@@ -45,4 +45,11 @@ class Match:
         self.away_team_id = away_team_id
         self.user_bet = None
     
-    
+    def place_bet(self, user_id, home_team_score, away_team_score):
+        bet = Bet(
+            user_id=user_id, 
+            match_id=self.id,
+            home_team_score=home_team_score, 
+            away_team_score=away_team_score
+        )
+        self.user_bet = bet
