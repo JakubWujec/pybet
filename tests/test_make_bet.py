@@ -11,7 +11,7 @@ def fake_match_repo():
     return repo
 
 def test_make_bet(fake_match_repo):
-    bet = services.make_bet(1, 2, 3, fake_match_repo)
+    bet = services.make_bet(1, 1, 2, 3, fake_match_repo)
     
     assert bet is not None
     assert isinstance(bet, model.Bet)

@@ -5,11 +5,13 @@ class Bet:
     match_id: int
     home_team_score: int
     away_team_score: int
+    user_id: int
     
-    def __init__(self, match_id: int, home_team_score: int, away_team_score: int):
+    def __init__(self,  user_id: int, match_id: int, home_team_score: int, away_team_score: int):
         self.match_id = match_id
         self.home_team_score = home_team_score
         self.away_team_score = away_team_score
+        self.user_id = user_id
     
     def __eq__(self, other):
         if not isinstance(other, Bet):
@@ -17,14 +19,15 @@ class Bet:
         return (
             self.match_id == other.match_id and
             self.home_team_score == other.home_team_score and
-            self.away_team_score == other.away_team_score
+            self.away_team_score == other.away_team_score and
+            self.user_id == self.user_id
         )
 
     def __hash__(self):
-        return hash((self.match_id, self.home_team_score, self.away_team_score))
+        return hash((self.match_id, self.home_team_score, self.away_team_score, self.user_id))
     
     def __repr__(self):
-        return f"Bet(match_id={self.match_id}, home_team_score={self.home_team_score}, away_team_score={self.away_team_score})"
+        return f"Bet(match_id={self.match_id}, home_team_score={self.home_team_score}, away_team_score={self.away_team_score}, user_id={self.user_id})"
 
 class Match:
     id: int
