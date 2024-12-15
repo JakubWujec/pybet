@@ -24,6 +24,7 @@ bets = Table(
     "bets",
     mapper_registry.metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('user_id', Integer),
     Column('match_id', ForeignKey('matches.id')),
     Column('home_team_score', Integer, nullable=False),
     Column('away_team_score', Integer, nullable=False)
@@ -31,8 +32,15 @@ bets = Table(
 
 
 def start_mappers():
-    matches_mapper = mapper_registry.map_imperatively(model.Match, matches)
     bets_mapper = mapper_registry.map_imperatively(model.Bet, bets)
-    
+    matches_mapper = mapper_registry.map_imperatively(
+        model.Match,
+        matches,
+        properties={
+            "user_bet": relationship(
+                bets_mapper,
+                uselist=False
+            )
+        },)
   
     

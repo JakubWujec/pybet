@@ -10,3 +10,4 @@ def test_saving_match(session):
     
     rows = list(session.execute(text('SELECT home_team_id, away_team_id FROM "matches"')))
     assert rows == [(1, 2)]
+    

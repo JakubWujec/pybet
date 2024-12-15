@@ -35,6 +35,7 @@ class Match:
     away_team_id: int
     home_team_score: Optional[int] = None 
     away_team_score: Optional[int] = None
+    user_bet: Optional[Bet] = None
     
     def __init__(self, home_team_id, away_team_id):
         self.id = None
@@ -42,5 +43,6 @@ class Match:
         self.away_team_score = None
         self.home_team_id = home_team_id
         self.away_team_id = away_team_id
+        self.user_bet = None
     
     

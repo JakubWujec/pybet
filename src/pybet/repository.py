@@ -24,3 +24,15 @@ class FakeMatchRepository:
         
     def get(self, match_id: int):
         return self.matches[match_id]    
+
+
+class SqlMatchRepository:
+    def __init__(self, session):
+        super().__init__()
+        self.session = session
+    
+    def add(self, match: model.Match):
+        self.session.add(match)
+    
+    def get(self, match_id: int):
+        return self.session.query(model.Match).filter_by(id=match_id).first()
