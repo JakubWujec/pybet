@@ -1,5 +1,6 @@
 import abc
 from src.pybet import model
+from typing import List
 
 class MatchRepository(abc.ABC):
     @abc.abstractmethod
@@ -9,6 +10,10 @@ class MatchRepository(abc.ABC):
     @abc.abstractmethod
     def get(self, match_id: int) -> model.Match:
         raise NotImplementedError 
+    
+    @abc.abstractmethod
+    def list(self) -> List[model.Match]:
+        raise NotImplementedError
 
 
 class FakeMatchRepository:
@@ -23,7 +28,10 @@ class FakeMatchRepository:
         self.matches[match.id] = match
         
     def get(self, match_id: int):
-        return self.matches[match_id]    
+        return self.matches[match_id]   
+
+    def list(self):
+        return list(self.matches.values())
 
 
 class SqlMatchRepository:
@@ -33,6 +41,10 @@ class SqlMatchRepository:
     
     def add(self, match: model.Match):
         self.session.add(match)
+        self.session.commit()
     
     def get(self, match_id: int):
         return self.session.query(model.Match).filter_by(id=match_id).first()
+    
+    def list(self):
+        return self.session.query(model.Match).all()
