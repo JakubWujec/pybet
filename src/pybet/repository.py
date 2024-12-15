@@ -1,5 +1,5 @@
 import abc
-from src.pybet.domain import model
+from src.pybet import model
 
 class MatchRepository(abc.ABC):
     @abc.abstractmethod

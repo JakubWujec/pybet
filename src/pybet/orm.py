@@ -1,4 +1,4 @@
-from src.pybet.domain import model
+from src.pybet import model
 from sqlalchemy import (
     Table, MetaData, Column, Integer, String, Date,
     ForeignKey, event, ForeignKeyConstraint

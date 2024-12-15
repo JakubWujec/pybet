@@ -1,11 +1,10 @@
 import pytest
-from src.pybet.domain import model
-from src.pybet import services
-from src.pybet.repository import FakeMatchRepository
+from src.pybet import model, services, repository
+
 
 @pytest.fixture()
 def fake_match_repo():
-    repo = FakeMatchRepository()
+    repo = repository.FakeMatchRepository()
     repo.add(
         model.Match(1, 2)
     )
