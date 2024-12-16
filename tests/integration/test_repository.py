@@ -36,12 +36,12 @@ def test_repository_can_retrieve_match_and_user_bet(session):
     )
     
     repo = repository.SqlMatchRepository(session)
-    match = repo.get(match_id=1)
+    match: model.Match = repo.get(match_id=1)
     
-    assert match.user_bet is not None
-    assert isinstance(match.user_bet, model.Bet)
-    assert match.user_bet.home_team_score == 3
-    assert match.user_bet.away_team_score == 3
+    assert len(match.bets)
+    assert isinstance(match.bets[0], model.Bet)
+    assert match.bets[0].home_team_score == 3
+    assert match.bets[0].away_team_score == 3
     
     
     

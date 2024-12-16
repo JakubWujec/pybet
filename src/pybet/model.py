@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List
 
 class Bet:
     match_id: int
@@ -29,13 +29,26 @@ class Bet:
     def __repr__(self):
         return f"Bet(match_id={self.match_id}, home_team_score={self.home_team_score}, away_team_score={self.away_team_score}, user_id={self.user_id})"
 
+
+class User:
+    id: int
+    username: str
+    bets: List["Bet"]
+    
+    def __init__(self, username, bets):
+        self.id = None
+        self.username = username
+        self.bets = []
+    
+    
+
 class Match:
     id: int
     home_team_id: int
     away_team_id: int
     home_team_score: Optional[int] = None 
     away_team_score: Optional[int] = None
-    user_bet: Optional[Bet] = None
+    bets: List["Bet"]
     
     def __init__(self, home_team_id, away_team_id):
         self.id = None
@@ -43,7 +56,7 @@ class Match:
         self.away_team_score = None
         self.home_team_id = home_team_id
         self.away_team_id = away_team_id
-        self.user_bet = None
+        self.bets: List["Bet"] = []
     
     def place_bet(self, user_id, home_team_score, away_team_score):
         bet = Bet(
@@ -52,4 +65,4 @@ class Match:
             home_team_score=home_team_score, 
             away_team_score=away_team_score
         )
-        self.user_bet = bet
+        self.bets.append(bet)

@@ -22,5 +22,5 @@ def test_make_bet_service():
     
     match = repo.get(1)
     
-    assert match.user_bet is not None
-    assert isinstance(match.user_bet, model.Bet) 
+    assert match.bets
+    assert isinstance(match.bets[0], model.Bet) 
