@@ -1,5 +1,5 @@
 from src.pybet import repository
-from src.pybet import model
+from src.pybet import schema
 from sqlalchemy.sql import text
 
 def test_repository_can_retrieve_match(session):
@@ -19,7 +19,7 @@ def test_repository_can_retrieve_match(session):
     match = repo.get(match_id=1)
     
     assert match is not None
-    assert isinstance(match, model.Match)
+    assert isinstance(match, schema.Match)
     
     
 def test_repository_can_retrieve_match_and_user_bet(session):
@@ -36,10 +36,10 @@ def test_repository_can_retrieve_match_and_user_bet(session):
     )
     
     repo = repository.SqlMatchRepository(session)
-    match: model.Match = repo.get(match_id=1)
+    match: schema.Match = repo.get(match_id=1)
     
     assert len(match.bets)
-    assert isinstance(match.bets[0], model.Bet)
+    assert isinstance(match.bets[0], schema.Bet)
     assert match.bets[0].home_team_score == 3
     assert match.bets[0].away_team_score == 3
     

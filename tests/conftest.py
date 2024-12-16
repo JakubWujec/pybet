@@ -2,27 +2,25 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, clear_mappers
 from src.pybet import config
-from src.pybet.orm import metadata, start_mappers
+from src.pybet.schema import metadata
 from pathlib import Path
 import time
 import requests
 
+
 @pytest.fixture
 def in_memory_db():
-    engine = create_engine("sqlite:///:memory:")
+    engine = create_engine("sqlite:///:memory:", echo=True)
     metadata.create_all(engine)
     return engine
 
 @pytest.fixture
-def session_factory(in_memory_db):
-    start_mappers()
+def in_memory_sqlite_session_factory(in_memory_db):
     yield sessionmaker(bind=in_memory_db)
-    clear_mappers()
-
 
 @pytest.fixture
-def session(session_factory):
-    return session_factory()
+def session(in_memory_sqlite_session_factory):
+    return in_memory_sqlite_session_factory()
 
 @pytest.fixture
 def sqlite_db():

@@ -1,5 +1,5 @@
 from src.pybet import services
-from src.pybet import repository, model
+from src.pybet import repository, schema
 
 class FakeSession:
     committed = False
@@ -9,7 +9,10 @@ class FakeSession:
 
 def test_make_bet_service():
     repo = repository.FakeMatchRepository()
-    repo.add(model.Match(2, 3))
+    repo.add(schema.Match(
+        home_team_id=2,
+        away_team_id=3
+    ))
     
     services.make_bet(
         user_id=1,
@@ -23,4 +26,4 @@ def test_make_bet_service():
     match = repo.get(1)
     
     assert match.bets
-    assert isinstance(match.bets[0], model.Bet) 
+    assert isinstance(match.bets[0], schema.Bet) 

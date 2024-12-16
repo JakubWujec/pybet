@@ -1,11 +1,10 @@
 from flask import Flask, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from src.pybet import orm, repository, model, services
+from src.pybet import repository, schema, services
 from src.pybet import config
 
 app = Flask(__name__)
-orm.start_mappers()
 get_session = sessionmaker(bind=create_engine(config.get_sqlite_uri()))
 
 @app.route("/bets", methods=["POST"])
@@ -31,7 +30,7 @@ def create_match():
     repo = repository.SqlMatchRepository(session)
 
     repo.add(
-        model.Match(
+        schema.Match(
             home_team_id=request.json["home_team_id"],
             away_team_id=request.json["away_team_id"],
         )

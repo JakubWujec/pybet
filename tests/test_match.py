@@ -1,8 +1,11 @@
-from src.pybet import model
+from src.pybet import schema
 
 def test_can_create_match():
-    match = model.Match(1, 2)
+    match = schema.Match(
+        home_team_id=1, 
+        away_team_id=2
+    )
     
     assert match is not None
-    assert isinstance(match, model.Match)
+    assert isinstance(match, schema.Match)
     

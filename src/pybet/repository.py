@@ -1,18 +1,18 @@
 import abc
-from src.pybet import model
+from src.pybet import schema
 from typing import List
 
 class MatchRepository(abc.ABC):
     @abc.abstractmethod
-    def add(self, match: model.Match):
+    def add(self, match: schema.Match):
         raise NotImplementedError
         
     @abc.abstractmethod
-    def get(self, match_id: int) -> model.Match:
+    def get(self, match_id: int) -> schema.Match:
         raise NotImplementedError 
     
     @abc.abstractmethod
-    def list(self) -> List[model.Match]:
+    def list(self) -> List[schema.Match]:
         raise NotImplementedError
 
 
@@ -21,7 +21,7 @@ class FakeMatchRepository:
         self.matches = {}
         self._next_id = 1
         
-    def add(self, match: model.Match):
+    def add(self, match: schema.Match):
         if match.id is None:
             match.id = self._next_id
             self._next_id +=1 
@@ -39,12 +39,12 @@ class SqlMatchRepository:
         super().__init__()
         self.session = session
     
-    def add(self, match: model.Match):
+    def add(self, match: schema.Match):
         self.session.add(match)
         self.session.commit()
     
     def get(self, match_id: int):
-        return self.session.query(model.Match).filter_by(id=match_id).first()
+        return self.session.query(schema.Match).filter_by(id=match_id).first()
     
     def list(self):
-        return self.session.query(model.Match).all()
+        return self.session.query(schema.Match).all()
