@@ -5,11 +5,11 @@ from src.pybet import schema, services, unit_of_work
 from src.pybet import config
 
 app = Flask(__name__)
-get_session = sessionmaker(bind=create_engine(config.get_sqlite_uri()))
+
 
 @app.route("/bets", methods=["POST"])
 def make_a_bet():
-    uow = unit_of_work.SqlAlchemyUnitOfWork(get_session)
+    uow = unit_of_work.SqlAlchemyUnitOfWork()
     user_id = 1
 
     services.make_bet(
@@ -24,7 +24,7 @@ def make_a_bet():
 
 @app.route("/matches", methods=["POST"])
 def create_match():
-    uow = unit_of_work.SqlAlchemyUnitOfWork(get_session)
+    uow = unit_of_work.SqlAlchemyUnitOfWork()
     with uow:
         uow.matches.add(
             schema.Match(
@@ -38,7 +38,7 @@ def create_match():
 
 @app.route("/matches/<match_id>", methods=["POST"])
 def update_score(match_id):
-    uow = unit_of_work.SqlAlchemyUnitOfWork(get_session)
+    uow = unit_of_work.SqlAlchemyUnitOfWork()
     
     services.update_match_score(
         match_id,
