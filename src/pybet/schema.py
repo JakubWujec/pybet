@@ -33,7 +33,6 @@ class Bet(Base):
 
     __table_args__ = (UniqueConstraint("user_id", "match_id", name="uq_user_match"),)
     
-
     user: Mapped["User"] = relationship(
         User, 
         back_populates="bets"
@@ -42,6 +41,25 @@ class Bet(Base):
         "Match", 
         back_populates="bets" 
     )
+    
+
+    def calculate_points(self, home_team_score: int, away_team_score: int):
+        POINTS_FOR_WINNER = 2
+        POINTS_FOR_DRAW = 3
+        POINTS_FOR_EXACT_SCORE = 5
+        
+        match_score_diff = home_team_score - away_team_score
+        bet_score_diff = self.home_team_score - self.away_team_score
+        
+        if self.home_team_score == home_team_score and away_team_score == self.away_team_score:
+            return POINTS_FOR_EXACT_SCORE
+        if bet_score_diff == 0 and match_score_diff == 0:
+            return POINTS_FOR_DRAW
+        if match_score_diff * bet_score_diff > 0 or (match_score_diff == 0 and bet_score_diff == 0):
+            return POINTS_FOR_WINNER
+   
+        return 0
+        
     
 
 class Match(Base):
@@ -55,7 +73,8 @@ class Match(Base):
     kickoff: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), 
         server_default=func.now(),
-        default=datetime.datetime.utcnow
+        default=datetime.datetime.now(datetime.timezone.utc),
+        nullable=False
     )
     
     bets: Mapped[Dict[int, "Bet"]] = relationship(
@@ -70,4 +89,8 @@ class Match(Base):
 
 
     def is_after_kickoff(self) -> bool:
+        # not flushed
+        if self.kickoff is None:
+            return False
+        
         return datetime.datetime.now() >= self.kickoff

@@ -1,5 +1,5 @@
 from src.pybet import services
-from src.pybet import repository, schema, unit_of_work, commands
+from src.pybet import repository, schema, unit_of_work, commands, events
 import pytest
 import datetime 
 
@@ -163,3 +163,42 @@ def test_make_bet_error_for_started_match():
             command,
             uow=uow
         )
+        
+def test_update_bet_points_service_when_exact_score():
+    uow = FakeUnitOfWork()
+    uow.matches.add(schema.Match(
+        home_team_id=2,
+        away_team_id=3
+    ))
+
+    HOME_SCORE = 2
+    AWAY_SCORE = 3
+    
+    create_bet_command = commands.MakeBetCommand(
+        user_id=1,
+        match_id=1,
+        home_team_score=HOME_SCORE,
+        away_team_score=AWAY_SCORE
+    )
+    
+    services.make_bet(create_bet_command, uow)
+    
+    update_score_command = commands.UpdateMatchScoreCommand(
+        match_id=1,
+        home_team_score=HOME_SCORE,
+        away_team_score=AWAY_SCORE
+    )
+    
+    services.update_match_score(
+        update_score_command,
+        uow=uow
+    )
+    
+    updated_score_event = events.MatchScoreUpdated(
+        match_id = 1
+    )
+    
+    services.update_bet_points_for_match(updated_score_event, uow)
+    match = uow.matches.get(1)
+    
+    assert match.bets[1].points == 5

@@ -39,11 +39,10 @@ def update_match_score(command: commands.UpdateMatchScoreCommand, uow: unit_of_w
         uow.commit()
     
         return match.id
-    
-    
-def update_points(event: events.Event, uow: unit_of_work):
-    # get match_id
-    # for each bet for this match
-    # calculate points for bet 
-    # for every user recalculate points?
-    pass 
+     
+def update_bet_points_for_match(event: events.MatchScoreUpdated, uow: unit_of_work.UnitOfWork):
+    with uow:
+        match = uow.matches.get(event.match_id)
+        for bet in match.bets.values():
+            bet.points = bet.calculate_points(match.home_team_score, match.away_team_score)            
+        uow.commit()
