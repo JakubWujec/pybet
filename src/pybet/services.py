@@ -1,4 +1,5 @@
 from src.pybet import schema, unit_of_work, commands
+from src.pybet import events
 import datetime
 
 class MatchAlreadyStarted(Exception):
@@ -21,7 +22,8 @@ def make_bet(command: commands.MakeBetCommand, uow: unit_of_work.UnitOfWork):
         bet = schema.Bet(
             user_id=command.user_id,
             home_team_score=command.home_team_score,
-            away_team_score=command.away_team_score
+            away_team_score=command.away_team_score,
+            points = 0
         )    
         match.place_bet(bet)
         uow.commit()
@@ -37,3 +39,11 @@ def update_match_score(command: commands.UpdateMatchScoreCommand, uow: unit_of_w
         uow.commit()
     
         return match.id
+    
+    
+def update_points(event: events.Event, uow: unit_of_work):
+    # get match_id
+    # for each bet for this match
+    # calculate points for bet 
+    # for every user recalculate points?
+    pass 

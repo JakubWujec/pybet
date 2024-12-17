@@ -29,7 +29,7 @@ class Bet(Base):
     match_id: Mapped[int] = mapped_column(ForeignKey("matches.id"), nullable=False)
     home_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
     away_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
-    points: Mapped[int] = mapped_column(Integer, default = 0)
+    points: Mapped[int] = mapped_column(Integer, default = 0, server_default="0")
 
     __table_args__ = (UniqueConstraint("user_id", "match_id", name="uq_user_match"),)
     

@@ -47,6 +47,7 @@ def test_make_bet_service():
     match = uow.matches.get(1)
     
     assert isinstance(match.bets[1], schema.Bet) 
+    assert match.bets[1].points == 0 
     
 def test_making_bet_for_the_same_user_and_match_doesnt_create_multiple_rows():
     uow = FakeUnitOfWork()
