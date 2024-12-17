@@ -2,7 +2,7 @@ from flask import Flask, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from src.pybet import schema, services, unit_of_work
-from src.pybet import config
+from src.pybet import config, message_bus, commands
 import datetime
 
 app = Flask(__name__)
@@ -13,12 +13,14 @@ def make_a_bet():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     user_id = 1
 
-    services.make_bet(
-        user_id=user_id,
-        match_id=request.json["match_id"],
-        home_team_score=request.json["home_team_score"],
-        away_team_score=request.json["away_team_score"],
-        uow=uow
+    message_bus.handle(
+        commands.MakeBetCommand(
+            user_id=user_id,
+            match_id=request.json["match_id"],
+            home_team_score=request.json["home_team_score"],
+            away_team_score=request.json["away_team_score"],
+        ),
+        uow
     )
     
     return "OK", 201
@@ -47,11 +49,13 @@ def create_match():
 def update_score(match_id):
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     
-    services.update_match_score(
-        match_id,
-        home_team_score=request.json["home_team_score"],
-        away_team_score=request.json["home_team_score"],
-        uow=uow
+    message_bus.handle(
+        commands.UpdateMatchScoreCommand(
+            match_id=match_id,
+            home_team_score=request.json["home_team_score"],
+            away_team_score=request.json["home_team_score"],
+        ),
+        uow
     )
     
     return "OK", 201

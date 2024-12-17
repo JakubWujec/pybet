@@ -9,7 +9,6 @@ class MatchNotFound(Exception):
     pass
 
 def make_bet(command: commands.MakeBetCommand, uow: unit_of_work.UnitOfWork):
-    
     with uow:
         match = uow.matches.get(command.match_id)    
         
