@@ -1,4 +1,4 @@
-from src.pybet import commands, events, services, unit_of_work
+from src.pybet import commands, events, unit_of_work, handlers
 from typing import Dict, List, Type, Callable, Union
 
 Message = Union[events.Event, commands.Command]
@@ -20,12 +20,12 @@ def handle_command(command: commands.Command, uow: unit_of_work.UnitOfWork):
     handler(command, uow)
 
 COMMAND_HANDLERS: Dict[Type[events.Event], Callable] = {
-    commands.UpdateMatchScoreCommand: services.update_match_score,
-    commands.MakeBetCommand: services.make_bet
+    commands.UpdateMatchScoreCommand: handlers.update_match_score,
+    commands.MakeBetCommand: handlers.make_bet
 }
 
 EVENT_HANDLERS: Dict[Type[events.Event], List[Callable]] = {
-    events.MatchScoreUpdated: [services.update_bet_points_for_match]
+    events.MatchScoreUpdated: [handlers.update_bet_points_for_match]
 }
 
 

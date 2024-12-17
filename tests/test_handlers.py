@@ -1,5 +1,4 @@
-from src.pybet import services
-from src.pybet import repository, schema, unit_of_work, commands, events
+from src.pybet import repository, schema, unit_of_work, commands, events, handlers
 import pytest
 import datetime 
 
@@ -39,7 +38,7 @@ def test_make_bet_service():
         away_team_score= 1,
     )
     
-    services.make_bet(
+    handlers.make_bet(
         command,
         uow=uow
     )
@@ -65,12 +64,12 @@ def test_making_bet_for_the_same_user_and_match_doesnt_create_multiple_rows():
         away_team_score= 1,
     )
     
-    services.make_bet(
+    handlers.make_bet(
         command1,
         uow=uow
     )
     
-    services.make_bet(
+    handlers.make_bet(
         command1,
         uow=uow
     )
@@ -102,12 +101,12 @@ def test_when_two_bets_from_different_user_the_two_rows_inseted():
     )
     
     
-    services.make_bet(
+    handlers.make_bet(
         command1,
         uow=uow
     )
     
-    services.make_bet(
+    handlers.make_bet(
         command2,
         uow=uow
     )
@@ -129,7 +128,7 @@ def test_update_match_score_service():
         away_team_score= 5
     )
     
-    services.update_match_score(
+    handlers.update_match_score(
         command,
         uow=uow
     )
@@ -158,8 +157,8 @@ def test_make_bet_error_for_started_match():
     )
         
     
-    with pytest.raises(services.MatchAlreadyStarted):
-        services.make_bet(
+    with pytest.raises(handlers.MatchAlreadyStarted):
+        handlers.make_bet(
             command,
             uow=uow
         )
@@ -181,7 +180,7 @@ def test_update_bet_points_service_when_exact_score():
         away_team_score=AWAY_SCORE
     )
     
-    services.make_bet(create_bet_command, uow)
+    handlers.make_bet(create_bet_command, uow)
     
     update_score_command = commands.UpdateMatchScoreCommand(
         match_id=1,
@@ -189,7 +188,7 @@ def test_update_bet_points_service_when_exact_score():
         away_team_score=AWAY_SCORE
     )
     
-    services.update_match_score(
+    handlers.update_match_score(
         update_score_command,
         uow=uow
     )
@@ -198,7 +197,7 @@ def test_update_bet_points_service_when_exact_score():
         match_id = 1
     )
     
-    services.update_bet_points_for_match(updated_score_event, uow)
+    handlers.update_bet_points_for_match(updated_score_event, uow)
     match = uow.matches.get(1)
     
     assert match.bets[1].points == 5

@@ -1,7 +1,5 @@
 from flask import Flask, request
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from src.pybet import schema, services, unit_of_work
+from src.pybet import schema, unit_of_work, handlers
 from src.pybet import config, message_bus, commands
 import datetime
 
