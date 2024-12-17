@@ -1,15 +1,29 @@
 from src.pybet import services
-from src.pybet import repository, schema
+from src.pybet import repository, schema, unit_of_work
 
 class FakeSession:
     committed = False
 
     def commit(self):
         self.committed = True
+        
+class FakeUnitOfWork(unit_of_work.UnitOfWork):
+    def __init__(self):
+        self.matches = repository.FakeMatchRepository()
+        self.committed = False
+    
+    def commit(self):
+        self.committed = True
+
+    def rollback(self):
+        pass
+
+    
 
 def test_make_bet_service():
-    repo = repository.FakeMatchRepository()
-    repo.add(schema.Match(
+    uow = FakeUnitOfWork()
+  
+    uow.matches.add(schema.Match(
         home_team_id=2,
         away_team_id=3
     ))
@@ -19,28 +33,27 @@ def test_make_bet_service():
         match_id=1,
         home_team_score= 1,
         away_team_score= 1,
-        repo=repo,
-        session=FakeSession()
+        uow=uow
     )
     
-    match = repo.get(1)
+    match = uow.matches.get(1)
     
     assert isinstance(match.bets[1], schema.Bet) 
     
 def test_making_bet_for_the_same_user_and_match_doesnt_create_multiple_rows():
-    repo = repository.FakeMatchRepository()
-    repo.add(schema.Match(
+    uow = FakeUnitOfWork()
+    uow.matches.add(schema.Match(
         home_team_id=2,
         away_team_id=3
     ))
     
+    
     services.make_bet(
         user_id=1,
         match_id=1,
         home_team_score= 1,
         away_team_score= 1,
-        repo=repo,
-        session=FakeSession()
+        uow=uow
     )
     
     services.make_bet(
@@ -48,17 +61,16 @@ def test_making_bet_for_the_same_user_and_match_doesnt_create_multiple_rows():
         match_id=1,
         home_team_score= 1,
         away_team_score= 1,
-        repo=repo,
-        session=FakeSession()
+        uow=uow
     )
     
-    match = repo.get(1)
+    match = uow.matches.get(1)
     
     assert len(match.bets) == 1
     
 def test_when_two_bets_from_different_user_the_two_rows_inseted():
-    repo = repository.FakeMatchRepository()
-    repo.add(schema.Match(
+    uow = FakeUnitOfWork()
+    uow.matches.add(schema.Match(
         home_team_id=2,
         away_team_id=3
     ))
@@ -68,8 +80,7 @@ def test_when_two_bets_from_different_user_the_two_rows_inseted():
         match_id=1,
         home_team_score= 1,
         away_team_score= 1,
-        repo=repo,
-        session=FakeSession()
+        uow=uow
     )
     
     services.make_bet(
@@ -77,17 +88,16 @@ def test_when_two_bets_from_different_user_the_two_rows_inseted():
         match_id=1,
         home_team_score= 1,
         away_team_score= 1,
-        repo=repo,
-        session=FakeSession()
+        uow=uow
     )
     
-    match = repo.get(1)
+    match = uow.matches.get(1)
     
     assert len(match.bets) == 2
     
 def test_update_match_score_service():
-    repo = repository.FakeMatchRepository()
-    repo.add(schema.Match(
+    uow = FakeUnitOfWork()
+    uow.matches.add(schema.Match(
         home_team_id=2,
         away_team_id=3
     ))
@@ -96,11 +106,10 @@ def test_update_match_score_service():
         match_id=1,
         home_team_score= 5,
         away_team_score= 5,
-        repo=repo,
-        session=FakeSession()
+        uow=uow
     )
     
-    match = repo.get(1)
+    match = uow.matches.get(1)
     
     assert match.home_team_score == 5
     assert match.away_team_score == 5

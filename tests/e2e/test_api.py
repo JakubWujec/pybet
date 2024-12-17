@@ -36,6 +36,6 @@ def test_update_match_score_happy_path_returns_201():
         "away_team_score": 3}
     url = config.get_api_url()
 
-    r = requests.post(f"{url}/match/", json=data)
+    r = requests.post(f"{url}/matches/1", json=data)
 
     assert r.status_code == 201
