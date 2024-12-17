@@ -1,5 +1,5 @@
 from src.pybet import services
-from src.pybet import repository, schema, unit_of_work
+from src.pybet import repository, schema, unit_of_work, commands
 import pytest
 import datetime 
 
@@ -32,11 +32,15 @@ def test_make_bet_service():
         kickoff = tommorow
     ))
     
-    services.make_bet(
+    command = commands.MakeBetCommand(
         user_id=1,
         match_id=1,
         home_team_score= 1,
         away_team_score= 1,
+    )
+    
+    services.make_bet(
+        command,
         uow=uow
     )
     
@@ -53,20 +57,20 @@ def test_making_bet_for_the_same_user_and_match_doesnt_create_multiple_rows():
         kickoff = tommorow
     ))
     
-    
-    services.make_bet(
+    command1 = commands.MakeBetCommand(
         user_id=1,
         match_id=1,
         home_team_score= 1,
         away_team_score= 1,
+    )
+    
+    services.make_bet(
+        command1,
         uow=uow
     )
     
     services.make_bet(
-        user_id=1,
-        match_id=1,
-        home_team_score= 1,
-        away_team_score= 1,
+        command1,
         uow=uow
     )
     
@@ -82,19 +86,28 @@ def test_when_two_bets_from_different_user_the_two_rows_inseted():
         kickoff = tommorow
     ))
     
-    services.make_bet(
+    command1 = commands.MakeBetCommand(
         user_id=1,
         match_id=1,
         home_team_score= 1,
         away_team_score= 1,
-        uow=uow
     )
     
-    services.make_bet(
+    command2 = commands.MakeBetCommand(
         user_id=2,
         match_id=1,
         home_team_score= 1,
         away_team_score= 1,
+    )
+    
+    
+    services.make_bet(
+        command1,
+        uow=uow
+    )
+    
+    services.make_bet(
+        command2,
         uow=uow
     )
     
@@ -109,10 +122,14 @@ def test_update_match_score_service():
         away_team_id=3
     ))
     
-    services.update_match_score(
+    command = commands.UpdateMatchScoreCommand(
         match_id=1,
         home_team_score= 5,
-        away_team_score= 5,
+        away_team_score= 5
+    )
+    
+    services.update_match_score(
+        command,
         uow=uow
     )
     
@@ -132,12 +149,16 @@ def test_make_bet_error_for_started_match():
             kickoff = yesterday
         ))
         
+    command = commands.MakeBetCommand(
+        user_id=1,
+        match_id=1,
+        home_team_score= 1,
+        away_team_score= 1,
+    )
+        
     
     with pytest.raises(services.MatchAlreadyStarted):
         services.make_bet(
-            user_id=1,
-            match_id=1,
-            home_team_score=2,
-            away_team_score=3,
+            command,
             uow=uow
         )
