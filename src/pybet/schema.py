@@ -57,7 +57,7 @@ class Match(Base):
         server_default=func.now(),
         default=datetime.datetime.utcnow
     )
-
+    
     bets: Mapped[Dict[int, "Bet"]] = relationship(
         "Bet",  # Target class
         back_populates="match",  
@@ -69,3 +69,5 @@ class Match(Base):
         self.bets[bet.user_id] = bet
 
 
+    def is_after_kickoff(self) -> bool:
+        return datetime.datetime.now() >= self.kickoff
