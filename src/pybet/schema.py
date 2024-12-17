@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, String, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import mapped_column, relationship, Mapped
-from sqlalchemy.orm import declarative_base
-from typing import List
+from sqlalchemy.orm import declarative_base, attribute_mapped_collection
+from typing import List, Dict
 
 Base = declarative_base()
 metadata = Base.metadata
@@ -51,13 +51,14 @@ class Match(Base):
     away_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
     
 
-    bets: Mapped[List["Bet"]] = relationship(
-        Bet,  # Target class
+    bets: Mapped[Dict[int, "Bet"]] = relationship(
+        "Bet",  # Target class
         back_populates="match",  
+        collection_class=attribute_mapped_collection("user_id"),
         cascade="all, delete-orphan",
     )
     
     def place_bet(self, bet: Bet):
-        self.bets.append(bet)
+        self.bets[bet.user_id] = bet
 
 

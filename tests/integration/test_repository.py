@@ -35,13 +35,13 @@ def test_repository_can_retrieve_match_and_user_bet(session):
         ' VALUES (1, 1, 3, 3)')
     )
     
+    user_id = 1
     repo = repository.SqlMatchRepository(session)
     match: schema.Match = repo.get(match_id=1)
     
-    assert len(match.bets)
-    assert isinstance(match.bets[0], schema.Bet)
-    assert match.bets[0].home_team_score == 3
-    assert match.bets[0].away_team_score == 3
+    bet = match.bets[user_id]
+    assert bet.home_team_score == 3
+    assert bet.away_team_score == 3
     
     
     

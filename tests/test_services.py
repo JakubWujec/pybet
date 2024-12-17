@@ -25,5 +25,63 @@ def test_make_bet_service():
     
     match = repo.get(1)
     
-    assert match.bets
-    assert isinstance(match.bets[0], schema.Bet) 
+
+    assert isinstance(match.bets[1], schema.Bet) 
+    
+def test_making_bet_for_the_same_user_and_match_doesnt_create_multiple_rows():
+    repo = repository.FakeMatchRepository()
+    repo.add(schema.Match(
+        home_team_id=2,
+        away_team_id=3
+    ))
+    
+    services.make_bet(
+        user_id=1,
+        match_id=1,
+        home_team_score= 1,
+        away_team_score= 1,
+        repo=repo,
+        session=FakeSession()
+    )
+    
+    services.make_bet(
+        user_id=1,
+        match_id=1,
+        home_team_score= 1,
+        away_team_score= 1,
+        repo=repo,
+        session=FakeSession()
+    )
+    
+    match = repo.get(1)
+    
+    assert len(match.bets) == 1
+    
+def test_when_two_bets_from_different_user_the_two_rows_inseted():
+    repo = repository.FakeMatchRepository()
+    repo.add(schema.Match(
+        home_team_id=2,
+        away_team_id=3
+    ))
+    
+    services.make_bet(
+        user_id=1,
+        match_id=1,
+        home_team_score= 1,
+        away_team_score= 1,
+        repo=repo,
+        session=FakeSession()
+    )
+    
+    services.make_bet(
+        user_id=2,
+        match_id=1,
+        home_team_score= 1,
+        away_team_score= 1,
+        repo=repo,
+        session=FakeSession()
+    )
+    
+    match = repo.get(1)
+    
+    assert len(match.bets) == 2

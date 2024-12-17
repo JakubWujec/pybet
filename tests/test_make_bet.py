@@ -17,4 +17,4 @@ def test_make_bet():
     match.place_bet(bet)
     
     assert len(match.bets)
-    assert isinstance(match.bets[0], schema.Bet)
+    assert isinstance(match.bets[1], schema.Bet)
