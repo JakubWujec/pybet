@@ -1,7 +1,10 @@
-from sqlalchemy import Integer, String, ForeignKey, UniqueConstraint
+from sqlalchemy import Integer, String, ForeignKey, UniqueConstraint, DateTime
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 from sqlalchemy.orm import declarative_base, attribute_mapped_collection
+from sqlalchemy.sql import func, text
+from sqlalchemy.sql.functions import GenericFunction
 from typing import List, Dict
+import datetime
 
 Base = declarative_base()
 metadata = Base.metadata
@@ -49,7 +52,11 @@ class Match(Base):
     away_team_id: Mapped[int] = mapped_column(Integer, nullable=False)
     home_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
     away_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
-    
+    kickoff: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), 
+        server_default=func.now(),
+        default=datetime.datetime.utcnow
+    )
 
     bets: Mapped[Dict[int, "Bet"]] = relationship(
         "Bet",  # Target class

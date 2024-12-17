@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from src.pybet import schema, services, unit_of_work
 from src.pybet import config
+import datetime
 
 app = Flask(__name__)
 
@@ -25,11 +26,17 @@ def make_a_bet():
 @app.route("/matches", methods=["POST"])
 def create_match():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
+    
+    kickoff = request.json["kickoff"]
+    if kickoff is not None:
+        kickoff = datetime.datetime.fromisoformat(kickoff)
+
     with uow:
         uow.matches.add(
             schema.Match(
                 home_team_id=request.json["home_team_id"],
                 away_team_id=request.json["away_team_id"],
+                kickoff=kickoff
             )
         )
         uow.commit()

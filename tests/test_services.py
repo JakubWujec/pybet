@@ -1,5 +1,10 @@
 from src.pybet import services
 from src.pybet import repository, schema, unit_of_work
+import pytest
+import datetime 
+
+yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+tommorow = datetime.datetime.now() + datetime.timedelta(days=1)
 
 class FakeSession:
     committed = False
@@ -18,14 +23,13 @@ class FakeUnitOfWork(unit_of_work.UnitOfWork):
     def rollback(self):
         pass
 
-    
-
 def test_make_bet_service():
     uow = FakeUnitOfWork()
   
     uow.matches.add(schema.Match(
         home_team_id=2,
-        away_team_id=3
+        away_team_id=3,
+        kickoff = tommorow
     ))
     
     services.make_bet(
@@ -42,9 +46,11 @@ def test_make_bet_service():
     
 def test_making_bet_for_the_same_user_and_match_doesnt_create_multiple_rows():
     uow = FakeUnitOfWork()
+
     uow.matches.add(schema.Match(
         home_team_id=2,
-        away_team_id=3
+        away_team_id=3,
+        kickoff = tommorow
     ))
     
     
@@ -72,7 +78,8 @@ def test_when_two_bets_from_different_user_the_two_rows_inseted():
     uow = FakeUnitOfWork()
     uow.matches.add(schema.Match(
         home_team_id=2,
-        away_team_id=3
+        away_team_id=3,
+        kickoff = tommorow
     ))
     
     services.make_bet(
@@ -113,3 +120,24 @@ def test_update_match_score_service():
     
     assert match.home_team_score == 5
     assert match.away_team_score == 5
+    
+    
+def test_make_bet_error_for_started_match():
+    uow = FakeUnitOfWork()
+
+    with uow:
+        uow.matches.add(schema.Match(
+            home_team_id=2,
+            away_team_id=3,
+            kickoff = yesterday
+        ))
+        
+    
+    with pytest.raises(services.MatchAlreadyStarted):
+        services.make_bet(
+            user_id=1,
+            match_id=1,
+            home_team_score=2,
+            away_team_score=3,
+            uow=uow
+        )

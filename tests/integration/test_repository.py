@@ -1,6 +1,9 @@
 from src.pybet import repository
 from src.pybet import schema
 from sqlalchemy.sql import text
+import pytest
+
+
 
 def test_repository_can_retrieve_match(session):
     session.execute(
@@ -17,9 +20,9 @@ def test_repository_can_retrieve_match(session):
     
     repo = repository.SqlMatchRepository(session)
     match = repo.get(match_id=1)
-    
     assert match is not None
     assert isinstance(match, schema.Match)
+    assert match.kickoff is not None
     
     
 def test_repository_can_retrieve_match_and_user_bet(session):
