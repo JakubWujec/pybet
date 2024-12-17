@@ -27,7 +27,7 @@ class FakeMatchRepository:
             self._next_id +=1 
         self.matches[match.id] = match
         
-    def get(self, match_id: int):
+    def get(self, match_id: int) -> schema.Match:
         return self.matches[match_id]   
 
     def list(self):
