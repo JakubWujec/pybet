@@ -1,4 +1,4 @@
-from src.pybet import repository, schema, unit_of_work, commands, events, handlers
+from src.pybet import repository, schema, unit_of_work, commands, events, handlers, message_bus
 import pytest
 import datetime 
 
@@ -25,24 +25,14 @@ class FakeUnitOfWork(unit_of_work.UnitOfWork):
 def test_make_bet_service():
     uow = FakeUnitOfWork()
   
-    uow.matches.add(schema.Match(
-        home_team_id=2,
-        away_team_id=3,
-        kickoff = tommorow
-    ))
+    history = [
+        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, kickoff=tommorow),
+        commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=1, away_team_score=1),
+    ]
     
-    command = commands.MakeBetCommand(
-        user_id=1,
-        match_id=1,
-        home_team_score= 1,
-        away_team_score= 1,
-    )
-    
-    handlers.make_bet(
-        command,
-        uow=uow
-    )
-    
+    for message in history:
+        message_bus.handle(message, uow)
+  
     match = uow.matches.get(1)
     
     assert isinstance(match.bets[1], schema.Bet) 
@@ -51,28 +41,15 @@ def test_make_bet_service():
 def test_making_bet_for_the_same_user_and_match_doesnt_create_multiple_rows():
     uow = FakeUnitOfWork()
 
-    uow.matches.add(schema.Match(
-        home_team_id=2,
-        away_team_id=3,
-        kickoff = tommorow
-    ))
+    history = [
+        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, kickoff=tommorow),
+        commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=1, away_team_score=1),
+        commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=1, away_team_score=1),
+    ]
     
-    command1 = commands.MakeBetCommand(
-        user_id=1,
-        match_id=1,
-        home_team_score= 1,
-        away_team_score= 1,
-    )
-    
-    handlers.make_bet(
-        command1,
-        uow=uow
-    )
-    
-    handlers.make_bet(
-        command1,
-        uow=uow
-    )
+    for message in history:
+        message_bus.handle(message, uow)
+   
     
     match = uow.matches.get(1)
     
@@ -80,36 +57,16 @@ def test_making_bet_for_the_same_user_and_match_doesnt_create_multiple_rows():
     
 def test_when_two_bets_from_different_user_the_two_rows_inseted():
     uow = FakeUnitOfWork()
-    uow.matches.add(schema.Match(
-        home_team_id=2,
-        away_team_id=3,
-        kickoff = tommorow
-    ))
     
-    command1 = commands.MakeBetCommand(
-        user_id=1,
-        match_id=1,
-        home_team_score= 1,
-        away_team_score= 1,
-    )
+    history = [
+        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, kickoff=tommorow),
+        commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=1, away_team_score=1),
+        commands.MakeBetCommand(user_id=2, match_id=1, home_team_score=1, away_team_score=1),
+    ]
     
-    command2 = commands.MakeBetCommand(
-        user_id=2,
-        match_id=1,
-        home_team_score= 1,
-        away_team_score= 1,
-    )
-    
-    
-    handlers.make_bet(
-        command1,
-        uow=uow
-    )
-    
-    handlers.make_bet(
-        command2,
-        uow=uow
-    )
+    for message in history:
+        message_bus.handle(message, uow)
+   
     
     match = uow.matches.get(1)
     
@@ -165,34 +122,19 @@ def test_make_bet_error_for_started_match():
         
 def test_update_bet_points_service_when_exact_score():
     uow = FakeUnitOfWork()
-    uow.matches.add(schema.Match(
-        home_team_id=2,
-        away_team_id=3
-    ))
 
     HOME_SCORE = 2
     AWAY_SCORE = 3
     
-    create_bet_command = commands.MakeBetCommand(
-        user_id=1,
-        match_id=1,
-        home_team_score=HOME_SCORE,
-        away_team_score=AWAY_SCORE
-    )
+    history = [
+        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, kickoff=tommorow),
+        commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=HOME_SCORE, away_team_score=AWAY_SCORE),
+        commands.UpdateMatchScoreCommand(match_id=1, home_team_score=HOME_SCORE, away_team_score=AWAY_SCORE)
+    ]
     
-    handlers.make_bet(create_bet_command, uow)
-    
-    update_score_command = commands.UpdateMatchScoreCommand(
-        match_id=1,
-        home_team_score=HOME_SCORE,
-        away_team_score=AWAY_SCORE
-    )
-    
-    handlers.update_match_score(
-        update_score_command,
-        uow=uow
-    )
-    
+    for cmd in history:
+        message_bus.handle(cmd, uow)
+        
     updated_score_event = events.MatchScoreUpdated(
         match_id = 1
     )

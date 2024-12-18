@@ -20,6 +20,7 @@ def handle_command(command: commands.Command, uow: unit_of_work.UnitOfWork):
     handler(command, uow)
 
 COMMAND_HANDLERS: Dict[Type[events.Event], Callable] = {
+    commands.CreateMatchCommand: handlers.create_match,
     commands.UpdateMatchScoreCommand: handlers.update_match_score,
     commands.MakeBetCommand: handlers.make_bet
 }
