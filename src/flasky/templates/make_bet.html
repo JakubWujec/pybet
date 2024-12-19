@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Make bet</h1>
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.home_team_score.label }}<br>
+        {{ form.home_team_score(min=0)}}
+    </p>
+    <p>
+        {{ form.away_team_score.label }}<br>
+        {{ form.away_team_score(min=0) }}
+    </p>
+
+    <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}

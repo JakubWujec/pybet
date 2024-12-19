@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+
+<head>
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>Welcome</title>
+    {% endif %}
+</head>
+
+<body>
+    <div>
+        Pybet: <a href="/index">Home</a>
+    </div>
+    <hr>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+
+</html>
