@@ -61,7 +61,17 @@ def update_score(match_id):
 @app.route("/")
 def index():
     user = {'username': 'John'}
-    return render_template('index.html', title='Home', user=user)
+    posts = [
+        {
+            'author': {'username': 'John'},
+            'body': 'Beautiful day in Portland!'
+        },
+        {
+            'author': {'username': 'Susan'},
+            'body': 'The Avengers movie was so cool!'
+        }
+    ]
+    return render_template('index.html', title='Home', user=user, posts=posts)
 
 if __name__ == "__main__":
     #flask --app flask_app run --host=localhost --port=5005 
