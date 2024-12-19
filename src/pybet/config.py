@@ -1,4 +1,5 @@
 import os
+from src.config import Config
 
 def get_api_url():
     host = os.environ.get("API_HOST", "localhost")
@@ -6,4 +7,4 @@ def get_api_url():
     return f"http://{host}:{port}"
 
 def get_sqlite_uri():
-    return 'sqlite:///dev.db'
+    return Config.SQLALCHEMY_DATABASE_URI

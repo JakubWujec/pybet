@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, flash, redirect
-from src.flasky.flask_config import FlaskConfig
+from src import config
 
-def create_app(config_class=FlaskConfig):
+def create_app(config_class=config.Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
