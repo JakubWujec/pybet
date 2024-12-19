@@ -6,7 +6,7 @@ import datetime
 def post_to_add_match(home_team_id: int, away_team_id: int, kickoff = datetime.datetime.now() + datetime.timedelta(days=1)):
     url = config.get_api_url()
     r = requests.post(
-        f"{url}/matches", json={"home_team_id": home_team_id, "away_team_id": away_team_id, "kickoff": datetime.datetime.isoformat(kickoff)}
+        f"{url}/api/matches", json={"home_team_id": home_team_id, "away_team_id": away_team_id, "kickoff": datetime.datetime.isoformat(kickoff)}
     )
     assert r.status_code == 201
 
@@ -21,7 +21,7 @@ def test_make_bet_happy_path_returns_201():
         "away_team_score": 3}
     url = config.get_api_url()
 
-    r = requests.post(f"{url}/bets", json=data)
+    r = requests.post(f"{url}/api/bets", json=data)
 
     assert r.status_code == 201
 
@@ -37,6 +37,6 @@ def test_update_match_score_happy_path_returns_201():
         "away_team_score": 3}
     url = config.get_api_url()
 
-    r = requests.post(f"{url}/matches/1", json=data)
+    r = requests.post(f"{url}/api/matches/1", json=data)
 
     assert r.status_code == 201
