@@ -1,9 +1,9 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from src.pybet import schema, unit_of_work, handlers
 from src.pybet import config, message_bus, commands
 import datetime
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="src/templates")
 
 
 @app.route("/bets", methods=["POST"])
@@ -57,6 +57,11 @@ def update_score(match_id):
     )
     
     return "OK", 201
+
+@app.route("/")
+def index():
+    user = {'username': 'John'}
+    return render_template('index.html', title='Home', user=user)
 
 if __name__ == "__main__":
     #flask --app flask_app run --host=localhost --port=5005 
