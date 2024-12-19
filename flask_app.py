@@ -2,10 +2,11 @@ from flask import Flask, request, render_template, flash, redirect
 from src.pybet import schema, unit_of_work, handlers
 from src.pybet import config, message_bus, commands
 from src.flasky.forms.bet_form import BetForm
+from src.flasky.flask_config import FlaskConfig
 import datetime
 
 app = Flask(__name__, template_folder="src/flasky/templates")
-app.config['SECRET_KEY'] = 'SECRET_KEY'
+app.config.from_object(FlaskConfig())
 
 @app.route("/api/bets", methods=["POST"])
 def make_a_bet():
