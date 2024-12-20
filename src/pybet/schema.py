@@ -43,6 +43,9 @@ class User(Base):
     def get_id(self):
         #a method that returns a unique identifier for the user as a string.
         return f"{self.id}"
+    
+    def is_admin(self):
+        return True
 
     
 class Bet(Base):
