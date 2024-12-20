@@ -3,8 +3,8 @@ from sqlalchemy.orm import mapped_column, relationship, Mapped
 from sqlalchemy.orm import declarative_base, attribute_mapped_collection
 from sqlalchemy.sql import func, text
 from sqlalchemy.sql.functions import GenericFunction
-from typing import List, Dict
-
+from typing import List, Dict, Optional
+from werkzeug.security import generate_password_hash, check_password_hash
 
 import datetime
 
@@ -17,12 +17,19 @@ class User(Base):
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(50), nullable=False)
-
+    password_hash: Mapped[Optional[str]] = mapped_column(String(256))
+    
     bets: Mapped[List["Bet"]] = relationship(
         "Bet",  
         back_populates="user",  
         cascade="all, delete-orphan"  
     )
+    
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
     
     def is_authenticated(self):
         #is_authenticated: a property that is True if the user has valid credentials or False otherwise.
