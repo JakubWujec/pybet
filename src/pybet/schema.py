@@ -4,10 +4,13 @@ from sqlalchemy.orm import declarative_base, attribute_mapped_collection
 from sqlalchemy.sql import func, text
 from sqlalchemy.sql.functions import GenericFunction
 from typing import List, Dict
+
+
 import datetime
 
 Base = declarative_base()
 metadata = Base.metadata
+
 
 class User(Base):
     __tablename__ = "users"
@@ -20,6 +23,20 @@ class User(Base):
         back_populates="user",  
         cascade="all, delete-orphan"  
     )
+    
+    def is_authenticated(self):
+        #is_authenticated: a property that is True if the user has valid credentials or False otherwise.
+        return True
+    def is_active(self):
+        # a property that is True if the user's account is active or False otherwise.
+        return True
+    def is_anonymous(self):
+        #is_anonymous: a property that is False for regular users, and True only for a special, anonymous user.
+        return False
+    def get_id(self):
+        #a method that returns a unique identifier for the user as a string.
+        return f"{self.id}"
+
     
 class Bet(Base):
     __tablename__ = "bets"
