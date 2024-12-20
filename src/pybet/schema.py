@@ -1,23 +1,28 @@
-from sqlalchemy import Integer, String, ForeignKey, UniqueConstraint, DateTime
+from sqlalchemy import Integer, String, ForeignKey, UniqueConstraint, DateTime, Enum
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 from sqlalchemy.orm import declarative_base, attribute_mapped_collection
 from sqlalchemy.sql import func, text
 from sqlalchemy.sql.functions import GenericFunction
 from typing import List, Dict, Optional
 from werkzeug.security import generate_password_hash, check_password_hash
-
+import enum
 import datetime
 
 Base = declarative_base()
 metadata = Base.metadata
 
 
+class Role(enum.Enum):
+    USER = 1
+    ADMIN = 2
+    
 class User(Base):
     __tablename__ = "users"
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(50), nullable=False)
     password_hash: Mapped[Optional[str]] = mapped_column(String(256))
+    role: Mapped[Role] = mapped_column(Enum(Role), nullable=False, default=Role.USER, server_default="USER")
     
     bets: Mapped[List["Bet"]] = relationship(
         "Bet",  
@@ -45,7 +50,7 @@ class User(Base):
         return f"{self.id}"
     
     def is_admin(self):
-        return True
+        return self.role == Role.ADMIN
 
     
 class Bet(Base):

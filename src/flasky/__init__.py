@@ -24,7 +24,7 @@ def create_app(config_class=config.Config):
     admin = Admin(
         app, 
         name='pybet',
-        index_view=admin_views.PybetAdminIndexView()
+
     )
     admin.add_view(admin_views.PybetAdminModelView(schema.Match, session))
     admin.add_view(admin_views.PybetAdminModelView(schema.User, session))
