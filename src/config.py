@@ -21,5 +21,5 @@ def get_session_factory():
     return sessionmaker(bind=create_engine(get_db_uri()))
 
 def get_session():
-    return sessionmaker()
+    return get_session_factory()()
 
