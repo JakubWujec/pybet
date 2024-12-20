@@ -2,8 +2,8 @@ from src.flasky.auth import bp
 from flask_login import current_user, login_user
 import sqlalchemy as sa
 from src.pybet import schema
-from src.flasky.forms.login_form import LoginForm
-from src.flasky.forms.register_form import RegisterForm
+from src.flasky.auth.forms.login_form import LoginForm
+from src.flasky.auth.forms.register_form import RegisterForm
 from flask import redirect, render_template, flash, url_for
 from src.config import get_session
 
