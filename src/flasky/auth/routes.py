@@ -17,7 +17,7 @@ def login_view():
         
         if user is None or not user.check_password(form.password.data):
             flash("Wrong credentials", category="error")
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.login_view'))
         
         login_user(user)
         return redirect('/index')
@@ -27,5 +27,14 @@ def login_view():
 @bp.route('/register', methods=['GET', 'POST'])
 def register_view():
     form = RegisterForm()
+    
+    if form.validate_on_submit():
+        session = get_session()
+        user = schema.User(username = form.username.data)
+        user.set_password(password = form.password.data)
+        session.add(user)
+        session.commit()
+        flash('Congratulations, you are now a registered user!')
+        return redirect(url_for('auth.login_view'))
     
     return render_template('register.html', title='Register', form=form)
