@@ -3,6 +3,7 @@ from src.pybet import schema, unit_of_work
 from src.pybet import message_bus, commands
 from flask import request, render_template, flash, redirect
 from src.flasky.forms.bet_form import BetForm
+from src.flasky.forms.match_form import MatchForm
 import datetime
 
 @bp.route("/api/bets", methods=["POST"])
@@ -68,6 +69,28 @@ def make_a_bet_form(match_id):
     
     return render_template(
         'make_bet.html',
+        form=form
+    )
+    
+@bp.route("/matches", methods=["GET", "POST"])
+def create_match_view():
+    form = MatchForm()
+    
+    if form.validate_on_submit():
+        uow = unit_of_work.SqlAlchemyUnitOfWork()
+
+        with uow:
+            uow.matches.add(
+                schema.Match(
+                    home_team_id=form.home_team_id.data,
+                    away_team_id=form.away_team_id.data,
+                )
+            )
+        uow.commit()
+        return redirect('/index')
+    
+    return render_template(
+        'create_match.html',
         form=form
     )
 
