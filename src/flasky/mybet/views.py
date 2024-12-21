@@ -9,6 +9,7 @@ import datetime
 
 
 @bp.route("/my-bet", methods=["GET", "POST"])
+@login_required
 def mybet_view():
     # form = BetForm()
     
@@ -29,4 +30,5 @@ def mybet_view():
     
     return render_template(
         'mybet.html',
+        current_user=current_user
     )
