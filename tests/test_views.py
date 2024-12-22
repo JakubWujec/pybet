@@ -1,8 +1,9 @@
-from src.pybet import message_bus, unit_of_work, commands, views
+from src.pybet import queries
+from src.pybet import message_bus, unit_of_work, commands
 import datetime 
 import pytest
 
-class TestMyBetsView:
+class TestMyBetsQuery:
     @pytest.fixture(autouse=True)
     def setup(self, in_memory_sqlite_session_factory):
         self.uow = unit_of_work.SqlAlchemyUnitOfWork(in_memory_sqlite_session_factory)
@@ -14,7 +15,7 @@ class TestMyBetsView:
         message_bus.handle(commands.MakeBetCommand(self.user_id, 1, 2, 3), self.uow)
         
         
-        self.result = views.mybets(self.user_id, self.uow)
+        self.result = queries.mybets(self.user_id, self.uow)
         self.first_match = next((row for row in self.result if row["home_team_id"] == 1), None)
         self.second_match = next((row for row in self.result if row["home_team_id"] == 3), None)
 
