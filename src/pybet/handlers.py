@@ -9,15 +9,16 @@ class MatchNotFound(Exception):
     pass
 
 def create_match(command: commands.CreateMatchCommand, uow: unit_of_work.UnitOfWork):
-    match = schema.Match(
-        home_team_id=command.home_team_id,
-        away_team_id = command.away_team_id,
-        kickoff = command.kickoff
-    )
-    uow.matches.add(
-        match=match,
-    )
-    uow.commit()
+    with uow:
+        match = schema.Match(
+            home_team_id=command.home_team_id,
+            away_team_id = command.away_team_id,
+            kickoff = command.kickoff
+        )
+        uow.matches.add(
+            match=match,
+        )
+        uow.commit()
 
 def make_bet(command: commands.MakeBetCommand, uow: unit_of_work.UnitOfWork):
     with uow:
