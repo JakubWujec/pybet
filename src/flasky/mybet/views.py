@@ -6,11 +6,22 @@ from src.flasky.forms.bet_form import BetForm
 from src.flasky.forms.match_form import MatchForm
 from flask_login import login_user, logout_user, current_user, login_required
 import datetime
+from src.config import get_session
 
 
 @bp.route("/my-bet", methods=["GET", "POST"])
 @login_required
 def mybet_view():
+    uow = unit_of_work.SqlAlchemyUnitOfWork()
+    matches = []
+    with uow:
+        matches = uow.matches.list()
+        
+        return render_template(
+            'mybet.html',
+            current_user=current_user,
+            matches=matches,
+        )
     # form = BetForm()
     
     # if form.validate_on_submit():
@@ -30,5 +41,6 @@ def mybet_view():
     
     return render_template(
         'mybet.html',
-        current_user=current_user
+        current_user=current_user,
+        matches=matches,
     )
