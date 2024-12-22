@@ -4,4 +4,26 @@
 
 <h1>MyBet {{current_user.username}}</h1>
 
+
+<div style="padding: 16px; border: solid black 2px; border-radius: 2px;">
+
+    <form method="POST" action="{{ url_for('my-bet.mybets_view') }}">
+        {% for index, match in enumerate(matches) %}
+        <div style="border: solid black 1px; display: flex; padding: 16px;">
+            <div>{{match.home_team_id}} VS {{match.away_team_id}}</div>
+            <input type="hidden" name="bets[{{ index }}][match_id]" value="{{ match.id }}">
+            <input type="number" class="form-control" name="bets[{{ index }}][home_team_score]" placeholder="Home Score"
+                required>
+            <input type="number" class="form-control" name="bets[{{ index }}][away_team_score]" placeholder="Away Score"
+                required>
+        </div>
+        {% endfor %}
+
+        <button type="submit">Submit</button>
+
+    </form>
+</div>
+
+
+
 {% endblock %}
