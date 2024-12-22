@@ -10,7 +10,7 @@ import requests
 
 @pytest.fixture
 def in_memory_db():
-    engine = create_engine("sqlite:///:memory:", echo=True)
+    engine = create_engine("sqlite:///:memory:")
     metadata.create_all(engine)
     return engine
 
