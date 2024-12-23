@@ -7,7 +7,10 @@ from contextlib import contextmanager
 
 basedir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 load_dotenv(os.path.join(basedir, '.env'))
-_session_factory = None  # Private variable to hold the singleton instance
+
+# Private variables to hold the singleton instance
+_session_factory = None  
+_db_engine = None
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
@@ -17,6 +20,8 @@ class Config:
     SQLALCHEMY_ENGINE_OPTIONS = {'pool_recycle' : 280}
     ADMIN_LOGIN = os.environ.get("ADMIN_LOGIN") or "admin"
     ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD") or "admin"
+    PYTHON_ANYWHERE_MAX_CONNECTION_POOL = 6
+    MAX_CONNECTION_POOL = os.environ.get("MAX_CONNECTION_POOL") or PYTHON_ANYWHERE_MAX_CONNECTION_POOL
     
 def get_db_uri():
     return Config.SQLALCHEMY_DATABASE_URI
@@ -29,6 +34,12 @@ def get_session_factory() -> sessionmaker:
 
 def get_session():
     return get_session_factory()()
+
+def get_db_engine():
+    global _db_engine
+    if _db_engine is None:
+        _db_engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, echo=True, pool_size=Config.MAX_CONNECTION_POOL, max_overflow=0)
+    return _db_engine
 
 @contextmanager
 def session_scope():

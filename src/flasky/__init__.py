@@ -3,24 +3,21 @@ from src.pybet import schema
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_login import LoginManager
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, clear_mappers, Session
-from src.config import Config, get_session
 from src.flasky.admin import views as admin_views
 from src import config
 
 
 login = LoginManager()
-PYTHON_ANYWHERE_MAX_CONNECTION_POOL = 6
 
 def create_app(config_class=config.Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
     login.init_app(app)    
-    engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, echo=True, pool_size=PYTHON_ANYWHERE_MAX_CONNECTION_POOL, max_overflow=0)
+    engine = config.get_db_engine()
     schema.metadata.create_all(engine)
-    with Session(engine) as session:
+    
+    with config.session_scope() as session:
         admin = Admin(
             app, 
             name='pybet',
@@ -48,4 +45,4 @@ def create_app(config_class=config.Config):
 
 @login.user_loader
 def load_user(id):
-    return get_session().get(schema.User, int(id))
+    return config.get_session().get(schema.User, int(id))
