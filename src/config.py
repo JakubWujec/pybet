@@ -30,7 +30,7 @@ def get_db_uri():
 def get_session_factory() -> sessionmaker:
     global _session_factory
     if _session_factory is None:
-        _session_factory = sessionmaker(bind=create_engine(get_db_uri()))
+        _session_factory = sessionmaker(bind=get_db_engine())
     return _session_factory
 
 def get_session():
@@ -39,7 +39,7 @@ def get_session():
 def get_db_engine():
     global _db_engine
     if _db_engine is None:
-        _db_engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, echo=True, poolclass=NullPool)
+        _db_engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, poolclass=NullPool)
     return _db_engine
 
 @contextmanager
