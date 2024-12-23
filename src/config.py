@@ -6,6 +6,7 @@ from src.pybet import schema
 
 basedir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 load_dotenv(os.path.join(basedir, '.env'))
+_session_factory = None  # Private variable to hold the singleton instance
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
@@ -20,7 +21,10 @@ def get_db_uri():
     return Config.SQLALCHEMY_DATABASE_URI
 
 def get_session_factory():
-    return sessionmaker(bind=create_engine(get_db_uri()))
+    global _session_factory
+    if _session_factory is None:
+        _session_factory = sessionmaker(bind=create_engine(get_db_uri()))
+    return _session_factory
 
 def get_session():
     return get_session_factory()()
