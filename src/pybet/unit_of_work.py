@@ -2,7 +2,7 @@ from sqlalchemy.orm.session import Session, sessionmaker
 from src.pybet.repository import SqlMatchRepository, MatchRepository
 import abc 
 from sqlalchemy import create_engine
-from src.pybet import config
+from src import config
 
 class UnitOfWork(abc.ABC):
     matches: MatchRepository
@@ -21,10 +21,11 @@ class UnitOfWork(abc.ABC):
     def rollback(self):
         raise NotImplementedError
 
-DEFAULT_SESSION_FACTORY = sessionmaker(bind=create_engine(config.get_sqlite_uri()))
 
 class SqlAlchemyUnitOfWork(UnitOfWork):
-    def __init__(self, session_factory: sessionmaker = DEFAULT_SESSION_FACTORY):
+    def __init__(self, session_factory: sessionmaker = None):
+        if session_factory is None:
+            session_factory = config.get_session_factory()
         self.session_factory = session_factory
     
     def __enter__(self):
