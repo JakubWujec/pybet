@@ -10,20 +10,23 @@
         {{ form.hidden_tag() }}
 
         {% for idx, bet_form in enumerate(form.bets) %}
-        <div style="border: solid black 1px; padding: 16px; margin-bottom: 10px;">
+        {% set home_team_name = match_by_id[bet_form.match_id.data]["home_team"]["name"] %}
+        {% set away_team_name = match_by_id[bet_form.match_id.data]["away_team"]["name"] %}
 
+        <div style="border: solid black 1px; padding: 16px; margin-bottom: 10px; display: flex">
             <input type="hidden" id="match_id_{{ idx }}" name="bets-{{ idx }}-match_id"
                 value="{{ bet_form.match_id.data }}" class="form-control" readonly>
-
             <div>
-                <label for="home_team_score_{{ idx }}">Home Score</label>
+                <label for="home_team_score_{{ idx }}">{{home_team_name}}</label>
                 <input type="number" id="home_team_score_{{ idx }}" name="bets-{{ idx }}-home_team_score"
                     value="{{ bet_form.home_team_score.data or 0 }}" class="form-control" required>
             </div>
+            <div>-</div>
             <div>
-                <label for="away_team_score_{{ idx }}">Away Score</label>
                 <input type="number" id="away_team_score_{{ idx }}" name="bets-{{ idx }}-away_team_score"
                     value="{{ bet_form.away_team_score.data or 0 }}" class="form-control" required>
+                <label for="away_team_score_{{ idx }}">{{away_team_name}}</label>
+
             </div>
         </div>
         {% endfor %}

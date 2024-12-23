@@ -1,5 +1,5 @@
 from src.pybet import queries
-from src.pybet import message_bus, unit_of_work, commands
+from src.pybet import message_bus, unit_of_work, commands, schema
 import datetime 
 import pytest
 
@@ -10,12 +10,25 @@ class TestMyBetsQuery:
         self.user_id = 1
         self.tommorow = datetime.datetime.now() + datetime.timedelta(days=1)
 
+        teams = [
+            schema.Team(name="A"),
+            schema.Team(name="B"),
+            schema.Team(name="C"),
+            schema.Team(name="D")
+        ]
+        with self.uow:
+            for t in teams:
+                self.uow.session.add(t)
+            self.uow.session.commit()
+
         message_bus.handle(commands.CreateMatchCommand(1, 2, self.tommorow), self.uow)
         message_bus.handle(commands.CreateMatchCommand(3, 4, self.tommorow), self.uow)
         message_bus.handle(commands.MakeBetCommand(self.user_id, 1, 2, 3), self.uow)
         
-        
         self.result = queries.mybets(self.user_id, self.uow)
+
+        assert len(self.result) == 2
+        
         self.first_match = next((row for row in self.result if row["home_team_id"] == 1), None)
         self.second_match = next((row for row in self.result if row["home_team_id"] == 3), None)
 

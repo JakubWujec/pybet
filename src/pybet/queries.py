@@ -5,18 +5,28 @@ from sqlalchemy.sql import text
 def mybets(user_id: int, uow: SqlAlchemyUnitOfWork):
     with uow:
         rows = list(uow.session.execute(text(
-            'SELECT m.id, home_team_id, away_team_id, m.home_team_score, m.away_team_score, kickoff, b.id, b.home_team_score, b.away_team_score'
+            'SELECT m.id, ht.id, ht.name, at.id, at.name, m.home_team_score, m.away_team_score, kickoff, b.id, b.home_team_score, b.away_team_score'
             ' FROM matches AS m'
+            ' JOIN teams as ht ON ht.id = m.home_team_id'
+            ' JOIN teams as at ON at.id = m.away_team_id'
             ' LEFT JOIN bets AS b on b.match_id = m.id'),
             dict(user_id=user_id)
         ))
     result = []
-    for (match_id, home_team_id, away_team_id, home_team_score, away_team_score, kickoff, bet_id, bet_home, bet_away) in rows:
+    for (match_id, home_team_id, home_team_name, away_team_id, away_team_name, home_team_score, away_team_score, kickoff, bet_id, bet_home, bet_away) in rows:
         match = {
             "id":match_id,
             "user_id": user_id,
             "home_team_id":home_team_id,
             "away_team_id":away_team_id,
+            "home_team": {
+                "id": home_team_id,
+                "name": home_team_name
+            },
+            "away_team": {
+                "id": away_team_id,
+                "name": away_team_name
+            },
             "kickoff":kickoff,
             "home_team_score": home_team_score,
             "away_team_score": away_team_score,

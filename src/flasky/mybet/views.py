@@ -14,6 +14,9 @@ from src.flasky.mybet import forms
 def mybets_view():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     matches = queries.mybets(current_user.id, uow)
+    match_by_id = dict()
+    for match in matches:
+        match_by_id[match["id"]] = match
     form = forms.MatchBetListForm()
 
     if request.method == "GET":
@@ -29,7 +32,6 @@ def mybets_view():
         if form.validate_on_submit():
             cmds = []
             # Process bets
-            print(form.data)
             for bet in form.data["bets"]:
                 cmds.append(commands.MakeBetCommand(
                     user_id=current_user.id,
@@ -37,7 +39,6 @@ def mybets_view():
                     home_team_score=bet['home_team_score'],
                     away_team_score=bet['away_team_score'],
                 ))
-                print(f"BET: {bet}")
             with uow:
                 for message in cmds:
                     message_bus.handle(message, uow)
@@ -45,12 +46,10 @@ def mybets_view():
 
         return "OK", 201
             
-        
-
     return render_template(
         'mybet.html',
         current_user=current_user,
-        matches=matches,
+        match_by_id=match_by_id,
         enumerate=enumerate,
         form=form
     )
