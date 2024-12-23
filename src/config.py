@@ -44,7 +44,7 @@ def get_session():
 def get_db_engine():
     global _db_engine
     if _db_engine is None:
-        _db_engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, pool_size=3, max_overflow=3, pool_timeout=5, pool_recycle=20)
+        _db_engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, pool_size=3, max_overflow=0, pool_timeout=5, pool_recycle=20)
     return _db_engine
 
 @contextmanager
