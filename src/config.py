@@ -4,6 +4,7 @@ from sqlalchemy.orm.session import Session, sessionmaker
 from sqlalchemy import create_engine
 from src.pybet import schema
 from contextlib import contextmanager
+from sqlalchemy.pool import NullPool
 
 basedir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 load_dotenv(os.path.join(basedir, '.env'))
@@ -38,7 +39,7 @@ def get_session():
 def get_db_engine():
     global _db_engine
     if _db_engine is None:
-        _db_engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, echo=True, pool_size=Config.MAX_CONNECTION_POOL, max_overflow=0)
+        _db_engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, echo=True, poolclass=NullPool)
     return _db_engine
 
 @contextmanager
