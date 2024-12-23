@@ -55,6 +55,24 @@ def test_making_bet_for_the_same_user_and_match_doesnt_create_multiple_rows():
     
     assert len(match.bets) == 1
     
+def test_making_second_bet_updates_scores():
+    uow = FakeUnitOfWork()
+
+    history = [
+        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, kickoff=tommorow),
+        commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=1, away_team_score=1),
+        commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=2, away_team_score=3),
+    ]
+    
+    for message in history:
+        message_bus.handle(message, uow)
+   
+    
+    match = uow.matches.get(1)
+    bet = match.bets[1]
+    assert bet.home_team_score == 2
+    assert bet.away_team_score == 3
+    
 def test_when_two_bets_from_different_user_the_two_rows_inseted():
     uow = FakeUnitOfWork()
     
