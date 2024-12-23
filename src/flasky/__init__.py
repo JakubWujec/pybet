@@ -45,4 +45,9 @@ def create_app(config_class=config.Config):
 
 @login.user_loader
 def load_user(id):
-    return config.get_session().get(schema.User, int(id))
+    with config.session_scope() as session:
+        u = session.get(schema.User, int(id))
+        if u is not None:
+            return schema.User(id=u.id, username=u.username, password_hash=u.password_hash, role=u.role)
+        return u
+    

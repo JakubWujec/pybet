@@ -4,6 +4,7 @@ from sqlalchemy.orm.session import Session, sessionmaker
 from sqlalchemy import create_engine
 from src.pybet import schema
 from contextlib import contextmanager
+from sqlalchemy.pool import NullPool
 
 basedir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 load_dotenv(os.path.join(basedir, '.env'))
@@ -29,16 +30,21 @@ def get_db_uri():
 def get_session_factory() -> sessionmaker:
     global _session_factory
     if _session_factory is None:
-        _session_factory = sessionmaker(bind=create_engine(get_db_uri()))
+        _session_factory = sessionmaker(bind=get_db_engine())
     return _session_factory
 
 def get_session():
     return get_session_factory()()
 
+# 'pool_size':  # Maximum of 4 persistent connections
+# 'max_overflow': # No additional temporary connections
+# 'pool_timeout': 10,     # Wait up to 10 seconds for a connection
+# 'pool_recycle': 3600     # Recycle connections every hour (to avoid stale connections)
+
 def get_db_engine():
     global _db_engine
     if _db_engine is None:
-        _db_engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, echo=True, pool_size=Config.MAX_CONNECTION_POOL, max_overflow=0)
+        _db_engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, pool_size=4, max_overflow=2, pool_timeout=5, pool_recycle=20)
     return _db_engine
 
 @contextmanager
