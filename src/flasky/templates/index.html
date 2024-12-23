@@ -2,10 +2,10 @@
 
 {% block content %}
 
-{% if current_user.is_anonymous %}
-<h1>Hi, You !</h1>
+{% if username %}
+<h1>Hi, {{username}} !</h1>
 {% else %}
-<h1>Hi, {{ user.username }}!</h1>
+<h1>Hi, Guest!</h1>
 {% endif %}
 
 

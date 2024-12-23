@@ -68,4 +68,7 @@ def testme():
 @bp.route("/index")
 def index():
     user = current_user
-    return render_template('index.html', title='Home', user=user)
+    username = None
+    if not current_user.is_anonymous():
+        username = user.username
+    return render_template('index.html', title='Home', username=username )
