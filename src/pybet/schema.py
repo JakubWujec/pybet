@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, ForeignKey, UniqueConstraint, DateTime, Enum
+from sqlalchemy import Integer, String, ForeignKey, UniqueConstraint, DateTime, Enum, CheckConstraint
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 from sqlalchemy.orm import declarative_base, attribute_mapped_collection
 from sqlalchemy.sql import func, text
@@ -104,6 +104,12 @@ class Team(Base):
     away_matches: Mapped[List["Match"]] = relationship(
         "Match", back_populates="away_team", foreign_keys="Match.away_team_id"
     )
+    
+    def __repr__(self):
+        return f"<Team(id={self.id}, name='{self.name}')>"
+
+    def __str__(self):
+        return self.name
 
 class Match(Base):
     __tablename__ = "matches"
@@ -127,12 +133,16 @@ class Match(Base):
         cascade="all, delete-orphan",
     )
     
-    # Relationships to the Team model
+
     home_team: Mapped["Team"] = relationship(
         "Team", foreign_keys=[home_team_id]
     )
     away_team: Mapped["Team"] = relationship(
         "Team", foreign_keys=[away_team_id]
+    )
+    
+    __table_args__ = (
+        CheckConstraint("home_team_id != away_team_id", name="check_home_away_different"),
     )
     
     def place_bet(self, bet: Bet):
