@@ -1,9 +1,9 @@
 from src.config import get_session
-from src.pybet import schema
+from src.pybet import schema, config
 from sqlalchemy.exc import IntegrityError
 import datetime
 
-def seed_db():
+def seed_teams_and_matches():
     future_date = datetime.datetime.now() + datetime.timedelta(days=3)
     
     session = get_session()
@@ -37,5 +37,19 @@ def seed_db():
         session.add(match)
     session.commit()
     
+    
+def seed_admin_user():
+    session = get_session()
+    user = schema.User(
+        username= config.Config.ADMIN_LOGIN
+    )
+    user.set_password(config.Config.ADMIN_PASSWORD)
+    user.role = schema.Role.ADMIN
+    
+    session.add(user)
+    session.commit()
+    
+    
 if __name__ == "__main__":
-    seed_db()
+    seed_teams_and_matches()
+    seed_admin_user()

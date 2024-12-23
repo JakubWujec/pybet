@@ -13,6 +13,8 @@ class Config:
         'sqlite:///' + os.path.join(basedir, 'dev.db')
     # SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
     SQLALCHEMY_ENGINE_OPTIONS = {'pool_recycle' : 280}
+    ADMIN_LOGIN = os.environ.get("ADMIN_LOGIN") or "admin"
+    ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD") or "admin"
     
 def get_db_uri():
     return Config.SQLALCHEMY_DATABASE_URI
