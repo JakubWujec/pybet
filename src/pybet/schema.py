@@ -52,7 +52,7 @@ class User(Base):
     def is_admin(self):
         return self.role == Role.ADMIN
 
-    
+
 class Bet(Base):
     __tablename__ = "bets"
     
@@ -92,14 +92,25 @@ class Bet(Base):
    
         return 0
         
-    
+class Team(Base):
+    __tablename__ = "teams"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
+
+    # Relationship to refer matches where this team is home or away
+    home_matches: Mapped[List["Match"]] = relationship(
+        "Match", back_populates="home_team", foreign_keys="Match.home_team_id"
+    )
+    away_matches: Mapped[List["Match"]] = relationship(
+        "Match", back_populates="away_team", foreign_keys="Match.away_team_id"
+    )
 
 class Match(Base):
     __tablename__ = "matches"
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    home_team_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    away_team_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    home_team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=False)
+    away_team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=False)
     home_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
     away_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
     kickoff: Mapped[datetime.datetime] = mapped_column(
@@ -114,6 +125,14 @@ class Match(Base):
         back_populates="match",  
         collection_class=attribute_mapped_collection("user_id"),
         cascade="all, delete-orphan",
+    )
+    
+    # Relationships to the Team model
+    home_team: Mapped["Team"] = relationship(
+        "Team", foreign_keys=[home_team_id]
+    )
+    away_team: Mapped["Team"] = relationship(
+        "Team", foreign_keys=[away_team_id]
     )
     
     def place_bet(self, bet: Bet):
