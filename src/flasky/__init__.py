@@ -4,7 +4,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_login import LoginManager
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, clear_mappers
+from sqlalchemy.orm import sessionmaker, clear_mappers, Session
 from src.config import Config, get_session
 from src.flasky.admin import views as admin_views
 from src import config
@@ -20,16 +20,15 @@ def create_app(config_class=config.Config):
     login.init_app(app)    
     engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, echo=True, pool_size=PYTHON_ANYWHERE_MAX_CONNECTION_POOL, max_overflow=0)
     schema.metadata.create_all(engine)
-    session = sessionmaker(bind=engine)()
+    with Session(engine) as session:
+        admin = Admin(
+            app, 
+            name='pybet',
 
-    admin = Admin(
-        app, 
-        name='pybet',
-
-    )
-    admin.add_view(admin_views.PybetAdminModelView(schema.Team, session))
-    admin.add_view(admin_views.AdminMatchView(schema.Match, session))
-    admin.add_view(admin_views.PybetAdminModelView(schema.User, session))
+        )
+        admin.add_view(admin_views.PybetAdminModelView(schema.Team, session))
+        admin.add_view(admin_views.AdminMatchView(schema.Match, session))
+        admin.add_view(admin_views.PybetAdminModelView(schema.User, session))
 
 
     from src.flasky.main import bp as main_bp
