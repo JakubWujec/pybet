@@ -117,7 +117,11 @@ class Match(Base):
     )
     
     def place_bet(self, bet: Bet):
-        self.bets[bet.user_id] = bet
+        if bet.user_id in self.bets:
+            self.bets[bet.user_id].home_team_score = bet.home_team_score
+            self.bets[bet.user_id].away_team_score = bet.away_team_score
+        else:
+            self.bets[bet.user_id] = bet
 
 
     def is_after_kickoff(self) -> bool:
