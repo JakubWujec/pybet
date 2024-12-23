@@ -36,10 +36,15 @@ def get_session_factory() -> sessionmaker:
 def get_session():
     return get_session_factory()()
 
+# 'pool_size': 4,          # Maximum of 4 persistent connections
+#    'max_overflow': 0,       # No additional temporary connections
+#    'pool_timeout': 10,      # Wait up to 10 seconds for a connection
+#    'pool_recycle': 3600     # Recycle connections every hour (to avoid stale connections)
+
 def get_db_engine():
     global _db_engine
     if _db_engine is None:
-        _db_engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, poolclass=NullPool)
+        _db_engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, pool_size=3, max_overflow=3, pool_timeout=5, pool_recycle=20)
     return _db_engine
 
 @contextmanager
