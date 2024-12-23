@@ -11,13 +11,14 @@ from src import config
 
 
 login = LoginManager()
+PYTHON_ANYWHERE_MAX_CONNECTION_POOL = 6
 
 def create_app(config_class=config.Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
     login.init_app(app)    
-    engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, echo=True)
+    engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, echo=True, pool_size=PYTHON_ANYWHERE_MAX_CONNECTION_POOL, max_overflow=0)
     schema.metadata.create_all(engine)
     session = sessionmaker(bind=engine)()
 
