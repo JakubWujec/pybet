@@ -21,10 +21,12 @@ def mybets_view():
 
     if request.method == "GET":
         for match in matches:
+            bet = match.get("bet", {})
+            
             form.bets.append_entry({
                 "match_id": int(match["id"]),
-                "home_team_score":0,
-                "away_team_score":0
+                "home_team_score": bet.get("home_team_score", 0), 
+                "away_team_score": bet.get("away_team_score", 0) 
             })
   
     if request.method == "POST":
