@@ -36,15 +36,20 @@ class User(Base):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
     
+    @property
     def is_authenticated(self):
         #is_authenticated: a property that is True if the user has valid credentials or False otherwise.
         return True
+    @property
     def is_active(self):
         # a property that is True if the user's account is active or False otherwise.
         return True
+    
+    @property
     def is_anonymous(self):
         #is_anonymous: a property that is False for regular users, and True only for a special, anonymous user.
         return False
+    
     def get_id(self):
         #a method that returns a unique identifier for the user as a string.
         return f"{self.id}"
