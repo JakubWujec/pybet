@@ -14,9 +14,7 @@ from src.flasky.mybet import forms
 def mybets_view():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     matches = queries.mybets(current_user.id, uow)
-    match_by_id = dict()
-    for match in matches:
-        match_by_id[match["id"]] = match
+    match_by_id = {match["id"]: match for match in matches}
     form = forms.MatchBetListForm()
 
     if request.method == "GET":
