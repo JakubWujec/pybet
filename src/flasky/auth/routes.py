@@ -1,5 +1,5 @@
 from src.flasky.auth import bp
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 from src.pybet import schema
 from src.flasky.auth.forms.login_form import LoginForm
@@ -43,3 +43,9 @@ def register_view():
             return redirect(url_for('auth.login_view'))
     
     return render_template('register.html', title='Register', form=form)
+
+@bp.route('/logout', methods=['POST'])
+def logout_view():
+    
+    logout_user()
+    return redirect('/index')
