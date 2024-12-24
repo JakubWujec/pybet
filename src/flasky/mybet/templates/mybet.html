@@ -10,23 +10,25 @@
         {% set home_team_name = match_by_id[bet_form.match_id.data]["home_team"]["name"] %}
         {% set away_team_name = match_by_id[bet_form.match_id.data]["away_team"]["name"] %}
 
-        <div class="border border-dark p-3 mb-3 d-flex align-items-center justify-content-between">
-            <input type="hidden" id="match_id_{{ idx }}" name="bets-{{ idx }}-match_id"
-                value="{{ bet_form.match_id.data }}" class="form-control" readonly>
+        <div class="border border-dark p-3 mb-3 d-flex flex-column justify-content-center align-items-between">
+            <div class="d-flex justify-content-center w-100">
+                <input type="hidden" id="match_id_{{ idx }}" name="bets-{{ idx }}-match_id"
+                    value="{{ bet_form.match_id.data }}" class="form-control" readonly>
+                <div class="d-flex align-items-center">
+                    <label for="home_team_score_{{ idx }}" class="me-2 fw-bold">{{home_team_name}}</label>
+                    <input type="number" id="home_team_score_{{ idx }}" name="bets-{{ idx }}-home_team_score"
+                        value="{{ bet_form.home_team_score.data or 0 }}" class="form-control" min="0" required>
+                </div>
 
-            <div class="d-flex align-items-center">
-                <label for="home_team_score_{{ idx }}" class="me-2 fw-bold">{{home_team_name}}</label>
-                <input type="number" id="home_team_score_{{ idx }}" name="bets-{{ idx }}-home_team_score"
-                    value="{{ bet_form.home_team_score.data or 0 }}" class="form-control" required>
+                <div class="mx-3 fw-bold">-</div>
+
+                <div class="d-flex align-items-center">
+                    <input type="number" id="away_team_score_{{ idx }}" name="bets-{{ idx }}-away_team_score"
+                        value="{{ bet_form.away_team_score.data or 0 }}" class="form-control" min="0" required>
+                    <label for="away_team_score_{{ idx }}" class="ms-2 fw-bold">{{away_team_name}}</label>
+                </div>
             </div>
 
-            <div class="mx-3 fw-bold">-</div>
-
-            <div class="d-flex align-items-center">
-                <input type="number" id="away_team_score_{{ idx }}" name="bets-{{ idx }}-away_team_score"
-                    value="{{ bet_form.away_team_score.data or 0 }}" class="form-control" required>
-                <label for="away_team_score_{{ idx }}" class="ms-2 fw-bold">{{away_team_name}}</label>
-            </div>
         </div>
         {% endfor %}
 
