@@ -69,6 +69,6 @@ def testme():
 def index():
     user = current_user
     username = None
-    if not current_user.is_anonymous():
+    if not current_user.is_anonymous:
         username = user.username
     return render_template('index.html', title='Home', username=username )
