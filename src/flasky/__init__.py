@@ -34,9 +34,6 @@ def create_app(config_class=config.Config):
     from src.flasky.auth import bp as auth_bp
     app.register_blueprint(auth_bp)
     
-    from src.flasky.matches import bp as matches_bp
-    app.register_blueprint(matches_bp)
-    
     from src.flasky.mybet import bp as mybet_bp
     app.register_blueprint(mybet_bp)
 
