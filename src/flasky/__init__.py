@@ -24,7 +24,8 @@ def create_app(config_class=config.Config):
 
         )
         admin.add_view(admin_views.PybetAdminModelView(schema.Team, session))
-        admin.add_view(admin_views.AdminMatchView(schema.Match, session))
+        admin.add_view(admin_views.AdminMatchView(schema.Match, session, name="Manage Matches",endpoint="manage_matches"))
+        admin.add_view(admin_views.UpdateScoreView(schema.Match, session, name="Update Score", endpoint="update_scores"))
         admin.add_view(admin_views.PybetAdminModelView(schema.User, session))
 
 
