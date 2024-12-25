@@ -2,11 +2,47 @@
 
 {% block content %}
 
-{% if username %}
-<h1>Hi, {{username}} !</h1>
-{% else %}
-<h1>Hi, Guest!</h1>
-{% endif %}
+<header class="bg-primary text-white text-center py-5">
+    <div class="container">
+        <h1 class="display-4">Challenge Your Friends</h1>
+        <p class="lead">Prove you’re the best at predicting match results and climb the leaderboard!</p>
+        <a href="/register" class="btn btn-light btn-lg">Join Now</a>
+    </div>
+</header>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="card shadow-sm p-4">
+                    <h3 class="card-title">Predict Matches</h3>
+                    <p class="card-text">Test your knowledge by predicting match scores and compete with your friends.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm p-4">
+                    <h3 class="card-title">Challenge Friends</h3>
+                    <p class="card-text">Invite your friends to compete with you in prediction challenges.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm p-4">
+                    <h3 class="card-title">Track Progress</h3>
+                    <p class="card-text">See how you rank on the leaderboard and celebrate your victories.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-3">
+    <div class="container">
+        <p class="mb-0">Pybet</p>
+    </div>
+</footer>
 
 
 
