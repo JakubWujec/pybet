@@ -4,5 +4,5 @@ class Event:
     pass 
 
 @dataclass
-class MatchScoreUpdated:
+class MatchScoreUpdated(Event):
     match_id: int
