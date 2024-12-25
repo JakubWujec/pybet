@@ -54,6 +54,7 @@ class User(Base):
         #a method that returns a unique identifier for the user as a string.
         return f"{self.id}"
     
+    @property
     def is_admin(self):
         return self.role == Role.ADMIN
 

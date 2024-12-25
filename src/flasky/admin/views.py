@@ -4,7 +4,7 @@ from flask import redirect, url_for
 
 class PybetAdminModelView(ModelView):
     def is_accessible(self):
-        return login.current_user and login.current_user.is_authenticated and login.current_user.is_admin()
+        return login.current_user and login.current_user.is_authenticated and login.current_user.is_admin
 
     def inaccessible_callback(self, name, **kwargs):
         # redirect to login page if user doesn't have access

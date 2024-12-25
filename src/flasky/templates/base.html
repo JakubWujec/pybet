@@ -25,6 +25,13 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/my-bets">Bets</a>
                     </li>
+
+                    {% if current_user.is_admin %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">Admin</a>
+                    </li>
+                    {% endif %}
+
                     {% if not current_user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="/login">Login</a>
