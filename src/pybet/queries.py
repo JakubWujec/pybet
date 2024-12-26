@@ -28,7 +28,7 @@ def mybets(user_id: int, uow: SqlAlchemyUnitOfWork):
                 "id": away_team_id,
                 "name": away_team_name
             },
-            "kickoff": datetime.strptime(kickoff, "%Y-%m-%d %H:%M:%S.%f"),
+            "kickoff": kickoff_to_datetime(kickoff),
             "home_team_score": home_team_score,
             "away_team_score": away_team_score,
             "bet": None
@@ -44,3 +44,10 @@ def mybets(user_id: int, uow: SqlAlchemyUnitOfWork):
     
     return result
     
+    
+def kickoff_to_datetime(kickoff):
+    print(type(kickoff))
+    if isinstance(kickoff, datetime):
+        return kickoff
+    return datetime.strptime(kickoff, "%Y-%m-%d %H:%M:%S.%f")
+        
