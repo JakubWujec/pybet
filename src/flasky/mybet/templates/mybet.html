@@ -16,7 +16,7 @@
                     <div class="card-header bg-dark text-white text-center">
                         <strong>{{ home_team_name }}</strong> vs <strong>{{ away_team_name }}</strong>
                         <div>
-                            <strong>Kickoff:</strong> {{ match_by_id[bet_form.match_id.data]["kickoff"] }}
+                            {{ match_by_id[bet_form.match_id.data]["kickoff"].strftime('%d %b %Y, %H:%M') }}
                         </div>
 
                     </div>
@@ -28,7 +28,7 @@
                         <!-- Prediction Inputs -->
                         <div class="d-flex justify-content-center align-items-center mb-3">
                             <!-- Home Team -->
-                            <div class="me-3 text-center">
+                            <div class="text-center">
 
                                 <input type="number" id="home_team_score_{{ idx }}"
                                     name="bets-{{ idx }}-home_team_score"

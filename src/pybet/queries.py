@@ -1,6 +1,6 @@
 from src.pybet.unit_of_work import SqlAlchemyUnitOfWork
 from sqlalchemy.sql import text
-
+from datetime import datetime
 
 def mybets(user_id: int, uow: SqlAlchemyUnitOfWork):
     with uow:
@@ -14,6 +14,7 @@ def mybets(user_id: int, uow: SqlAlchemyUnitOfWork):
         ))
     result = []
     for (match_id, home_team_id, home_team_name, away_team_id, away_team_name, home_team_score, away_team_score, kickoff, bet_id, bet_home, bet_away, bet_points) in rows:
+
         match = {
             "id":match_id,
             "user_id": user_id,
@@ -27,7 +28,7 @@ def mybets(user_id: int, uow: SqlAlchemyUnitOfWork):
                 "id": away_team_id,
                 "name": away_team_name
             },
-            "kickoff":kickoff,
+            "kickoff": datetime.strptime(kickoff, "%Y-%m-%d %H:%M:%S.%f"),
             "home_team_score": home_team_score,
             "away_team_score": away_team_score,
             "bet": None

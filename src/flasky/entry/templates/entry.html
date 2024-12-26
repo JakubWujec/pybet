@@ -16,9 +16,8 @@
                 <!-- Header  -->
                 <div class="card-header bg-dark text-white text-center">
                     <strong>{{ match.home_team.name }}</strong> vs <strong>{{ match.away_team.name }}</strong>
-                    <div class="small mt-2">
-                        <!-- Display Kickoff Date and Time .strftime('%d %b %Y, %H:%M')-->
-                        <strong>Kickoff:</strong> {{ match.kickoff }}
+                    <div>
+                        {{ match.kickoff.strftime('%d %b %Y, %H:%M') }}
                     </div>
                 </div>
 
@@ -26,14 +25,16 @@
                 <div class="card-body">
                     <p class="text-center mb-2">
                         <strong>Actual Score:</strong>
-                        <span class="badge bg-primary">{{ match.home_team_score }}</span> -
+                        <span class="badge bg-primary">{{ match.home_team_score }}</span>
+                        <span>-</span>
                         <span class="badge bg-primary">{{ match.away_team_score }}</span>
                     </p>
 
                     <p class="text-center mb-2">
                         <strong>Your Prediction:</strong>
                         {% if match.user_bet %}
-                        <span class="badge bg-info">{{ match.bet.home_team_score }}</span> -
+                        <span class="badge bg-info">{{ match.bet.home_team_score }}</span>
+                        <span>-</span>
                         <span class="badge bg-info">{{ match.bet.away_team_score }}</span>
                         {% else %}
                         <span>None</span>
