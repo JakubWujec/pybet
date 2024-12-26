@@ -37,6 +37,9 @@ def create_app(config_class=config.Config):
     
     from src.flasky.mybet import bp as mybet_bp
     app.register_blueprint(mybet_bp)
+    
+    from src.flasky.entry import bp as entry_bp
+    app.register_blueprint(entry_bp)
 
 
     return app

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Past Matches</h1>
+    <div class="row">
+        {% for idx, match in enumerate(matches) %}
+        {% set home_team_name = match["home_team"]["name"] %}
+        {% set home_team_score = match["home_team_score"] if match["home_team_score"] is not none else '?' %}
+        {% set away_team_name = match["away_team"]["name"] %}
+        {% set away_team_score = match["away_team_score"] if match["away_team_score"] is not none else '?' %}
+
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <!-- Header  -->
+                <div class="card-header bg-dark text-white text-center">
+                    <strong>{{ match.home_team.name }}</strong> vs <strong>{{ match.away_team.name }}</strong>
+                    <div class="small mt-2">
+                        <!-- Display Kickoff Date and Time .strftime('%d %b %Y, %H:%M')-->
+                        <strong>Kickoff:</strong> {{ match.kickoff }}
+                    </div>
+                </div>
+
+                <!-- Match Details -->
+                <div class="card-body">
+                    <p class="text-center mb-2">
+                        <strong>Actual Score:</strong>
+                        <span class="badge bg-primary">{{ match.home_team_score }}</span> -
+                        <span class="badge bg-primary">{{ match.away_team_score }}</span>
+                    </p>
+
+                    <p class="text-center mb-2">
+                        <strong>Your Prediction:</strong>
+                        {% if match.user_bet %}
+                        <span class="badge bg-info">{{ match.bet.home_team_score }}</span> -
+                        <span class="badge bg-info">{{ match.bet.away_team_score }}</span>
+                        {% else %}
+                        <span>None</span>
+                        {% endif %}
+                    </p>
+                    <p class="text-center mb-0">
+                        <strong>Points:</strong>
+                        {% if match.bet.points > 0 %}
+                        <span class="badge bg-success">{{ match.bet.points }}</span>
+                        {% else %}
+                        <span class="badge bg-danger">0</span>
+                        {% endif %}
+                    </p>
+                </div>
+
+
+            </div>
+
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+{% endblock %}
