@@ -40,6 +40,9 @@ def create_app(config_class=config.Config):
     
     from src.flasky.entry import bp as entry_bp
     app.register_blueprint(entry_bp)
+    
+    app.register_error_handler(404, page_not_found)
+    app.register_error_handler(500, internal_error)
 
 
     return app
@@ -52,3 +55,8 @@ def load_user(id):
             return schema.User(id=u.id, username=u.username, password_hash=u.password_hash, role=u.role)
         return u
     
+def page_not_found(error):
+    return render_template('404.html'), 404
+
+def internal_error(error):
+    return render_template('500.html'), 500
