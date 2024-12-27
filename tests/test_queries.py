@@ -26,13 +26,20 @@ class TestMyBetsQuery:
         message_bus.handle(commands.MakeBetCommand(self.user_id, 1, 2, 3), self.uow)
         
         self.result = queries.mybets(self.user_id, self.uow)
+        print(self.result)
 
-        assert len(self.result) == 2
+    @property
+    def first_match(self):
+        return next((row for row in self.result if row["home_team_id"] == 1), None)
+    
+    @property 
+    def second_match(self):
+        return next((row for row in self.result if row["home_team_id"] == 3), None)
+    
+    def test_both_team_are_fetched(self):
+        assert self.first_match is not None
+        assert self.second_match is not None
         
-        self.first_match = next((row for row in self.result if row["home_team_id"] == 1), None)
-        self.second_match = next((row for row in self.result if row["home_team_id"] == 3), None)
-
-
     def test_mybets_view_returns_correct_number_of_matches(self):
         assert len(self.result) == 2
 
@@ -54,3 +61,12 @@ class TestMyBetsQuery:
         bet["home_team_score"] == 2
         bet["away_team_score"] == 3
         
+    def test_other_user_doesnt_have_any_bets(self):
+        other_user_id = 2
+        result = queries.mybets(other_user_id, self.uow)
+        
+        first_match = next((row for row in result if row["home_team_id"] == 1), None)
+        second_match = next((row for row in result if row["home_team_id"] == 3), None)
+        
+        assert first_match["bet"] is None
+        assert second_match["bet"] is None

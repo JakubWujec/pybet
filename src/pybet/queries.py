@@ -9,7 +9,7 @@ def mybets(user_id: int, uow: SqlAlchemyUnitOfWork):
             ' FROM matches AS m'
             ' JOIN teams as ht ON ht.id = m.home_team_id'
             ' JOIN teams as at ON at.id = m.away_team_id'
-            ' LEFT JOIN bets AS b on b.match_id = m.id'),
+            ' LEFT JOIN bets AS b on b.match_id = m.id AND b.user_id = :user_id'),
             dict(user_id=user_id)
         ))
     result = []
