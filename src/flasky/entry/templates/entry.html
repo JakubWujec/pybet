@@ -42,7 +42,7 @@
                     </p>
                     <p class="text-center mb-0">
                         <strong>Points:</strong>
-                        {% if match.bet.points > 0 %}
+                        {% if match.bet %}
                         <span class="badge bg-success">{{ match.bet.points }}</span>
                         {% else %}
                         <span class="badge bg-danger">0</span>

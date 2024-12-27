@@ -17,8 +17,9 @@ def mybets_view():
 
     if request.method == "GET":
         for match in matches:
-            bet = match.get("bet", {})
-            
+            bet = match.get("bet", dict())
+            if bet is None:
+                bet = dict()
             form.bets.append_entry({
                 "match_id": int(match["id"]),
                 "home_team_score": bet.get("home_team_score", 0), 
