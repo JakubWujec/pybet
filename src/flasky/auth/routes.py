@@ -21,7 +21,7 @@ def login_view():
                 flash("Wrong credentials", category="error")
                 return redirect(url_for('auth.login_view'))
             
-            login_user(user)
+            login_user(user, remember=form.rememberMe.data)
             return redirect('/index')
     return render_template('login.html', title='Login', form=form)
 
