@@ -1,6 +1,7 @@
 from src.flasky.mybet import bp
 from src.pybet import schema, unit_of_work, queries
 from src.pybet import message_bus, commands
+from src.pybet.handlers import MatchAlreadyStarted
 from flask import request, render_template, flash, redirect
 from flask_login import login_user, logout_user, current_user, login_required
 import datetime
@@ -28,23 +29,26 @@ def mybets_view():
   
     if request.method == "POST":
     
-        if form.validate_on_submit():
-            cmds = []
-            # Process bets
-            for bet in form.data["bets"]:
-                cmds.append(commands.MakeBetCommand(
-                    user_id=current_user.id,
-                    match_id=bet['match_id'],
-                    home_team_score=bet['home_team_score'],
-                    away_team_score=bet['away_team_score'],
-                ))
-            with uow:
-                for message in cmds:
-                    message_bus.handle(message, uow)
-          
-
-        return "OK", 201
-            
+        try:
+            if form.validate_on_submit():
+                cmds = []
+                # Process bets
+                for bet in form.data["bets"]:
+                    cmds.append(commands.MakeBetCommand(
+                        user_id=current_user.id,
+                        match_id=bet['match_id'],
+                        home_team_score=bet['home_team_score'],
+                        away_team_score=bet['away_team_score'],
+                    ))
+                with uow:
+                    for message in cmds:
+                        message_bus.handle(message, uow)
+                        
+                flash("All good", category="info")
+        except MatchAlreadyStarted as ex:
+            flash("Too late. Some matches already started", "error")
+            redirect(request.url)
+               
     return render_template(
         'mybet.html',
         current_user=current_user,
