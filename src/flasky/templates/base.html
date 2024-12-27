@@ -49,6 +49,7 @@
 
                 </ul>
 
+                {% if current_user.is_authenticated %}
                 <div class="dropdown text-end">
                     <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
                         data-bs-toggle="dropdown" aria-expanded="false">
@@ -58,12 +59,12 @@
                         </svg>
                     </a>
                     <ul class="dropdown-menu text-small">
-                        <li><a class="dropdown-item" href="#">A</a></li>
-                        <li><a class="dropdown-item" href="#">B</a></li>
-                        <li><a class="dropdown-item" href="#">C</a></li>
+                        <li class="dropdown-item">{{current_user.username}}</li>
+
                         <li>
                             <hr class="dropdown-divider">
                         </li>
+
                         <li>
                             <form method="POST" action="{{ url_for('auth.logout_view') }}">
                                 <button type="submit" class="btn btn-link">Logout</button>
@@ -71,6 +72,7 @@
                         </li>
                     </ul>
                 </div>
+                {% endif %}
 
 
             </div>
