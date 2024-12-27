@@ -44,6 +44,9 @@ class TestMyBetsQuery:
         
     def test_second_match_doesnt_have_a_bet(self):
         assert self.second_match["bet"] is None
+        
+    def test_returns_kickoff_as_datetime(self):
+        assert isinstance(self.first_match["kickoff"], datetime.datetime)
 
     def test_bet(self):
         bet = self.first_match["bet"]
