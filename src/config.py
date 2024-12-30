@@ -7,7 +7,8 @@ from contextlib import contextmanager
 from sqlalchemy.pool import NullPool
 
 basedir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
-load_dotenv(os.path.join(basedir, '.env'))
+chosen_env = os.environ.get('FLASK_ENV_FILE', '.env')
+load_dotenv(os.path.join(basedir, chosen_env))
 
 # Private variables to hold the singleton instance
 _session_factory = None  
