@@ -19,18 +19,22 @@ def seed_teams_and_matches(session):
         except IntegrityError:
             pass
     session.flush()
+    
+    gameround = schema.Gameround(name="1")
+    session.add(gameround)
+    session.flush()
         
     matches = [
-        schema.Match(home_team_id = team_dict["MCI"].id, away_team_id=team_dict["EVE"].id, kickoff=future_date),
-        schema.Match(home_team_id = team_dict["BOU"].id, away_team_id=team_dict["CRY"].id, kickoff=future_date),
-        schema.Match(home_team_id = team_dict["CHE"].id, away_team_id=team_dict["FUL"].id, kickoff=future_date),
-        schema.Match(home_team_id = team_dict["NEW"].id, away_team_id=team_dict["AVC"].id, kickoff=future_date),
-        schema.Match(home_team_id = team_dict["NOT"].id, away_team_id=team_dict["TOT"].id, kickoff=future_date),
-        schema.Match(home_team_id = team_dict["SOU"].id, away_team_id=team_dict["WHU"].id, kickoff=future_date),
-        schema.Match(home_team_id = team_dict["WOL"].id, away_team_id=team_dict["MUN"].id, kickoff=future_date),
-        schema.Match(home_team_id = team_dict["LIV"].id, away_team_id=team_dict["LEI"].id, kickoff=future_date),
-        schema.Match(home_team_id = team_dict["BRI"].id, away_team_id=team_dict["BRE"].id, kickoff=future_date),
-        schema.Match(home_team_id = team_dict["ARS"].id, away_team_id=team_dict["IPS"].id, kickoff=future_date),
+        schema.Match(home_team_id = team_dict["MCI"].id, away_team_id=team_dict["EVE"].id, kickoff=future_date, gameround_id=1),
+        schema.Match(home_team_id = team_dict["BOU"].id, away_team_id=team_dict["CRY"].id, kickoff=future_date, gameround_id=1),
+        schema.Match(home_team_id = team_dict["CHE"].id, away_team_id=team_dict["FUL"].id, kickoff=future_date, gameround_id=1),
+        schema.Match(home_team_id = team_dict["NEW"].id, away_team_id=team_dict["AVC"].id, kickoff=future_date, gameround_id=1),
+        schema.Match(home_team_id = team_dict["NOT"].id, away_team_id=team_dict["TOT"].id, kickoff=future_date, gameround_id=1),
+        schema.Match(home_team_id = team_dict["SOU"].id, away_team_id=team_dict["WHU"].id, kickoff=future_date, gameround_id=1),
+        schema.Match(home_team_id = team_dict["WOL"].id, away_team_id=team_dict["MUN"].id, kickoff=future_date, gameround_id=1),
+        schema.Match(home_team_id = team_dict["LIV"].id, away_team_id=team_dict["LEI"].id, kickoff=future_date, gameround_id=1),
+        schema.Match(home_team_id = team_dict["BRI"].id, away_team_id=team_dict["BRE"].id, kickoff=future_date, gameround_id=1),
+        schema.Match(home_team_id = team_dict["ARS"].id, away_team_id=team_dict["IPS"].id, kickoff=future_date, gameround_id=1),
     ]
     for match in matches:
         session.add(match)

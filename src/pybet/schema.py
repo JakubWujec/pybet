@@ -117,12 +117,24 @@ class Team(Base):
     def __str__(self):
         return self.name
 
+class Gameround(Base):
+    __tablename__ = "gamerounds"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(50), nullable=False)
+    
+    matches: Mapped[List["Match"]] = relationship(
+        "Match",
+        back_populates="gameround",
+        cascade="all, delete-orphan"
+    )
+
 class Match(Base):
     __tablename__ = "matches"
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     home_team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=False)
     away_team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=False)
+    gameround_id: Mapped[int] = mapped_column(ForeignKey("gamerounds.id"), nullable=True)
     home_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
     away_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
     kickoff: Mapped[datetime.datetime] = mapped_column(
@@ -131,20 +143,22 @@ class Match(Base):
         default=datetime.datetime.now(datetime.timezone.utc),
         nullable=False
     )
-    
     bets: Mapped[Dict[int, "Bet"]] = relationship(
         "Bet",  # Target class
         back_populates="match",  
         collection_class=attribute_mapped_collection("user_id"),
         cascade="all, delete-orphan",
     )
-    
 
     home_team: Mapped["Team"] = relationship(
         "Team", foreign_keys=[home_team_id]
     )
     away_team: Mapped["Team"] = relationship(
         "Team", foreign_keys=[away_team_id]
+    )
+    
+    gameround: Mapped["Gameround"] = relationship(
+        "Gameround", foreign_keys=[gameround_id]
     )
     
     __table_args__ = (
