@@ -5,7 +5,8 @@ from sqlalchemy import exc
 def test_can_create_match():
     match = schema.Match(
         home_team_id=1, 
-        away_team_id=2
+        away_team_id=2,
+        gameround_id=1
     )
     
     assert match is not None
@@ -19,6 +20,7 @@ def test_match_cannot_be_created_two_exact_teams(in_memory_sqlite_session_factor
     match = schema.Match(
         home_team_id=team_id,
         away_team_id=team_id,
+        gameround_id=1
     )
     
     with pytest.raises(exc.IntegrityError, match="check_home_away_different"):

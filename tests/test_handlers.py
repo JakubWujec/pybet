@@ -26,7 +26,7 @@ def test_make_bet_service():
     uow = FakeUnitOfWork()
   
     history = [
-        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, kickoff=tommorow),
+        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, gameround_id=1, kickoff=tommorow),
         commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=1, away_team_score=1),
     ]
     
@@ -42,7 +42,7 @@ def test_making_bet_for_the_same_user_and_match_doesnt_create_multiple_rows():
     uow = FakeUnitOfWork()
 
     history = [
-        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, kickoff=tommorow),
+        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, gameround_id=1, kickoff=tommorow),
         commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=1, away_team_score=1),
         commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=1, away_team_score=1),
     ]
@@ -59,7 +59,7 @@ def test_making_second_bet_updates_scores():
     uow = FakeUnitOfWork()
 
     history = [
-        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, kickoff=tommorow),
+        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, gameround_id=1, kickoff=tommorow),
         commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=1, away_team_score=1),
         commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=2, away_team_score=3),
     ]
@@ -77,7 +77,7 @@ def test_when_two_bets_from_different_user_the_two_rows_inseted():
     uow = FakeUnitOfWork()
     
     history = [
-        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, kickoff=tommorow),
+        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, gameround_id=1, kickoff=tommorow),
         commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=1, away_team_score=1),
         commands.MakeBetCommand(user_id=2, match_id=1, home_team_score=1, away_team_score=1),
     ]
@@ -145,7 +145,7 @@ def test_update_bet_points_service_when_exact_score():
     AWAY_SCORE = 3
     
     history = [
-        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, kickoff=tommorow),
+        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, gameround_id=1, kickoff=tommorow),
         commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=HOME_SCORE, away_team_score=AWAY_SCORE),
         commands.UpdateMatchScoreCommand(match_id=1, home_team_score=HOME_SCORE, away_team_score=AWAY_SCORE)
     ]

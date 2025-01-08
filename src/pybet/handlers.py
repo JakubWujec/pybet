@@ -13,6 +13,7 @@ def create_match(command: commands.CreateMatchCommand, uow: unit_of_work.UnitOfW
         match = schema.Match(
             home_team_id=command.home_team_id,
             away_team_id = command.away_team_id,
+            gameround_id = command.gameround_id,
             kickoff = command.kickoff
         )
         uow.matches.add(

@@ -21,8 +21,8 @@ class TestMyBetsQuery:
                 self.uow.session.add(t)
             self.uow.session.commit()
 
-        message_bus.handle(commands.CreateMatchCommand(1, 2, self.tommorow), self.uow)
-        message_bus.handle(commands.CreateMatchCommand(3, 4, self.tommorow), self.uow)
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=1, away_team_id=2, gameround_id=1, kickoff=self.tommorow), self.uow)
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=3, away_team_id=4, gameround_id=1, kickoff=self.tommorow), self.uow)
         message_bus.handle(commands.MakeBetCommand(self.user_id, 1, 2, 3), self.uow)
         
         self.result = queries.mybets(self.user_id, self.uow)
