@@ -7,7 +7,8 @@ import datetime
 @bp.route("/entry/<user_id>/rounds/<round>", methods=["GET"])
 def user_round_entry_view(user_id: int, round: int):
     uow = unit_of_work.SqlAlchemyUnitOfWork()
-    matches = queries.mybets(user_id, uow)
+    query_result = queries.mybets(user_id, gameround_id=round, uow=uow)
+    matches = query_result["matches"]
 
     return render_template(
         'entry.html',

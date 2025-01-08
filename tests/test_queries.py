@@ -8,6 +8,7 @@ class TestMyBetsQuery:
     def setup(self, in_memory_sqlite_session_factory):
         self.uow = unit_of_work.SqlAlchemyUnitOfWork(in_memory_sqlite_session_factory)
         self.user_id = 1
+        self.gameround_id = 1
         self.tommorow = datetime.datetime.now() + datetime.timedelta(days=1)
 
         teams = [
@@ -21,27 +22,30 @@ class TestMyBetsQuery:
                 self.uow.session.add(t)
             self.uow.session.commit()
 
-        message_bus.handle(commands.CreateMatchCommand(home_team_id=1, away_team_id=2, gameround_id=1, kickoff=self.tommorow), self.uow)
-        message_bus.handle(commands.CreateMatchCommand(home_team_id=3, away_team_id=4, gameround_id=1, kickoff=self.tommorow), self.uow)
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=1, away_team_id=2, gameround_id=self.gameround_id, kickoff=self.tommorow), self.uow)
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=3, away_team_id=4, gameround_id=self.gameround_id, kickoff=self.tommorow), self.uow)
         message_bus.handle(commands.MakeBetCommand(self.user_id, 1, 2, 3), self.uow)
         
-        self.result = queries.mybets(self.user_id, self.uow)
-        print(self.result)
+        self.result = queries.mybets(self.user_id, self.gameround_id, self.uow)
+
+    @property
+    def matches(self):
+        return self.result["matches"]
 
     @property
     def first_match(self):
-        return next((row for row in self.result if row["home_team_id"] == 1), None)
+        return next((row for row in self.matches if row["home_team_id"] == 1), None)
     
     @property 
     def second_match(self):
-        return next((row for row in self.result if row["home_team_id"] == 3), None)
+        return next((row for row in self.matches if row["home_team_id"] == 3), None)
     
     def test_both_team_are_fetched(self):
         assert self.first_match is not None
         assert self.second_match is not None
         
     def test_mybets_view_returns_correct_number_of_matches(self):
-        assert len(self.result) == 2
+        assert len(self.matches) == 2
 
     def test_first_match_have_a_bet(self):
         assert self.first_match["bet"] is not None
@@ -63,10 +67,11 @@ class TestMyBetsQuery:
         
     def test_other_user_doesnt_have_any_bets(self):
         other_user_id = 2
-        result = queries.mybets(other_user_id, self.uow)
+        result = queries.mybets(other_user_id, self.gameround_id, self.uow)
+        matches = result["matches"]
         
-        first_match = next((row for row in result if row["home_team_id"] == 1), None)
-        second_match = next((row for row in result if row["home_team_id"] == 3), None)
+        first_match = next((row for row in matches if row["home_team_id"] == 1), None)
+        second_match = next((row for row in matches if row["home_team_id"] == 3), None)
         
         assert first_match["bet"] is None
         assert second_match["bet"] is None
