@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker, clear_mappers
 from src.pybet import config
 from src.pybet.schema import metadata
 from pathlib import Path
+from sqlalchemy.orm import Session
 import time
 import requests
 
@@ -19,7 +20,7 @@ def in_memory_sqlite_session_factory(in_memory_db):
     yield sessionmaker(bind=in_memory_db)
 
 @pytest.fixture
-def session(in_memory_sqlite_session_factory):
+def session(in_memory_sqlite_session_factory) -> Session:
     return in_memory_sqlite_session_factory()
 
 @pytest.fixture

@@ -20,7 +20,7 @@ class User(Base):
     __tablename__ = "users"
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    username: Mapped[str] = mapped_column(String(50), nullable=False)
+    username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     password_hash: Mapped[Optional[str]] = mapped_column(String(256))
     role: Mapped[Role] = mapped_column(Enum(Role), nullable=False, default=Role.USER, server_default="USER")
     
@@ -29,7 +29,7 @@ class User(Base):
         back_populates="user",  
         cascade="all, delete-orphan"  
     )
-    
+      
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
