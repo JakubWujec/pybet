@@ -78,3 +78,56 @@ def get_next_gameround(uow: SqlAlchemyUnitOfWork) -> int | None:
         )).scalar()
         return result
 
+def standings_query(round: int, uow: SqlAlchemyUnitOfWork):
+    with uow:
+        count = uow.session.execute(text(
+            '''
+                SELECT COUNT(DISTINCT u.id)
+                FROM users as u
+                JOIN bets as b on b.user_id = u.id
+                JOIN matches as m on m.id = b.match_id
+                WHERE m.gameround = :round
+            '''
+        ), dict(round=round)).scalar()
+        
+        rows = uow.session.execute(text(
+            '''
+                SELECT u.id id, u.username username, SUM(b.points) points, RANK() OVER(ORDER BY b.points) position
+                FROM users as u
+                JOIN bets as b on b.user_id = u.id
+                JOIN matches as m on m.id = b.match_id
+                WHERE m.gameround = :round
+                GROUP BY u.id, u.username;
+            '''
+        ), dict(round=round))
+        
+        print(f"COUNT: {count}")
+        print(f"rows {rows}")
+
+
+    standings = [
+        {
+            "position": 1,
+            "name": "Adam",
+            "points": 100
+        },
+        {
+            "position": 2,
+            "name": "Bob",
+            "points": 99
+        },
+        {
+            "position": 3,
+            "name": "Eva",
+            "points": 45
+        },
+        
+    ]
+        
+    return {
+        "standings": standings,
+        "has_next": True,
+        "has_prev": True,
+        "prev_link": "abc",
+        "next_link": "cde"
+    }
