@@ -99,33 +99,21 @@ def standings_query(round: int, uow: SqlAlchemyUnitOfWork):
                 WHERE m.gameround = :round
                 GROUP BY u.id, u.username;
             '''
-        ), dict(round=round))
-        
-        print(f"COUNT: {count}")
-        print(f"rows {rows}")
-
-
-    standings = [
-        {
-            "position": 1,
-            "name": "Adam",
-            "points": 100
-        },
-        {
-            "position": 2,
-            "name": "Bob",
-            "points": 99
-        },
-        {
-            "position": 3,
-            "name": "Eva",
-            "points": 45
-        },
-        
-    ]
-        
+        ), dict(round=round)).all()
+            
+    standings = list(map(
+        lambda row: {
+            "user_id": row[0],
+            "username": row[1],
+            "points": row[2],
+            "position": row[3]  
+        }, 
+        rows
+    ))
+    
     return {
         "standings": standings,
+        "count": count,
         "has_next": True,
         "has_prev": True,
         "prev_link": "abc",
