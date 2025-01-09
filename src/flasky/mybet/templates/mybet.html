@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Fill Your Predictions</h1>
+    <h1 class="text-center mb-4">Gameround {{gameround}}</h1>
     <form method="POST" action="{{ url_for('my-bet.mybets_view') }}" role="form">
         {{ form.hidden_tag() }}
         <div class="row">

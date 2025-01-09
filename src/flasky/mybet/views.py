@@ -56,5 +56,6 @@ def mybets_view():
         current_user=current_user,
         match_by_id=match_by_id,
         enumerate=enumerate,
-        form=form
+        form=form,
+        gameround=next_gameround_id
     )

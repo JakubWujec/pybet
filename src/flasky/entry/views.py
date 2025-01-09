@@ -13,6 +13,7 @@ def user_round_entry_view(user_id: int, round: int):
     return render_template(
         'entry.html',
         enumerate=enumerate,
-        matches=matches
+        matches=matches,
+        gameround=round
     )
     
