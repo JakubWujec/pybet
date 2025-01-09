@@ -55,33 +55,26 @@ def kickoff_to_datetime(kickoff):
         return kickoff
     return datetime.strptime(kickoff, "%Y-%m-%d %H:%M:%S.%f")
 
-def get_current_gameround_id(uow: SqlAlchemyUnitOfWork):
-    ## select highest gameround_id where at least one match has already started
+def get_active_gameround_id_by_date(current_timestamp: datetime, uow: SqlAlchemyUnitOfWork):
     with uow:
-        cursor_result = uow.session.execute(text(
+        result = uow.session.execute(text(
             'SELECT MAX(gameround_id) as gameround_id'
             ' FROM matches AS m'
-            ' WHERE kickoff <= CURRENT_TIMESTAMP'
-            ),
-        )
-        result = cursor_result.first()
-        if result is None:
-            return None
-        return result[0]
+            ' WHERE kickoff <= :current_timestamp'
+            ), dict(current_timestamp=current_timestamp.strftime("%Y-%m-%d %H:%M:%S.%f"))
+        ).scalar()
+        return result
 
 def get_next_gameround_id(uow: SqlAlchemyUnitOfWork) -> int | None:
     ## select lowest round id where no match has started
     with uow:
-        cursor_result = uow.session.execute(text(
+        result = uow.session.execute(text(
             'SELECT MIN(gameround_id) as gameround_id'
             ' FROM matches'
             ' WHERE gameround_id NOT IN'
             ' (SELECT DISTINCT gameround_id'
             ' FROM matches'
             ' where kickoff <= CURRENT_TIMESTAMP)'
-        ))
-        result = cursor_result.first()
-        if result is None:
-            return None
-        return result[0]
+        )).scalar()
+        return result
 

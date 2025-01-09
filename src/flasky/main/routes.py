@@ -11,8 +11,8 @@ import datetime
 def points():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     user_id = current_user.id
-    gameround_id = queries.get_current_gameround_id(uow)
-    return redirect(f'/entry/{user_id}/rounds/{gameround_id}')
+    active_gameround_id = queries.get_active_gameround_id_by_date(datetime.datetime.now(), uow)
+    return redirect(f'/entry/{user_id}/rounds/{active_gameround_id}')
 
 @bp.route("/api/bets", methods=["POST"])
 def make_a_bet():
