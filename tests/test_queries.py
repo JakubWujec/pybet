@@ -8,7 +8,7 @@ class TestMyBetsQuery:
     def setup(self, in_memory_sqlite_session_factory):
         self.uow = unit_of_work.SqlAlchemyUnitOfWork(in_memory_sqlite_session_factory)
         self.user_id = 1
-        self.gameround_id = 1
+        self.gameround = 1
         self.tommorow = datetime.datetime.now() + datetime.timedelta(days=1)
 
         teams = [
@@ -22,11 +22,11 @@ class TestMyBetsQuery:
                 self.uow.session.add(t)
             self.uow.session.commit()
 
-        message_bus.handle(commands.CreateMatchCommand(home_team_id=1, away_team_id=2, gameround_id=self.gameround_id, kickoff=self.tommorow), self.uow)
-        message_bus.handle(commands.CreateMatchCommand(home_team_id=3, away_team_id=4, gameround_id=self.gameround_id, kickoff=self.tommorow), self.uow)
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=1, away_team_id=2, gameround=self.gameround, kickoff=self.tommorow), self.uow)
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=3, away_team_id=4, gameround=self.gameround, kickoff=self.tommorow), self.uow)
         message_bus.handle(commands.MakeBetCommand(self.user_id, 1, 2, 3), self.uow)
         
-        self.result = queries.mybets(self.user_id, self.gameround_id, self.uow)
+        self.result = queries.mybets(self.user_id, self.gameround, self.uow)
 
     @property
     def matches(self):
@@ -67,7 +67,7 @@ class TestMyBetsQuery:
         
     def test_other_user_doesnt_have_any_bets(self):
         other_user_id = 2
-        result = queries.mybets(other_user_id, self.gameround_id, self.uow)
+        result = queries.mybets(other_user_id, self.gameround, self.uow)
         matches = result["matches"]
         
         first_match = next((row for row in matches if row["home_team_id"] == 1), None)
@@ -98,24 +98,24 @@ class TestGetActiveGameRoundQuery:
             self.uow.session.commit()
         
         ## ROUND 1 PREVIOUS WEEK 
-        message_bus.handle(commands.CreateMatchCommand(home_team_id=1, away_team_id=2, gameround_id=1, kickoff=self.previous_week), self.uow)
-        message_bus.handle(commands.CreateMatchCommand(home_team_id=3, away_team_id=4, gameround_id=1, kickoff=self.previous_week), self.uow)
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=1, away_team_id=2, gameround=1, kickoff=self.previous_week), self.uow)
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=3, away_team_id=4, gameround=1, kickoff=self.previous_week), self.uow)
         
         ## ROUND 2 NEXT WEEK 
-        message_bus.handle(commands.CreateMatchCommand(home_team_id=1, away_team_id=3, gameround_id=2, kickoff=self.next_week), self.uow)
-        message_bus.handle(commands.CreateMatchCommand(home_team_id=2, away_team_id=4, gameround_id=2, kickoff=self.next_week), self.uow)
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=1, away_team_id=3, gameround=2, kickoff=self.next_week), self.uow)
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=2, away_team_id=4, gameround=2, kickoff=self.next_week), self.uow)
                                                        
     
     def test_returns_returns_none_before_any_matches(self):
         before_any_match_started = self.previous_week - datetime.timedelta(days = 7)
-        result = queries.get_active_gameround_id_by_date(before_any_match_started, self.uow)
+        result = queries.get_active_gameround_by_date(before_any_match_started, self.uow)
         assert result is None
     
     def test_returns_one_when_between_rounds(self):
-        result = queries.get_active_gameround_id_by_date(self.today, self.uow)
+        result = queries.get_active_gameround_by_date(self.today, self.uow)
         assert result == 1
     
     def test_returns_two_after_all_matches(self):
         after_all_matches = self.next_week + datetime.timedelta(days = 7)
-        result = queries.get_active_gameround_id_by_date(after_all_matches, self.uow)
+        result = queries.get_active_gameround_by_date(after_all_matches, self.uow)
         assert result == 2

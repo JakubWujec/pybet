@@ -8,7 +8,7 @@ import pytest
 def setup_match_and_bet(session):
     session.execute(
         text(
-            "INSERT INTO matches (id, home_team_id, away_team_id, gameround_id)"
+            "INSERT INTO matches (id, home_team_id, away_team_id, gameround)"
             " VALUES (1, 1, 2, 1)"
         )
     )

@@ -12,8 +12,8 @@ from src.flasky.mybet import forms
 @login_required
 def mybets_view():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
-    next_gameround_id = queries.get_next_gameround_id(uow=uow)
-    query_result = queries.mybets(user_id=current_user.id, gameround_id=next_gameround_id, uow=uow)
+    next_gameround = queries.get_next_gameround(uow=uow)
+    query_result = queries.mybets(user_id=current_user.id, gameround=next_gameround, uow=uow)
     matches = query_result["matches"]
     match_by_id = {match["id"]: match for match in matches}
     form = forms.MatchBetListForm()
@@ -57,5 +57,5 @@ def mybets_view():
         match_by_id=match_by_id,
         enumerate=enumerate,
         form=form,
-        gameround=next_gameround_id
+        gameround=next_gameround
     )

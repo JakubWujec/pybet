@@ -2,7 +2,7 @@ from src.pybet.unit_of_work import SqlAlchemyUnitOfWork
 from sqlalchemy.sql import text
 from datetime import datetime
 
-def mybets(user_id: int, gameround_id: int, uow: SqlAlchemyUnitOfWork):
+def mybets(user_id: int, gameround: int, uow: SqlAlchemyUnitOfWork):
     with uow:
         rows = list(uow.session.execute(text(
             'SELECT m.id, ht.id, ht.name, at.id, at.name, m.home_team_score, m.away_team_score, kickoff, b.id, b.home_team_score, b.away_team_score, b.points'
@@ -10,9 +10,9 @@ def mybets(user_id: int, gameround_id: int, uow: SqlAlchemyUnitOfWork):
             ' JOIN teams as ht ON ht.id = m.home_team_id'
             ' JOIN teams as at ON at.id = m.away_team_id'
             ' LEFT JOIN bets AS b on b.match_id = m.id AND b.user_id = :user_id'
-            ' WHERE m.gameround_id = :gameround_id'
+            ' WHERE m.gameround = :gameround'
             ),
-            dict(user_id=user_id, gameround_id=gameround_id)
+            dict(user_id=user_id, gameround=gameround)
         ))
     result = {
         "matches": []
@@ -55,24 +55,24 @@ def kickoff_to_datetime(kickoff):
         return kickoff
     return datetime.strptime(kickoff, "%Y-%m-%d %H:%M:%S.%f")
 
-def get_active_gameround_id_by_date(current_timestamp: datetime, uow: SqlAlchemyUnitOfWork):
+def get_active_gameround_by_date(current_timestamp: datetime, uow: SqlAlchemyUnitOfWork):
     with uow:
         result = uow.session.execute(text(
-            'SELECT MAX(gameround_id) as gameround_id'
+            'SELECT MAX(gameround) as gameround'
             ' FROM matches AS m'
             ' WHERE kickoff <= :current_timestamp'
             ), dict(current_timestamp=current_timestamp.strftime("%Y-%m-%d %H:%M:%S.%f"))
         ).scalar()
         return result
 
-def get_next_gameround_id(uow: SqlAlchemyUnitOfWork) -> int | None:
+def get_next_gameround(uow: SqlAlchemyUnitOfWork) -> int | None:
     ## select lowest round id where no match has started
     with uow:
         result = uow.session.execute(text(
-            'SELECT MIN(gameround_id) as gameround_id'
+            'SELECT MIN(gameround) as gameround'
             ' FROM matches'
-            ' WHERE gameround_id NOT IN'
-            ' (SELECT DISTINCT gameround_id'
+            ' WHERE gameround NOT IN'
+            ' (SELECT DISTINCT gameround'
             ' FROM matches'
             ' where kickoff <= CURRENT_TIMESTAMP)'
         )).scalar()

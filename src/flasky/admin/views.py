@@ -21,14 +21,14 @@ class AdminMatchView(ModelView):
         'home_team_score',
         'away_team_score',
         'kickoff',
-        'gameround_id'
+        'gameround'
     ]
     
     form_columns = [
         'home_team',
         'away_team',
         'kickoff',
-        'gameround_id'
+        'gameround'
     ]
     
   

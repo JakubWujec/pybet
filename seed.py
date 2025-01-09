@@ -21,24 +21,20 @@ def seed_teams_and_matches(session):
             pass
     session.flush()
     
-    gameround = schema.Gameround(name="1")
-    session.add(gameround)
-    session.flush()
-    
     past_matches = [
-        schema.Match(home_team_id = team_dict["MCI"].id, away_team_id=team_dict["EVE"].id, kickoff=past_date, gameround_id=1),
-        schema.Match(home_team_id = team_dict["BOU"].id, away_team_id=team_dict["CRY"].id, kickoff=past_date, gameround_id=1),
-        schema.Match(home_team_id = team_dict["CHE"].id, away_team_id=team_dict["FUL"].id, kickoff=past_date, gameround_id=1),
-        schema.Match(home_team_id = team_dict["NEW"].id, away_team_id=team_dict["AVC"].id, kickoff=past_date, gameround_id=1),
-        schema.Match(home_team_id = team_dict["NOT"].id, away_team_id=team_dict["TOT"].id, kickoff=past_date, gameround_id=1),
+        schema.Match(home_team_id = team_dict["MCI"].id, away_team_id=team_dict["EVE"].id, kickoff=past_date, gameround=1),
+        schema.Match(home_team_id = team_dict["BOU"].id, away_team_id=team_dict["CRY"].id, kickoff=past_date, gameround=1),
+        schema.Match(home_team_id = team_dict["CHE"].id, away_team_id=team_dict["FUL"].id, kickoff=past_date, gameround=1),
+        schema.Match(home_team_id = team_dict["NEW"].id, away_team_id=team_dict["AVC"].id, kickoff=past_date, gameround=1),
+        schema.Match(home_team_id = team_dict["NOT"].id, away_team_id=team_dict["TOT"].id, kickoff=past_date, gameround=1),
     ]
         
     future_matches = [
-        schema.Match(home_team_id = team_dict["SOU"].id, away_team_id=team_dict["WHU"].id, kickoff=future_date, gameround_id=2),
-        schema.Match(home_team_id = team_dict["WOL"].id, away_team_id=team_dict["MUN"].id, kickoff=future_date, gameround_id=2),
-        schema.Match(home_team_id = team_dict["LIV"].id, away_team_id=team_dict["LEI"].id, kickoff=future_date, gameround_id=2),
-        schema.Match(home_team_id = team_dict["BRI"].id, away_team_id=team_dict["BRE"].id, kickoff=future_date, gameround_id=2),
-        schema.Match(home_team_id = team_dict["ARS"].id, away_team_id=team_dict["IPS"].id, kickoff=future_date, gameround_id=2),
+        schema.Match(home_team_id = team_dict["SOU"].id, away_team_id=team_dict["WHU"].id, kickoff=future_date, gameround=2),
+        schema.Match(home_team_id = team_dict["WOL"].id, away_team_id=team_dict["MUN"].id, kickoff=future_date, gameround=2),
+        schema.Match(home_team_id = team_dict["LIV"].id, away_team_id=team_dict["LEI"].id, kickoff=future_date, gameround=2),
+        schema.Match(home_team_id = team_dict["BRI"].id, away_team_id=team_dict["BRE"].id, kickoff=future_date, gameround=2),
+        schema.Match(home_team_id = team_dict["ARS"].id, away_team_id=team_dict["IPS"].id, kickoff=future_date, gameround=2),
     ]
     
     for match in past_matches:
@@ -60,9 +56,18 @@ def seed_admin_user(session):
     session.add(user)
     session.commit()
     
+def seed_test_user(session):
+    user = schema.User(
+        username="user"
+    )
+    user.set_password("user")
+    
+    session.add(user)
+    session.commit()
     
 if __name__ == "__main__":    
     with config.session_scope() as session:
+        seed_test_user(session)
         seed_admin_user(session)
         seed_teams_and_matches(session)
         

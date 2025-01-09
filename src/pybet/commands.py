@@ -7,7 +7,7 @@ class Command:
 class CreateMatchCommand(Command):
     home_team_id: int
     away_team_id: int
-    gameround_id: int
+    gameround: int
     kickoff: datetime
 
 @dataclass

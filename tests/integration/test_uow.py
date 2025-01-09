@@ -18,7 +18,7 @@ def get_linked_bet_id(session: Session, user_id: int, match_id: int) -> int | No
 def insert_user_and_match(session):
     session.execute(
             text(
-            "INSERT INTO matches (home_team_id, away_team_id, gameround_id)"
+            "INSERT INTO matches (home_team_id, away_team_id, gameround)"
             ' VALUES (1, 2, 1)')
         )
     session.execute(
