@@ -1,6 +1,7 @@
 from src.pybet.unit_of_work import SqlAlchemyUnitOfWork
 from sqlalchemy.sql import text
 from datetime import datetime
+from typing import List
 
 def mybets(user_id: int, gameround: int, uow: SqlAlchemyUnitOfWork):
     with uow:
@@ -66,7 +67,6 @@ def get_active_gameround_by_date(current_timestamp: datetime, uow: SqlAlchemyUni
         return result
 
 def get_next_gameround(uow: SqlAlchemyUnitOfWork) -> int | None:
-    ## select lowest round id where no match has started
     with uow:
         result = uow.session.execute(text(
             'SELECT MIN(gameround) as gameround'
@@ -77,6 +77,15 @@ def get_next_gameround(uow: SqlAlchemyUnitOfWork) -> int | None:
             ' where kickoff <= CURRENT_TIMESTAMP)'
         )).scalar()
         return result
+    
+def get_available_gamerounds(uow: SqlAlchemyUnitOfWork) -> List[int]:
+    with uow:
+        result = uow.session.execute(text(
+            """
+                SELECT DISTINCT gameround FROM matches ORDER BY gameround
+            """
+        )).all()
+        return [row[0] for row in result]
 
 def standings_query(round: int, page:int, per_page:int, uow: SqlAlchemyUnitOfWork):
     offset = (page - 1) * per_page

@@ -1,16 +1,25 @@
 from src.flasky.standings import bp
 from src.pybet import unit_of_work, queries
-from flask import render_template, request, url_for
+from flask import render_template, request, url_for, redirect
+from datetime import datetime
 
+@bp.route("/standings", methods=["POST"])
+def standings_view_post():
+    gameround = request.form.get("gameround", type=int)
+    return redirect(url_for("standings.standings_view", gameround=gameround))
 
 @bp.route("/standings", methods=["GET"])
 def standings_view():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
-    page = request.args.get('page', 1, type=int)
-    per_page = 2
     
+    active_gameround = queries.get_active_gameround_by_date(datetime.now(), uow=uow)
+    gameround = request.args.get('gameround', active_gameround, type=int)
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    
+    available_gamerounds = queries.get_available_gamerounds(uow=uow)
     data = queries.standings_query(
-        round=2,
+        round=gameround,
         page=page,
         per_page=per_page,
         uow=uow
@@ -20,6 +29,8 @@ def standings_view():
     
     return render_template(
         'standings.html',
+        gamerounds=available_gamerounds,
+        selected_gameround=gameround,
         standings=standings,
         count=count,
         next_url= url_for(endpoint="standings.standings_view", page=pagination["next_page"]) if pagination["has_next"] else None,

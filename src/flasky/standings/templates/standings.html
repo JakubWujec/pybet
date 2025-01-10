@@ -4,6 +4,20 @@
 
 <div class="container my-5">
     <h1 class="text-center mb-4">Standings</h1>
+    <form method="POST" action="{{ url_for('standings.standings_view') }}" class="mb-4">
+        <div class="input-group">
+            <label class="input-group-text" for="gameroundSelect">Select Gameround</label>
+            <select class="form-select" id="gameroundSelect" name="gameround">
+                {% for round in gamerounds %}
+                <option value="{{ round }}" {% if round==selected_gameround %}selected{% endif %}>
+                    Gameround {{ round }}
+                </option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary" type="submit">Go</button>
+        </div>
+    </form>
+
     <div class="table-responsive">
         <table class="table table-striped table-bordered align-middle">
             <thead class="table-dark">
