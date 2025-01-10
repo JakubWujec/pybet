@@ -78,7 +78,8 @@ def get_next_gameround(uow: SqlAlchemyUnitOfWork) -> int | None:
         )).scalar()
         return result
 
-def standings_query(round: int, uow: SqlAlchemyUnitOfWork):
+def standings_query(round: int, page:int, per_page:int, uow: SqlAlchemyUnitOfWork):
+    offset = (page - 1) * per_page
     with uow:
         count = uow.session.execute(text(
             '''
@@ -97,9 +98,10 @@ def standings_query(round: int, uow: SqlAlchemyUnitOfWork):
                 JOIN bets as b on b.user_id = u.id
                 JOIN matches as m on m.id = b.match_id
                 WHERE m.gameround = :round
-                GROUP BY u.id, u.username;
+                GROUP BY u.id, u.username
+                LIMIT :limit OFFSET :offset;
             '''
-        ), dict(round=round)).all()
+        ), dict(round=round, limit=per_page, offset=offset)).all()
             
     standings = list(map(
         lambda row: {
@@ -114,8 +116,4 @@ def standings_query(round: int, uow: SqlAlchemyUnitOfWork):
     return {
         "standings": standings,
         "count": count,
-        "has_next": True,
-        "has_prev": True,
-        "prev_link": "abc",
-        "next_link": "cde"
     }
