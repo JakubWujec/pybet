@@ -38,11 +38,11 @@ def create_app(config_class=config.Config):
     from src.flasky.mybet import bp as mybet_bp
     app.register_blueprint(mybet_bp)
     
-    from src.flasky.entry import bp as entry_bp
-    app.register_blueprint(entry_bp)
-    
     from src.flasky.standings import bp as standings_bp
     app.register_blueprint(standings_bp)
+    
+    from src.flasky.points import bp as points_bp
+    app.register_blueprint(points_bp)
     
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, internal_error)
