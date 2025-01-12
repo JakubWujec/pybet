@@ -20,14 +20,10 @@ def seed_teams_and_matches_from_fpl(session: Session):
 
     session.flush()   
     
-    print(fpl_teams)
-    print(list(fpl_teams.keys()))
-    
     r = requests.get(url = URL2)
     fixtures_data = r.json()
     for idx, fixture in enumerate(fixtures_data):
         if not fixture['finished'] and fixture['event'] is not None:
-            print(f"{idx} {fixture}")
             team_a = fpl_teams[fixture["team_a"]]
             team_h = fpl_teams[fixture["team_h"]]
             match = schema.Match(
