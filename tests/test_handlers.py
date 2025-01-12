@@ -153,11 +153,6 @@ def test_update_bet_points_service_when_exact_score():
     for cmd in history:
         message_bus.handle(cmd, uow)
         
-    updated_score_event = events.MatchScoreUpdated(
-        match_id = 1
-    )
-    
-    handlers.update_bet_points_for_match(updated_score_event, uow)
     match = uow.matches.get(1)
     
     assert match.bets[1].points == 5

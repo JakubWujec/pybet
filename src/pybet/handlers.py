@@ -1,5 +1,5 @@
-from src.pybet import schema, unit_of_work, commands
-from src.pybet import events
+from src.pybet import schema, unit_of_work, commands, events, message_bus
+
 import datetime
 
 class MatchAlreadyStarted(Exception):
@@ -45,12 +45,18 @@ def make_bet(command: commands.MakeBetCommand, uow: unit_of_work.UnitOfWork):
 
 def update_match_score(command: commands.UpdateMatchScoreCommand, uow: unit_of_work.UnitOfWork):
     with uow:
-        match = uow.matches.get(command.match_id)  
-        match.home_team_score = command.home_team_score
-        match.away_team_score = command.away_team_score
-        uow.commit()
-    
-        return match.id
+        try:
+            match = uow.matches.get(command.match_id)  
+            match.home_team_score = command.home_team_score
+            match.away_team_score = command.away_team_score
+            uow.commit()
+            
+            return match.id
+        finally:
+            message_bus.handle(
+                events.MatchScoreUpdated(match_id=match.id),
+                uow
+            )
      
 def update_bet_points_for_match(event: events.MatchScoreUpdated, uow: unit_of_work.UnitOfWork):
     with uow:
