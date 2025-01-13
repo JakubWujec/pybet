@@ -50,11 +50,15 @@ class UpdateScoreView(ModelView):
         'away_team_score',
     ]
     
-    def after_model_change(self, form, model, is_created):
-        event = events.MatchScoreUpdated(
-            match_id=model.id
+    def update_model(self, form, model):
+        uow = unit_of_work.SqlAlchemyUnitOfWork(lambda: self.session)
+        message_bus.handle(
+            commands.UpdateMatchScoreCommand(
+                model.id,
+                form.data['home_team_score'],
+                form.data['away_team_score'],
+            ),
+            uow
         )
-        message_bus.handle(event, unit_of_work.SqlAlchemyUnitOfWork())
-
-        return super().after_model_change(form, model, is_created)
     
+        return True
