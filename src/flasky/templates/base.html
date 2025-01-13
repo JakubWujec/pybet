@@ -80,15 +80,7 @@
 
     </header>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div>
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category if category else 'primary' }}" role="alert">{{ message }}</div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
+    {% include 'macros/flash_msg.html' %}
 
     {% block content %}{% endblock %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
