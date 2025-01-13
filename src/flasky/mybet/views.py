@@ -46,7 +46,9 @@ def mybets_view():
                     for message in cmds:
                         message_bus.handle(message, uow)
                         
-                flash("All good", category="info")
+                flash("Record was successfully save.", category="success")
+            else:
+                flash("Something went wrong. Validate your input and try again.", category="danger")
         except MatchAlreadyStarted as ex:
             flash("Too late. Some matches already started", "error")
             redirect(request.url)
