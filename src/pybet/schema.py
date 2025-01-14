@@ -15,6 +15,7 @@ metadata = Base.metadata
 class Role(enum.Enum):
     USER = 1
     ADMIN = 2
+    BOT = 3
     
 class User(Base):
     __tablename__ = "users"

@@ -15,6 +15,9 @@ class MatchRepository(abc.ABC):
     def list(self) -> List[schema.Match]:
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def get_gameround_matches(self, gameround: int):
+        raise NotImplementedError
 
 class FakeMatchRepository:
     def __init__(self):
@@ -33,6 +36,14 @@ class FakeMatchRepository:
     def list(self):
         return list(self.matches.values())
 
+    def get_gameround_matches(self, gameround: int):
+        return list(
+            filter(
+                lambda m: m.gameround == gameround,
+                self.matches.values()
+            )
+        )
+
 
 class SqlMatchRepository:
     def __init__(self, session):
@@ -45,6 +56,9 @@ class SqlMatchRepository:
     
     def get(self, match_id: int):
         return self.session.query(schema.Match).filter_by(id=match_id).first()
+    
+    def get_gameround_matches(self, gameround: int):
+        return self.session.query(schema.Match).filter_by(gameround=gameround).all()
     
     def list(self):
         return self.session.query(schema.Match).all()

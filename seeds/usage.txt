@@ -1,0 +1,2 @@
+# example
+py -m seeds.seed_bot_users
