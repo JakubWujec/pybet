@@ -29,13 +29,19 @@ def seed_teams_and_matches_from_fpl(session: Session):
             match = schema.Match(
                 home_team_id = team_h.id,
                 away_team_id = team_a.id,
-                kickoff = datetime.fromisoformat(fixture["kickoff_time"]),
+                kickoff = fromisoformat(fixture["kickoff_time"]),
                 gameround=fixture['event']
             )
             session.add(match)
 
     session.commit()
     
+    
+def fromisoformat(date_str: str):
+    # py3.10 datetime doesn't parse dates with Z properly, ex. 2025-01-14T19:30:00Z
+    if 'Z' in date_str:
+        date_str = date_str.replace('Z', '+00:00')
+    return datetime.fromisoformat(date_str)
     
 if __name__ == "__main__":    
     with config.session_scope() as session:
