@@ -25,6 +25,14 @@ class Config:
     PYTHON_ANYWHERE_MAX_CONNECTION_POOL = 6
     MAX_CONNECTION_POOL = os.environ.get("MAX_CONNECTION_POOL") or PYTHON_ANYWHERE_MAX_CONNECTION_POOL
     
+def get_api_url():
+    host = os.environ.get("API_HOST", "localhost")
+    port = 5005 if host == "localhost" else 80
+    return f"http://{host}:{port}"
+
+def get_sqlite_uri():
+    return Config.SQLALCHEMY_DATABASE_URI
+    
 def get_db_uri():
     return Config.SQLALCHEMY_DATABASE_URI
 

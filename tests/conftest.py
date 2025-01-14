@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, clear_mappers
-from src.pybet import config
+from src import config
 from src.pybet.schema import metadata
 from pathlib import Path
 from sqlalchemy.orm import Session
