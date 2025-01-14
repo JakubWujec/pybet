@@ -21,12 +21,12 @@ def create_app(config_class=config.Config):
         admin = Admin(
             app, 
             name='pybet',
-
         )
         admin.add_view(admin_views.PybetAdminModelView(schema.Team, session))
         admin.add_view(admin_views.AdminMatchView(schema.Match, session, name="Manage Matches",endpoint="manage_matches"))
         admin.add_view(admin_views.UpdateScoreView(schema.Match, session, name="Update Score", endpoint="update_scores"))
         admin.add_view(admin_views.PybetAdminModelView(schema.User, session))
+        admin.add_view(admin_views.PybetAdminModelView(schema.Bet, session))
 
 
     from src.flasky.main import bp as main_bp

@@ -58,6 +58,12 @@ class User(Base):
     @property
     def is_admin(self):
         return self.role == Role.ADMIN
+    
+    def __repr__(self):
+        return f"User(username={self.username})"
+    
+    def __str__(self):
+        return self.username
 
 
 class Bet(Base):
@@ -166,3 +172,7 @@ class Match(Base):
             return False
         
         return datetime.datetime.now() >= self.kickoff
+    
+    def __str__(self):
+        if self.away_team is not None and self.home_team is not None:
+            return  f"{self.home_team.name} VS {self.away_team.name} (GR:{self.gameround})"
