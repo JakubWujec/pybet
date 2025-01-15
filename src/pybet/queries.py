@@ -102,7 +102,7 @@ def standings_query(round: int, page:int, per_page:int, uow: SqlAlchemyUnitOfWor
         
         rows = uow.session.execute(text(
             '''
-                SELECT u.id id, u.username username, SUM(b.points) points, RANK() OVER(ORDER BY b.points) position
+                SELECT u.id id, u.username username, SUM(b.points) points, RANK() OVER(ORDER BY SUM(b.points) DESC) position
                 FROM users as u
                 JOIN bets as b on b.user_id = u.id
                 JOIN matches as m on m.id = b.match_id
