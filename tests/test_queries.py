@@ -1,5 +1,6 @@
 from src.pybet import queries
 from src.pybet import message_bus, unit_of_work, commands, schema
+from sqlalchemy.sql import text
 import datetime 
 import pytest
 
@@ -119,3 +120,66 @@ class TestGetActiveGameRoundQuery:
         after_all_matches = self.next_week + datetime.timedelta(days = 7)
         result = queries.get_active_gameround_by_date(after_all_matches, self.uow)
         assert result == 2
+        
+            
+class TestStandingsQuery:
+    @pytest.fixture(autouse=True)
+    def setup(self, in_memory_sqlite_session_factory):
+        self.uow = unit_of_work.SqlAlchemyUnitOfWork(in_memory_sqlite_session_factory)
+
+        self.today = datetime.datetime.now()
+        self.gameround = 1
+        
+        teams = [
+            schema.Team(name="A"),
+            schema.Team(name="B"),
+        ]
+        users = [
+            schema.User(username="User1"),
+            schema.User(username="User2")
+        ]
+        
+        with self.uow:
+            for t in teams:
+                self.uow.session.add(t)
+            for user in users:
+                self.uow.session.add(user)
+            self.uow.session.commit()
+        
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=1, away_team_id=2, gameround=self.gameround, kickoff=self.today), self.uow)
+        
+        # user1 got 3 points, user2 got 5 points
+        # query instead of command to to avoid checking dates
+        with self.uow:
+            self.uow.session.execute(text(
+                '''INSERT INTO bets (user_id, match_id, home_team_score, away_team_score, points)
+                VALUES (1, 1, 1, 0, 3), (2, 1, 2, 0, 5);
+                '''   
+            ))
+            self.uow.session.commit()
+
+        d = queries.standings_query(
+            round=self.gameround,
+            page=1,
+            per_page=20,
+            uow=self.uow
+        )
+
+        self.standings, self.count = d['standings'], d['count']
+        
+    def test_count_is_equal_to_number_of_betters(self):
+        assert self.count == 2
+        assert len(self.standings) == 2
+        
+    def test_standings_are_ordered(self):
+        assert self.standings[0]['position'] == 1
+        assert self.standings[1]['position'] == 2
+        
+    def test_first_user_has_more_point_than_second(self):
+        assert self.standings[0]['points'] > self.standings[1]['points']
+        
+    
+        
+        
+        
+        
