@@ -1,7 +1,7 @@
 from src.flasky.points import bp
 from flask_login import login_user, logout_user, current_user, login_required
-from flask import request, render_template, flash, url_for, redirect
-from src.pybet import unit_of_work, queries
+from flask import request, render_template, flash, url_for, redirect, abort
+from src.pybet import unit_of_work, queries, schema
 import datetime
 
 @bp.route('/points', methods=['GET'])
@@ -21,13 +21,20 @@ def points():
 @bp.route("/points/<user_id>/rounds/<round>", methods=["GET"])
 def user_round_points_view(user_id: int, round: int):
     uow = unit_of_work.SqlAlchemyUnitOfWork()
+    with uow:
+        user: schema.User = uow.session.query(schema.User).get(user_id)
+        if user is None: 
+            abort(404)
+        username = user.username
+   
     query_result = queries.mybets(user_id, gameround=round, uow=uow)
     matches = query_result["matches"]
-
+    
     return render_template(
         'entry.html',
         enumerate=enumerate,
         matches=matches,
-        gameround=round
+        gameround=round,
+        username=username
     )
     
