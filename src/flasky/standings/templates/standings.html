@@ -2,6 +2,19 @@
 
 {% block content %}
 
+<style>
+    .link-hover-underline {
+        text-decoration: none;
+        /* Remove underline by default */
+        color: inherit;
+        /* Inherit text color */
+    }
+
+    .link-hover-underline:hover {
+        text-decoration: underline;
+        /* Add underline on hover */
+    }
+</style>
 <div class="container my-5">
     <h1 class="text-center mb-4">Standings</h1>
     <form method="POST" action="{{ url_for('standings.standings_view') }}" class="mb-4">
@@ -31,7 +44,13 @@
                 {% for player in standings %}
                 <tr>
                     <td class="text-nowrap">{{ player.position }}</td>
-                    <td>{{ player.username }}</td>
+
+                    <td>
+                        <a class="link-hover-underline"
+                            href="{{url_for('points.user_round_points_view', user_id=player.user_id, round=gameround)}}">
+                            {{player.username }}
+                        </a>
+                    </td>
                     <td>{{ player.points }}</td>
                 </tr>
                 {% endfor %}
@@ -46,5 +65,6 @@
         {% endif %}
     </div>
 </div>
+
 
 {% endblock %}

@@ -30,6 +30,7 @@ def standings_view():
     return render_template(
         'standings.html',
         gamerounds=available_gamerounds,
+        gameround=gameround,
         selected_gameround=gameround,
         standings=standings,
         count=count,
