@@ -13,7 +13,11 @@ def create_app(config_class=config.Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
-    login.init_app(app)    
+    login.init_app(app)
+    login.login_view = 'auth.login_view'
+    login.login_message = "Please log in to access this page."
+    login.login_message_category = "warning"
+    
     engine = config.get_db_engine()
     schema.metadata.create_all(engine)
     
