@@ -54,7 +54,7 @@ def mybets_view():
             redirect(request.url)
                
     return render_template(
-        'mybet.html',
+        'mybet/mybet.html',
         current_user=current_user,
         match_by_id=match_by_id,
         enumerate=enumerate,

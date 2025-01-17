@@ -2,8 +2,7 @@ from src.flasky.auth import bp
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 from src.pybet import schema
-from src.flasky.auth.forms.login_form import LoginForm
-from src.flasky.auth.forms.register_form import RegisterForm
+from src.flasky.auth.forms import LoginForm, RegisterForm
 from flask import redirect, render_template, flash, url_for
 from src import config
 from src.pybet import unit_of_work
@@ -23,7 +22,7 @@ def login_view():
             
             login_user(user, remember=form.rememberMe.data)
             return redirect('/index')
-    return render_template('login.html', title='Login', form=form)
+    return render_template('auth/login.html', title='Login', form=form)
 
 
 @bp.route('/register', methods=['GET', 'POST'])
@@ -42,7 +41,7 @@ def register_view():
             flash('Congratulations, you are now a registered user!')
             return redirect(url_for('auth.login_view'))
     
-    return render_template('register.html', title='Register', form=form)
+    return render_template('auth/register.html', title='Register', form=form)
 
 @bp.route('/logout', methods=['POST'])
 def logout_view():

@@ -31,7 +31,7 @@ def user_round_points_view(user_id: int, round: int):
     matches = query_result["matches"]
     
     return render_template(
-        'entry.html',
+        'points/entry.html',
         enumerate=enumerate,
         matches=matches,
         gameround=round,

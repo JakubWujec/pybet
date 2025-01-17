@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-bp = Blueprint('points', __name__, template_folder="./templates")
+bp = Blueprint('points', __name__)
 
 from src.flasky.points import views
 

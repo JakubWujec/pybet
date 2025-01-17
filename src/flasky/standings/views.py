@@ -28,7 +28,7 @@ def standings_view():
     pagination = paginate(page, per_page, count)
     
     return render_template(
-        'standings.html',
+        'standings/standings.html',
         gamerounds=available_gamerounds,
         gameround=gameround,
         selected_gameround=gameround,

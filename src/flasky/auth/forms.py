@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, IntegerField, StringField, PasswordField
+from wtforms import SubmitField, IntegerField, StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, ValidationError
 from src.pybet import schema
 from src.config import get_session
@@ -16,3 +16,9 @@ class RegisterForm(FlaskForm):
             schema.User.username == username.data))
         if user is not None:
             raise ValidationError('Please use a different username.')
+        
+class LoginForm(FlaskForm):
+    username = StringField('username', validators=[DataRequired()])
+    password = PasswordField('password', validators=[DataRequired()])
+    rememberMe = BooleanField()
+    submit = SubmitField('Login')
