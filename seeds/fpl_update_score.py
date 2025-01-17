@@ -12,20 +12,20 @@ def update_score_from_fpl(round: int):
     
     uow = unit_of_work.SqlAlchemyUnitOfWork()
         
-    with uow:
-        for fixture in data:
-            if fixture['finished']:
-                home_team_fpl_id = fixture['team_h']
-                away_team_fpl_id = fixture['team_a']
-                home_team_code = get_team_code_by_fpl_id(home_team_fpl_id)
-                away_team_code = get_team_code_by_fpl_id(away_team_fpl_id)
-                home_team_id = queries.get_team_id_by_name(home_team_code, uow)
-                away_team_id = queries.get_team_id_by_name(away_team_code, uow)
-                home_team_score = fixture['team_h_score']
-                away_team_score = fixture['team_a_score']
-                match_id = queries.find_match_id(round, home_team_id, away_team_id, uow)
-                
-                if match_id:
+    for fixture in data:
+        if fixture['finished']:
+            home_team_fpl_id = fixture['team_h']
+            away_team_fpl_id = fixture['team_a']
+            home_team_code = get_team_code_by_fpl_id(home_team_fpl_id)
+            away_team_code = get_team_code_by_fpl_id(away_team_fpl_id)
+            home_team_id = queries.get_team_id_by_name(home_team_code, uow)
+            away_team_id = queries.get_team_id_by_name(away_team_code, uow)
+            home_team_score = fixture['team_h_score']
+            away_team_score = fixture['team_a_score']
+            match_id = queries.find_match_id(round, home_team_id, away_team_id, uow)
+            
+            if match_id:
+                with uow:
                     message_bus.handle(
                         commands.UpdateMatchScoreCommand(
                             match_id=match_id,
