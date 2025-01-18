@@ -1,6 +1,6 @@
 from src.pybet import schema, unit_of_work, commands, events, message_bus
 
-import datetime
+from datetime import datetime, timezone
 
 class MatchAlreadyStarted(Exception):
     pass
@@ -29,7 +29,7 @@ def make_bet(command: commands.MakeBetCommand, uow: unit_of_work.UnitOfWork):
             raise MatchNotFound()
         
         if match.is_after_kickoff():
-            raise MatchAlreadyStarted(f"Now: {datetime.datetime.now().isoformat()}, kickoff: {match.kickoff.isoformat()}")
+            raise MatchAlreadyStarted(f"Now: {datetime.now(timezone.utc)}, kickoff: {match.kickoff}")
         
         bet = schema.Bet(
             user_id=command.user_id,

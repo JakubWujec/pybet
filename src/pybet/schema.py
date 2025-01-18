@@ -6,7 +6,7 @@ from sqlalchemy.sql.functions import GenericFunction
 from typing import List, Dict, Optional
 from werkzeug.security import generate_password_hash, check_password_hash
 import enum
-import datetime
+from datetime import datetime, timezone
 
 Base = declarative_base()
 metadata = Base.metadata
@@ -134,11 +134,11 @@ class Match(Base):
     gameround: Mapped[int] = mapped_column(Integer, nullable=False)
     home_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
     away_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
-    kickoff: Mapped[datetime.datetime] = mapped_column(
-        DateTime(timezone=True), 
+    kickoff: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
         server_default=func.now(),
-        default=datetime.datetime.now(datetime.timezone.utc),
-        nullable=False
+        default=datetime.now(timezone.utc),
+        nullable=False,
     )
     bets: Mapped[Dict[int, "Bet"]] = relationship(
         "Bet",  # Target class
@@ -170,8 +170,8 @@ class Match(Base):
         # not flushed
         if self.kickoff is None:
             return False
-        
-        return datetime.datetime.now() >= self.kickoff
+        kickoff = self.kickoff.replace(tzinfo=timezone.utc)
+        return datetime.now(timezone.utc) >= kickoff
     
     def __str__(self):
         if self.away_team is not None and self.home_team is not None:

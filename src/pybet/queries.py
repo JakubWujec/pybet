@@ -1,6 +1,6 @@
 from src.pybet.unit_of_work import SqlAlchemyUnitOfWork
 from sqlalchemy.sql import text
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List
 
 def mybets(user_id: int, gameround: int, uow: SqlAlchemyUnitOfWork):
@@ -67,15 +67,19 @@ def get_active_gameround_by_date(current_timestamp: datetime, uow: SqlAlchemyUni
         return result
 
 def get_next_gameround(uow: SqlAlchemyUnitOfWork) -> int | None:
+    now = datetime.now(timezone.utc)
     with uow:
         result = uow.session.execute(text(
-            'SELECT MIN(gameround) as gameround'
-            ' FROM matches'
-            ' WHERE gameround NOT IN'
-            ' (SELECT DISTINCT gameround'
-            ' FROM matches'
-            ' where kickoff <= CURRENT_TIMESTAMP)'
-        )).scalar()
+        '''
+            SELECT MIN(gameround) as gameround
+            FROM matches
+            WHERE gameround NOT IN (
+                SELECT DISTINCT gameround
+                FROM matches
+                WHERE kickoff <= :current_timestamp
+        )
+        '''
+        ), dict(current_timestamp=now.strftime("%Y-%m-%d %H:%M:%S.%f"))).scalar()
         return result
     
 def get_available_gamerounds(uow: SqlAlchemyUnitOfWork) -> List[int]:
