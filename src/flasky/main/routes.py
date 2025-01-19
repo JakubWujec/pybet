@@ -10,4 +10,5 @@ def index():
     username = None
     if not current_user.is_anonymous:
         username = user.username
-    return render_template('index.html', title='Home', username=username )
+    #return render_template('index.html', title='Home', username=username )
+    return render_template('homepage.html', title='Home', username=username )
