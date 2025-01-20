@@ -1,23 +1,36 @@
 from src.pybet import commands, events, unit_of_work, handlers
-from typing import Dict, List, Type, Callable, Union
+from typing import Dict, List, Type, Callable, Union, TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from src.pybet import unit_of_work
+
 
 Message = Union[events.Event, commands.Command]
 
-def handle(message: Message, uow: unit_of_work.UnitOfWork):
-    if isinstance(message, commands.Command):
-        handle_command(message, uow)
+def handle(message: Message, uow: "unit_of_work.UnitOfWork"):
+    queue = [message]
+    while queue:
+        _message = queue.pop()
         
-    if isinstance(message, events.Event):
-        handle_event(message, uow)
+        if isinstance(_message, commands.Command):
+            handle_command(_message, queue, uow)
+        elif isinstance(_message, events.Event):
+            handle_event(_message, queue, uow)
+        else:
+            raise Exception(f'{message} was not an Event or Command')
+           
     
 
-def handle_event(event: events.Event, uow: unit_of_work.UnitOfWork):
+def handle_event(event: events.Event, queue: List[Message], uow: "unit_of_work.UnitOfWork"):
     for handler in EVENT_HANDLERS[type(event)]:
-        handler(event, uow) 
+        handler(event, uow)
+        queue.extend(uow.collect_new_events()) 
 
-def handle_command(command: commands.Command, uow: unit_of_work.UnitOfWork):
+def handle_command(command: commands.Command, queue: List[Message], uow: "unit_of_work.UnitOfWork"):
     handler = COMMAND_HANDLERS[type(command)]
     handler(command, uow)
+    queue.extend(uow.collect_new_events())
 
 COMMAND_HANDLERS: Dict[Type[events.Event], Callable] = {
     commands.CreateMatchCommand: handlers.create_match,

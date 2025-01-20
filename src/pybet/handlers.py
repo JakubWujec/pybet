@@ -55,12 +55,6 @@ def update_match_score(command: commands.UpdateMatchScoreCommand, uow: unit_of_w
             return match.id
         except Exception as ex:
             print(f"ERROR {ex}")
-        finally:
-            for event in match.events:
-                message_bus.handle(
-                    event,
-                    uow
-                )
      
 def update_bet_points_for_match(event: events.MatchScoreUpdated, uow: unit_of_work.UnitOfWork):
     with uow:

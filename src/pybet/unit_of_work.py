@@ -1,7 +1,6 @@
 from sqlalchemy.orm.session import Session, sessionmaker
 from src.pybet.repository import SqlMatchRepository, MatchRepository
 import abc 
-from sqlalchemy import create_engine
 from src import config
 
 class UnitOfWork(abc.ABC):
@@ -12,6 +11,11 @@ class UnitOfWork(abc.ABC):
     
     def __exit__(self, *args):
         self.rollback()
+                
+    def collect_new_events(self):
+        for match in self.matches.seen:
+            while match.events:
+                yield match.events.pop(0)
         
     @abc.abstractmethod
     def commit(self):
