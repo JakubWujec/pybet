@@ -1,5 +1,5 @@
 import requests
-from src.pybet import message_bus, commands, queries, unit_of_work
+from src.pybet import message_bus, commands, queries, unit_of_work, schema
 from seeds.fpl_data import get_team_code_by_fpl_id
 import sys
 
@@ -9,20 +9,29 @@ def update_score_from_fpl(round: int):
     URL = f"https://fantasy.premierleague.com/api/fixtures/?event={round}"
     r = requests.get(url = URL)
     data = r.json()    
-    
+    team_id_by_name = {}
+    match_id_by_home_team_id = {}
     uow = unit_of_work.SqlAlchemyUnitOfWork()
-        
+    with uow:
+        team_rows = uow.session.query(schema.Team).all()
+        for row in team_rows:
+            team_id_by_name[row.name] = row.id
+        match_rows = uow.session.query(schema.Match).filter_by(gameround=round).all()
+        for row in match_rows:
+            match_id_by_home_team_id[row.home_team_id] = row.id
+
+
     for fixture in data:
         if fixture['finished']:
             home_team_fpl_id = fixture['team_h']
             away_team_fpl_id = fixture['team_a']
             home_team_code = get_team_code_by_fpl_id(home_team_fpl_id)
             away_team_code = get_team_code_by_fpl_id(away_team_fpl_id)
-            home_team_id = queries.get_team_id_by_name(home_team_code, uow)
-            away_team_id = queries.get_team_id_by_name(away_team_code, uow)
+            home_team_id = team_id_by_name[home_team_code]
+            # away_team_id = team_id_by_name[away_team_code]
             home_team_score = fixture['team_h_score']
             away_team_score = fixture['team_a_score']
-            match_id = queries.find_match_id(round, home_team_id, away_team_id, uow)
+            match_id = match_id_by_home_team_id[home_team_id]
             
             if match_id:
                 message_bus.handle(
