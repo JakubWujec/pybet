@@ -21,6 +21,13 @@ def points():
 @bp.route("/points/<user_id>/rounds/<round>", methods=["GET"])
 def user_round_points_view(user_id: int, round: int):
     uow = unit_of_work.SqlAlchemyUnitOfWork()
+    round = int(round)
+    user_id = int(user_id)
+    active_gameround = queries.get_active_gameround_by_date(datetime.datetime.now(), uow)
+    
+    if current_user.id != user_id and round > active_gameround:
+        return redirect(url_for("points.user_round_points_view", user_id=user_id, round=active_gameround))
+    
     with uow:
         user: schema.User = uow.session.query(schema.User).get(user_id)
         if user is None: 
