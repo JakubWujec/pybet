@@ -7,6 +7,7 @@ from typing import List, Dict, Optional
 from werkzeug.security import generate_password_hash, check_password_hash
 import enum
 from datetime import datetime, timezone
+from src.pybet import events
 
 Base = declarative_base()
 metadata = Base.metadata
@@ -146,6 +147,7 @@ class Match(Base):
         collection_class=attribute_mapped_collection("user_id"),
         cascade="all, delete-orphan",
     )
+    events: List["events.Event"] = []
 
     home_team: Mapped["Team"] = relationship(
         "Team", foreign_keys=[home_team_id]
@@ -164,6 +166,16 @@ class Match(Base):
             self.bets[bet.user_id].away_team_score = bet.away_team_score
         else:
             self.bets[bet.user_id] = bet
+
+    def update_score(self, home_team_score: int, away_team_score: int):
+        self.home_team_score = home_team_score
+        self.away_team_score = away_team_score
+        
+        self.events.append(
+            events.MatchScoreUpdated(
+                self.id
+            )
+        )
 
 
     def is_after_kickoff(self) -> bool:

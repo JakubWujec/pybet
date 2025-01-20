@@ -47,16 +47,20 @@ def update_match_score(command: commands.UpdateMatchScoreCommand, uow: unit_of_w
     with uow:
         try:
             match = uow.matches.get(command.match_id)  
-            match.home_team_score = command.home_team_score
-            match.away_team_score = command.away_team_score
-            uow.commit()
-            
-            return match.id
-        finally:
-            message_bus.handle(
-                events.MatchScoreUpdated(match_id=match.id),
-                uow
+            match.update_score(
+                home_team_score=command.home_team_score,
+                away_team_score=command.away_team_score
             )
+            uow.commit()
+            return match.id
+        except Exception as ex:
+            print(f"ERROR {ex}")
+        finally:
+            for event in match.events:
+                message_bus.handle(
+                    event,
+                    uow
+                )
      
 def update_bet_points_for_match(event: events.MatchScoreUpdated, uow: unit_of_work.UnitOfWork):
     with uow:
