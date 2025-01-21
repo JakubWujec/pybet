@@ -44,7 +44,6 @@ def make_bet(command: commands.MakeBetCommand, uow: unit_of_work.UnitOfWork):
 
 
 def update_match_score(command: commands.UpdateMatchScoreCommand, uow: unit_of_work.UnitOfWork):
-    raise Exception("ERRR")
     match = uow.matches.get(command.match_id)  
     match.update_score(
         home_team_score=command.home_team_score,
