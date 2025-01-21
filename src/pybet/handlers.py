@@ -44,13 +44,14 @@ def make_bet(command: commands.MakeBetCommand, uow: unit_of_work.UnitOfWork):
 
 
 def update_match_score(command: commands.UpdateMatchScoreCommand, uow: unit_of_work.UnitOfWork):
-    match = uow.matches.get(command.match_id)  
-    match.update_score(
-        home_team_score=command.home_team_score,
-        away_team_score=command.away_team_score
-    )
-    uow.commit()
-    return match.id
+    with uow:
+        match = uow.matches.get(command.match_id)  
+        match.update_score(
+            home_team_score=command.home_team_score,
+            away_team_score=command.away_team_score
+        )
+        uow.commit()
+        return match.id
 
      
 def update_bet_points_for_match(event: events.MatchScoreUpdated, uow: unit_of_work.UnitOfWork):
