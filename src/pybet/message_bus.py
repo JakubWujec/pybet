@@ -1,10 +1,11 @@
 from src.pybet import commands, events, unit_of_work, handlers
 from typing import Dict, List, Type, Callable, Union, TYPE_CHECKING
-
+import logging
 
 if TYPE_CHECKING:
     from src.pybet import unit_of_work
-
+    
+logger = logging.getLogger(__name__)
 
 Message = Union[events.Event, commands.Command]
 
@@ -28,9 +29,14 @@ def handle_event(event: events.Event, queue: List[Message], uow: "unit_of_work.U
         queue.extend(uow.collect_new_events()) 
 
 def handle_command(command: commands.Command, queue: List[Message], uow: "unit_of_work.UnitOfWork"):
-    handler = COMMAND_HANDLERS[type(command)]
-    handler(command, uow)
-    queue.extend(uow.collect_new_events())
+    logger.debug("handling command %s", command)
+    try: 
+        handler = COMMAND_HANDLERS[type(command)]
+        handler(command, uow)
+        queue.extend(uow.collect_new_events())
+    except Exception:
+        logger.exception("Exception handling command %s", command)
+        raise
 
 COMMAND_HANDLERS: Dict[Type[events.Event], Callable] = {
     commands.CreateMatchCommand: handlers.create_match,
