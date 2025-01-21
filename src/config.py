@@ -49,11 +49,11 @@ def get_session():
 # 'max_overflow': # No additional temporary connections
 # 'pool_timeout': 10,     # Wait up to 10 seconds for a connection
 # 'pool_recycle': 3600     # Recycle connections every hour (to avoid stale connections)
-
+# 'pool_preping' 
 def get_db_engine():
     global _db_engine
     if _db_engine is None:
-        _db_engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, pool_size=4, max_overflow=2, pool_timeout=5, pool_recycle=20)
+        _db_engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, pool_size=4, max_overflow=2, pool_timeout=5, pool_recycle=3600, pool_pre_ping=True)
     return _db_engine
 
 @contextmanager
