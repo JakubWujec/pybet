@@ -1,11 +1,11 @@
-from flask import Flask, request, render_template, flash, redirect
+from flask import Flask, url_for
 from src.pybet import schema
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.menu import MenuLink
 from flask_login import LoginManager
 from src.flasky.admin import views as admin_views
 from src import config
-
 
 login = LoginManager()
 
@@ -31,6 +31,7 @@ def create_app(config_class=config.Config):
         admin.add_view(admin_views.UpdateScoreView(schema.Match, session, name="Update Score", endpoint="update_scores"))
         admin.add_view(admin_views.PybetAdminModelView(schema.User, session))
         admin.add_view(admin_views.PybetAdminModelView(schema.Bet, session))
+        admin.add_link(MenuLink(name='Back to App', category='', url="/"))
 
 
     from src.flasky.main import bp as main_bp
@@ -51,6 +52,8 @@ def create_app(config_class=config.Config):
     from src.flasky.generic.errors import page_not_found, internal_error
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, internal_error)
+    
+  
     
     return app
 
