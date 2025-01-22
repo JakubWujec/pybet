@@ -4,15 +4,18 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.menu import MenuLink
 from flask_login import LoginManager
+from flask_sqlalchemy import SQLAlchemy
 from src.flasky.admin import views as admin_views
 from src import config
 
 login = LoginManager()
+db = SQLAlchemy()
 
 def create_app(config_class=config.Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
+    db.init_app(app)
     login.init_app(app)
     login.login_view = 'auth.login_view'
     login.login_message = "Please log in to access this page."
@@ -21,18 +24,16 @@ def create_app(config_class=config.Config):
     engine = config.get_db_engine()
     schema.metadata.create_all(engine)
     
-    with config.session_scope() as session:
-        admin = Admin(
-            app, 
-            name='pybet',
-        )
-        admin.add_view(admin_views.PybetAdminModelView(schema.Team, session))
-        admin.add_view(admin_views.AdminMatchView(schema.Match, session, name="Manage Matches",endpoint="manage_matches"))
-        admin.add_view(admin_views.UpdateScoreView(schema.Match, session, name="Update Score", endpoint="update_scores"))
-        admin.add_view(admin_views.PybetAdminModelView(schema.User, session))
-        admin.add_view(admin_views.PybetAdminModelView(schema.Bet, session))
-        admin.add_link(MenuLink(name='Back to App', category='', url="/"))
-
+    admin = Admin(
+        app, 
+        name='pybet',
+    )
+    admin.add_view(admin_views.PybetAdminModelView(schema.Team, db.session))
+    admin.add_view(admin_views.AdminMatchView(schema.Match, db.session, name="Manage Matches",endpoint="manage_matches"))
+    admin.add_view(admin_views.UpdateScoreView(schema.Match, db.session, name="Update Score", endpoint="update_scores"))
+    admin.add_view(admin_views.PybetAdminModelView(schema.User, db.session))
+    admin.add_view(admin_views.PybetAdminModelView(schema.Bet, db.session))
+    admin.add_link(MenuLink(name='Back to App', category='', url="/"))
 
     from src.flasky.main import bp as main_bp
     app.register_blueprint(main_bp)
