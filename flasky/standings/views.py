@@ -34,8 +34,8 @@ def standings_view():
         selected_gameround=gameround,
         standings=standings,
         count=count,
-        next_url= url_for(endpoint="standings.standings_view", page=pagination["next_page"]) if pagination["has_next"] else None,
-        prev_url= url_for(endpoint="standings.standings_view", page=pagination["prev_page"]) if pagination["has_prev"] else None
+        next_url= url_for(endpoint="standings.standings_view", gameround=gameround, page=pagination["next_page"]) if pagination["has_next"] else None,
+        prev_url= url_for(endpoint="standings.standings_view", gameround=gameround, page=pagination["prev_page"]) if pagination["has_prev"] else None
     )
     
     
