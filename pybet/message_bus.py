@@ -1,9 +1,9 @@
-from src.pybet import commands, events, unit_of_work, handlers
+from pybet import commands, events, unit_of_work, handlers
 from typing import Dict, List, Type, Callable, Union, TYPE_CHECKING
 import logging
 
 if TYPE_CHECKING:
-    from src.pybet import unit_of_work
+    from pybet import unit_of_work
     
 logger = logging.getLogger(__name__)
 

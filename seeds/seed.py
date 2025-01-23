@@ -1,6 +1,6 @@
-from src.config import get_session
-from src.pybet import schema
-from src import config
+from config import get_session, session_scope
+from pybet import schema
+
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 import datetime
@@ -50,6 +50,6 @@ def seed_teams_and_matches(session):
 
     
 if __name__ == "__main__":    
-    with config.session_scope() as session:
+    with session_scope() as session:
         seed_teams_and_matches(session)
         

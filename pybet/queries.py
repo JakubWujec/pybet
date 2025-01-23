@@ -1,4 +1,4 @@
-from src.pybet.unit_of_work import SqlAlchemyUnitOfWork
+from pybet.unit_of_work import SqlAlchemyUnitOfWork
 from sqlalchemy.sql import text
 from datetime import datetime, timezone
 from typing import List

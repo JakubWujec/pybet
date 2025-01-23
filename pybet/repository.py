@@ -1,5 +1,5 @@
 import abc
-from src.pybet import schema
+from pybet import schema
 from typing import List, Set
 
 class MatchRepository(abc.ABC):

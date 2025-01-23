@@ -1,4 +1,4 @@
-from src.flasky.standings.views import paginate
+from flasky.standings.views import paginate
 
 def test_paginate_multiple_pages():
     result = paginate(page=2, per_page=10, total_count=35)

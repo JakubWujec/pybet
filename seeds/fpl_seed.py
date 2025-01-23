@@ -1,7 +1,7 @@
-from src.pybet import schema
+from pybet import schema
 from sqlalchemy.orm import Session
 from datetime import datetime
-from src import config
+from config import session_scope
 import requests
 
 def seed_teams_and_matches_from_fpl(session: Session):
@@ -44,6 +44,6 @@ def fromisoformat(date_str: str):
     return datetime.fromisoformat(date_str)
     
 if __name__ == "__main__":    
-    with config.session_scope() as session:
+    with session_scope() as session:
         seed_teams_and_matches_from_fpl(session)
         

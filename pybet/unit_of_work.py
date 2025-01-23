@@ -1,7 +1,7 @@
 from sqlalchemy.orm.session import Session, sessionmaker
-from src.pybet.repository import SqlMatchRepository, MatchRepository
+from pybet.repository import SqlMatchRepository, MatchRepository
 import abc 
-from src import config
+from config import get_session_factory
 
 class UnitOfWork(abc.ABC):
     matches: MatchRepository
@@ -29,7 +29,7 @@ class UnitOfWork(abc.ABC):
 class SqlAlchemyUnitOfWork(UnitOfWork):
     def __init__(self, session_factory: sessionmaker = None):
         if session_factory is None:
-            session_factory = config.get_session_factory()
+            session_factory = get_session_factory()
         self.session_factory = session_factory
     
     def __enter__(self):

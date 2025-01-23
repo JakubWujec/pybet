@@ -2,6 +2,6 @@ from flask import Blueprint
 
 bp = Blueprint('points', __name__)
 
-from src.flasky.points import views
+from flasky.points import views
 
 

@@ -1,4 +1,4 @@
-from src.pybet import schema, unit_of_work
+from pybet import schema, unit_of_work
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import text
 

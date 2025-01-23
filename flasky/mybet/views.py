@@ -1,12 +1,12 @@
-from src.flasky.mybet import bp
-from src.pybet import schema, unit_of_work, queries
-from src.pybet import message_bus, commands
-from src.pybet.handlers import MatchAlreadyStarted
+from flasky.mybet import bp
+from pybet import schema, unit_of_work, queries
+from pybet import message_bus, commands
+from pybet.handlers import MatchAlreadyStarted
 from flask import request, render_template, flash, redirect
 from flask_login import login_user, logout_user, current_user, login_required
 import datetime
-from src.config import get_session
-from src.flasky.mybet import forms
+from config import get_session
+from flasky.mybet import forms
 
 @bp.route("/my-bets", methods=["GET", "POST"])
 @login_required

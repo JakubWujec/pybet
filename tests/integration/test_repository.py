@@ -1,5 +1,5 @@
-from src.pybet import repository
-from src.pybet import schema
+from pybet import repository
+from pybet import schema
 from sqlalchemy.sql import text
 import pytest
 

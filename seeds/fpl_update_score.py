@@ -1,5 +1,5 @@
 import requests
-from src.pybet import message_bus, commands, queries, unit_of_work, schema
+from pybet import message_bus, commands, queries, unit_of_work, schema
 from seeds.fpl_data import get_team_code_by_fpl_id
 import sys
 

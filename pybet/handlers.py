@@ -1,4 +1,4 @@
-from src.pybet import schema, unit_of_work, commands, events, message_bus
+from pybet import schema, unit_of_work, commands, events, message_bus
 
 from datetime import datetime, timezone
 

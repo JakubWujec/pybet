@@ -1,4 +1,4 @@
-from src.pybet import repository, schema, unit_of_work, commands, events, handlers, message_bus
+from pybet import repository, schema, unit_of_work, commands, events, handlers, message_bus
 import pytest
 import datetime 
 

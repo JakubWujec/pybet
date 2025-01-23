@@ -2,7 +2,7 @@ import flask_login as login
 from flask import request, flash
 from flask_admin.contrib.sqla import ModelView
 from flask import redirect, url_for
-from src.pybet import commands, message_bus, unit_of_work, events
+from pybet import commands, message_bus, unit_of_work, events
 
 class PybetAdminModelView(ModelView):
     def is_accessible(self):

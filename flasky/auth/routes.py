@@ -1,17 +1,17 @@
-from src.flasky.auth import bp
+from flasky.auth import bp
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
-from src.pybet import schema
-from src.flasky.auth.forms import LoginForm, RegisterForm
+from pybet import schema
+from flasky.auth.forms import LoginForm, RegisterForm
 from flask import redirect, render_template, flash, url_for
-from src import config
-from src.pybet import unit_of_work
+from config import get_session_factory
+from pybet import unit_of_work
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login_view():
     form = LoginForm()
     if form.validate_on_submit():
-        uow = unit_of_work.SqlAlchemyUnitOfWork(config.get_session_factory())
+        uow = unit_of_work.SqlAlchemyUnitOfWork(get_session_factory())
         with uow:
             user = uow.session.scalar(
                 sa.select(schema.User).where(schema.User.username == form.username.data))
@@ -30,7 +30,7 @@ def register_view():
     form = RegisterForm()
     
     if form.validate_on_submit():
-        uow = unit_of_work.SqlAlchemyUnitOfWork(config.get_session_factory())
+        uow = unit_of_work.SqlAlchemyUnitOfWork(get_session_factory())
         
         with uow:
             user = schema.User(username = form.username.data)

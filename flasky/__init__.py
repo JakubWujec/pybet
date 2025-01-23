@@ -1,15 +1,15 @@
 from flask import Flask, url_for
-from src.pybet import schema
+from pybet import schema
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.menu import MenuLink
 from flask_login import LoginManager
-from src.flasky.admin import views as admin_views
-from src import config
+from flasky.admin import views as admin_views
+from config import session_scope, get_db_engine, Config
 
 login = LoginManager()
 
-def create_app(config_class=config.Config):
+def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
@@ -18,10 +18,10 @@ def create_app(config_class=config.Config):
     login.login_message = "Please log in to access this page."
     login.login_message_category = "warning"
     
-    engine = config.get_db_engine()
+    engine = get_db_engine()
     schema.metadata.create_all(engine)
     
-    with config.session_scope() as session:
+    with session_scope() as session:
         admin = Admin(
             app, 
             name='pybet',
@@ -34,22 +34,22 @@ def create_app(config_class=config.Config):
         admin.add_link(MenuLink(name='Back to App', category='', url="/"))
 
 
-    from src.flasky.main import bp as main_bp
+    from flasky.main import bp as main_bp
     app.register_blueprint(main_bp)
     
-    from src.flasky.auth import bp as auth_bp
+    from flasky.auth import bp as auth_bp
     app.register_blueprint(auth_bp)
     
-    from src.flasky.mybet import bp as mybet_bp
+    from flasky.mybet import bp as mybet_bp
     app.register_blueprint(mybet_bp)
     
-    from src.flasky.standings import bp as standings_bp
+    from flasky.standings import bp as standings_bp
     app.register_blueprint(standings_bp)
     
-    from src.flasky.points import bp as points_bp
+    from flasky.points import bp as points_bp
     app.register_blueprint(points_bp)
     
-    from src.flasky.generic.errors import page_not_found, internal_error
+    from flasky.generic.errors import page_not_found, internal_error
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, internal_error)
     
@@ -59,7 +59,7 @@ def create_app(config_class=config.Config):
 
 @login.user_loader
 def load_user(id):
-    with config.session_scope() as session:
+    with session_scope() as session:
         u = session.get(schema.User, int(id))
         if u is not None:
             return schema.User(id=u.id, username=u.username, password_hash=u.password_hash, role=u.role)

@@ -1,4 +1,4 @@
-from src.flasky import create_app
+from flasky import create_app
 import os 
 app = create_app()
 

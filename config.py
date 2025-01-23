@@ -1,15 +1,12 @@
 import os 
 from dotenv import load_dotenv
-from sqlalchemy.orm.session import Session, sessionmaker
+from sqlalchemy.orm.session import sessionmaker
 from sqlalchemy import create_engine
-from src.pybet import schema
 from contextlib import contextmanager
-from sqlalchemy.pool import NullPool
 
-basedir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+basedir = os.path.abspath(os.path.dirname(__file__))
 chosen_env = os.environ.get('FLASK_ENV_FILE', '.env')
 load_dotenv(os.path.join(basedir, chosen_env))
-
 # Private variables to hold the singleton instance
 _session_factory = None  
 _db_engine = None

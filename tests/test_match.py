@@ -1,4 +1,4 @@
-from src.pybet import schema, unit_of_work
+from pybet import schema, unit_of_work
 import pytest
 from sqlalchemy import exc
 

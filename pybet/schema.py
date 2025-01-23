@@ -7,7 +7,7 @@ from typing import List, Dict, Optional
 from werkzeug.security import generate_password_hash, check_password_hash
 import enum
 from datetime import datetime, timezone
-from src.pybet import events
+from pybet import events
 
 Base = declarative_base()
 metadata = Base.metadata

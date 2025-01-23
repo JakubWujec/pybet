@@ -1,5 +1,5 @@
-from src.pybet import queries
-from src.pybet import message_bus, unit_of_work, commands, schema
+from pybet import queries
+from pybet import message_bus, unit_of_work, commands, schema
 from sqlalchemy.sql import text
 import datetime 
 import pytest

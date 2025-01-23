@@ -1,4 +1,4 @@
-from src.flasky.mybet.forms import MatchBetForm
+from flasky.mybet.forms import MatchBetForm
 from werkzeug.datastructures import MultiDict
 
 def test_negative_score():

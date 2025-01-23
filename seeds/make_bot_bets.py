@@ -1,6 +1,6 @@
 import sys
 import random
-from src.pybet import unit_of_work, message_bus, commands, schema
+from pybet import unit_of_work, message_bus, commands, schema
 
 def make_bot_bets(round: int):
     uow = unit_of_work.SqlAlchemyUnitOfWork()

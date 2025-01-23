@@ -1,11 +1,11 @@
-from src.pybet import schema
-from src import config
+from pybet import schema
+from config import Config, session_scope
     
 def seed_admin_user(session):
     user = schema.User(
-        username= config.Config.ADMIN_LOGIN
+        username= Config.ADMIN_LOGIN
     )
-    user.set_password(config.Config.ADMIN_PASSWORD)
+    user.set_password(Config.ADMIN_PASSWORD)
     user.role = schema.Role.ADMIN
     
     session.add(user)
@@ -21,7 +21,7 @@ def seed_test_user(session):
     session.commit()
     
 if __name__ == "__main__":    
-    with config.session_scope() as session:
+    with session_scope() as session:
         seed_test_user(session)
         seed_admin_user(session)
         

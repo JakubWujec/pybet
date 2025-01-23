@@ -1,5 +1,5 @@
-from src.pybet import unit_of_work
-from src.pybet import schema
+from pybet import unit_of_work
+from pybet import schema
 from sqlalchemy.sql import text
 from sqlalchemy.engine import CursorResult
 from sqlalchemy.orm.session import Session

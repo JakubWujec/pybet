@@ -2,4 +2,4 @@ from flask import Blueprint
 
 bp = Blueprint('main', __name__, template_folder="../templates")
 
-from src.flasky.main import routes
+from flasky.main import routes

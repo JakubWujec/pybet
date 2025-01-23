@@ -1,7 +1,7 @@
-from src.flasky.points import bp
+from flasky.points import bp
 from flask_login import login_user, logout_user, current_user, login_required
 from flask import request, render_template, flash, url_for, redirect, abort
-from src.pybet import unit_of_work, queries, schema
+from pybet import unit_of_work, queries, schema
 import datetime
 
 @bp.route('/points', methods=['GET'])

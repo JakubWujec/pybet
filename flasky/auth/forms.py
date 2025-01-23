@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, IntegerField, StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, ValidationError
-from src.pybet import schema
-from src.config import get_session
+from pybet import schema
+from config import get_session
 import sqlalchemy as sa
 
 class RegisterForm(FlaskForm):

@@ -1,5 +1,5 @@
-from src.flasky.standings import bp
-from src.pybet import unit_of_work, queries
+from flasky.standings import bp
+from pybet import unit_of_work, queries
 from flask import render_template, request, url_for, redirect
 from datetime import datetime
 
