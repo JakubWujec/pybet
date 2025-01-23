@@ -7,7 +7,7 @@ from pybet.queries import get_active_gameround_by_date
 if __name__ == "__main__":    
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     current_gameround = get_active_gameround_by_date(current_timestamp=datetime.now(), uow=uow)
-    print("CURRENT GAMEROUND: current_gameround")
+    print(f"CURRENT GAMEROUND: {current_gameround}")
     update_score_from_fpl(current_gameround)
     make_bot_bets(current_gameround + 1)
         
