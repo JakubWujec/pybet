@@ -178,8 +178,23 @@ class TestStandingsQuery:
     def test_first_user_has_more_point_than_second(self):
         assert self.standings[0]['points'] > self.standings[1]['points']
         
-    
+class TestGameroundQueries:
+    @pytest.fixture(autouse=True)
+    def setup(self, in_memory_sqlite_session_factory):
+        self.uow = unit_of_work.SqlAlchemyUnitOfWork(in_memory_sqlite_session_factory)
+        self.today = datetime.datetime.now()
         
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=1, away_team_id=2, gameround=1, kickoff=self.today - datetime.timedelta(days=7)), self.uow)
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=1, away_team_id=2, gameround=2, kickoff=self.today + datetime.timedelta(days=7)), self.uow)
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=1, away_team_id=2, gameround=3, kickoff=self.today + datetime.timedelta(days=14)), self.uow)
+        message_bus.handle(commands.CreateMatchCommand(home_team_id=1, away_team_id=2, gameround=3, kickoff=self.today + datetime.timedelta(days=14)), self.uow)
+
+    def test_get_available_gamerounds_query(self):
+        gamerounds = queries.get_available_gamerounds(uow=self.uow)
         
+        assert gamerounds == [1,2,3]
         
+    def test_get_next_gameround_query(self):
+        gameround = queries.get_next_gameround(uow=self.uow)
         
+        assert gameround == 2

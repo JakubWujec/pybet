@@ -141,32 +141,3 @@ def standings_query(round: int, page:int, per_page:int, uow: SqlAlchemyUnitOfWor
         "standings": standings,
         "count": count,
     }
-    
-    
-def get_team_id_by_name(team_name: int, uow: SqlAlchemyUnitOfWork):
-    with uow:
-        team_id = uow.session.execute(text(
-            '''
-                SELECT id
-                FROM teams
-                WHERE name=:team_name
-            '''
-        ), dict(team_name=team_name)).first()
-        return team_id[0]
-    
-def find_match_id(gameround:int, home_team_id: int, away_team_id: int, uow: SqlAlchemyUnitOfWork):
-    with uow:
-        match_id = uow.session.execute(text(
-            '''
-                SELECT id
-                FROM matches
-                WHERE gameround = :gameround AND home_team_id = :home_team_id AND away_team_id = :away_team_id
-            '''
-        ), dict(gameround=gameround, home_team_id=home_team_id, away_team_id=away_team_id)).first()
-        
-        if match_id is None:
-            return None
-        
-        return match_id[0]
-    
-    
