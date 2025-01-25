@@ -1,2 +1,4 @@
 -r prod.txt
 pytest
+coverage==7.6.10
+pytest-cov==6.0.0
