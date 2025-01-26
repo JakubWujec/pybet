@@ -88,23 +88,8 @@ class Bet(Base):
         back_populates="bets" 
     )
     
-
-    def calculate_points(self, home_team_score: int, away_team_score: int):
-        POINTS_FOR_WINNER = 2
-        POINTS_FOR_DRAW = 3
-        POINTS_FOR_EXACT_SCORE = 5
-        
-        match_score_diff = home_team_score - away_team_score
-        bet_score_diff = self.home_team_score - self.away_team_score
-        
-        if self.home_team_score == home_team_score and away_team_score == self.away_team_score:
-            return POINTS_FOR_EXACT_SCORE
-        if bet_score_diff == 0 and match_score_diff == 0:
-            return POINTS_FOR_DRAW
-        if match_score_diff * bet_score_diff > 0 or (match_score_diff == 0 and bet_score_diff == 0):
-            return POINTS_FOR_WINNER
-   
-        return 0
+    def update_points(self, points: int):
+        self.points = points
         
 class Team(Base):
     __tablename__ = "teams"

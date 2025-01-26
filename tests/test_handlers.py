@@ -1,4 +1,5 @@
 from pybet import repository, schema, unit_of_work, commands, events, handlers, message_bus
+from config import Config
 import pytest
 import datetime 
 
@@ -155,4 +156,21 @@ def test_update_bet_points_service_when_exact_score():
         
     match = uow.matches.get(1)
     
-    assert match.bets[1].points == 5
+    assert match.bets[1].points == Config.POINTS_FOR_EXACT_SCORE
+
+def test_update_bet_points_service_when_draw():
+    uow = FakeUnitOfWork()
+
+    
+    history = [
+        commands.CreateMatchCommand(home_team_id=2, away_team_id=3, gameround=1, kickoff=tommorow),
+        commands.MakeBetCommand(user_id=1, match_id=1, home_team_score=1, away_team_score=1),
+        commands.UpdateMatchScoreCommand(match_id=1, home_team_score=0, away_team_score=0)
+    ]
+    
+    for cmd in history:
+        message_bus.handle(cmd, uow)
+        
+    match = uow.matches.get(1)
+    
+    assert match.bets[1].points == Config.POINTS_FOR_DRAW

@@ -12,6 +12,11 @@ _session_factory = None
 _db_engine = None
 
 class Config:
+    POINTS_FOR_EXACT_SCORE = os.environ.get('POINTS_FOR_EXACT_SCORE') or 5
+    POINTS_FOR_DRAW = os.environ.get('POINTS_FOR_DRAW') or 3
+    POINTS_FOR_WINNER = os.environ.get('POINTS_FOR_WINNER') or 2
+    POINTS_FOR_MISS = os.environ.get('POINTS_FOR_WINNER') or 0
+    
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI') or \
         'sqlite:///' + os.path.join(basedir, 'dev.db')

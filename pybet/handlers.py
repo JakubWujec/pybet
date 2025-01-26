@@ -1,4 +1,4 @@
-from pybet import schema, unit_of_work, commands, events, message_bus
+from pybet import schema, unit_of_work, commands, events, message_bus, services
 
 from datetime import datetime, timezone
 
@@ -42,7 +42,6 @@ def make_bet(command: commands.MakeBetCommand, uow: unit_of_work.UnitOfWork):
     
         return match.id
 
-
 def update_match_score(command: commands.UpdateMatchScoreCommand, uow: unit_of_work.UnitOfWork):
     with uow:
         match = uow.matches.get(command.match_id)  
@@ -53,10 +52,9 @@ def update_match_score(command: commands.UpdateMatchScoreCommand, uow: unit_of_w
         uow.commit()
         return match.id
 
-     
 def update_bet_points_for_match(event: events.MatchScoreUpdated, uow: unit_of_work.UnitOfWork):
     with uow:
         match = uow.matches.get(event.match_id)
         for bet in match.bets.values():
-            bet.points = bet.calculate_points(match.home_team_score, match.away_team_score)            
+            bet.points = services.calculate_points(bet.home_team_score, bet.away_team_score, match.home_team_score, match.away_team_score)            
         uow.commit()
