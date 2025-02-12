@@ -20,32 +20,25 @@ def mybets_view():
 
     if request.method == "GET":
         for match in matches:
-            bet = match.get("bet", dict())
-            if bet is None:
-                bet = dict()
+            bet = getattr(match, 'bet', dict())
             form.bets.append_entry({
                 "match_id": int(match["id"]),
                 "home_team_score": bet.get("home_team_score", 0), 
                 "away_team_score": bet.get("away_team_score", 0) 
             })
-  
-    if request.method == "POST":
-    
+    elif request.method == "POST":
         try:
             if form.validate_on_submit():
-                cmds = []
-                # Process bets
-                for bet in form.data["bets"]:
-                    cmds.append(commands.MakeBetCommand(
-                        user_id=current_user.id,
-                        match_id=bet['match_id'],
-                        home_team_score=bet['home_team_score'],
-                        away_team_score=bet['away_team_score'],
-                    ))
+                cmds = [commands.MakeBetCommand(
+                    user_id=current_user.id,
+                    match_id=bet['match_id'],
+                    home_team_score=bet['home_team_score'],
+                    away_team_score=bet['away_team_score'],
+                ) for bet in form.data["bets"]]
+                
                 with uow:
                     for message in cmds:
                         message_bus.handle(message, uow)
-                        
                 flash("Record was successfully save.", category="success")
             else:
                 flash("Something went wrong. Validate your input and try again.", category="danger")
