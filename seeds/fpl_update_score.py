@@ -15,7 +15,7 @@ def update_score_from_fpl(round: int):
         matches = uow.matches.get_gameround_matches(round)
             
         for _match in matches:
-            found_result = next((result for result in match_results if result.home_team_short_name == _match.home_team.name and result.away_team_short_name == _match.away_team.name), None)
+            found_result = next((result for result in match_results if result.home_team_short_name == _match.home_team.name and result.away_team_short_name == _match.away_team.name and result.finished == True), None)
             if found_result:
                 message_bus.handle(
                     commands.UpdateMatchScoreCommand(

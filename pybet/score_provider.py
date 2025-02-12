@@ -50,7 +50,7 @@ class FPLScoreProvider(ScoreProvider):
             away_team_short_name=self.FPL_ID_TO_NAME_MAPPING[fixture['team_a']],
             home_team_score=fixture['team_h_score'],
             away_team_score=fixture['team_a_score'],
-            finished=True
+            finished=fixture['finished']
         ) for fixture in data]
             
         return result
