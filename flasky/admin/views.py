@@ -31,7 +31,7 @@ class AdminMatchView(ModelView):
         'gameround'
     ]
     
-    column_filters=['gameround']
+    column_filters=['gameround', 'home_team', 'away_team']
     
   
 class UpdateScoreView(ModelView):    
@@ -53,7 +53,7 @@ class UpdateScoreView(ModelView):
         'away_team_score',
     ]
     
-    column_filters=['gameround']
+    column_filters=['gameround', 'home_team',  'away_team']
     
     def update_model(self, form, model):
         uow = unit_of_work.SqlAlchemyUnitOfWork(lambda: self.session)
