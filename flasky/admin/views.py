@@ -13,7 +13,7 @@ class PybetAdminModelView(ModelView):
         return redirect(url_for("auth.login_view"))
     
 
-class AdminMatchView(ModelView):
+class AdminMatchView(PybetAdminModelView):
     column_list = [
         'id',
         'home_team',
@@ -34,7 +34,7 @@ class AdminMatchView(ModelView):
     column_filters=['gameround', 'home_team', 'away_team']
     
   
-class UpdateScoreView(ModelView):    
+class UpdateScoreView(PybetAdminModelView):    
     can_delete = False
     can_create = False
     can_view_details = False
