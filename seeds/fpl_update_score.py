@@ -1,6 +1,5 @@
 from pybet import message_bus, commands, unit_of_work
 from pybet.score_provider import FPLScoreProvider
-from seeds.fpl_data import get_team_code_by_fpl_id
 import sys
 
 #>py -m seeds.fpl_update_score

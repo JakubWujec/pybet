@@ -8,6 +8,12 @@ import pytest
 def setup_match_and_bet(session):
     session.execute(
         text(
+            "INSERT INTO teams (id, name)"
+            " VALUES (1, 'ARS'), (2, 'CHE')"
+        )
+    )
+    session.execute(
+        text(
             "INSERT INTO matches (id, home_team_id, away_team_id, gameround)"
             " VALUES (1, 1, 2, 1)"
         )
@@ -26,7 +32,27 @@ def test_repository_can_retrieve_match(session, setup_match_and_bet):
     assert match is not None
     assert isinstance(match, schema.Match)
     assert match.kickoff is not None
-
+    
+def test_repository_retrieve_match_with_teams_loaded(session, setup_match_and_bet):
+    repo = repository.SqlMatchRepository(session)
+    match = repo.get(match_id=1)
+    
+    assert match.home_team is not None
+    assert match.away_team is not None
+    assert match.home_team.name == 'ARS'
+    assert match.away_team.name == 'CHE'
+    
+    
+def test_repository_retrieve_matches__with_teams_loaded(session, setup_match_and_bet):
+    repo = repository.SqlMatchRepository(session)
+    matches = repo.get_gameround_matches(gameround=1)
+    match = matches[0]
+    
+    assert match.home_team is not None
+    assert match.away_team is not None
+    assert match.home_team.name == 'ARS'
+    assert match.away_team.name == 'CHE'
+    
 def test_repository_can_retrieve_match_and_user_bet(session, setup_match_and_bet):
     user_id = 1
     repo = repository.SqlMatchRepository(session)
