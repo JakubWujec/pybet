@@ -1,6 +1,7 @@
 import abc
 from pybet import schema
 from typing import List, Set
+from sqlalchemy.orm import Session, joinedload
 
 class MatchRepository(abc.ABC):
     def __init__(self):
@@ -21,7 +22,7 @@ class MatchRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_gameround_matches(self, gameround: int):
+    def get_gameround_matches(self, gameround: int) -> List[schema.Match]:
         raise NotImplementedError
     
     @abc.abstractmethod
@@ -62,7 +63,7 @@ class FakeMatchRepository(MatchRepository):
 class SqlMatchRepository(MatchRepository):
     def __init__(self, session):
         super().__init__()
-        self.session = session
+        self.session: Session = session
     
     def _add(self, match: schema.Match):
         self.session.add(match)
@@ -71,7 +72,14 @@ class SqlMatchRepository(MatchRepository):
         return self.session.query(schema.Match).filter_by(id=match_id).first()
     
     def get_gameround_matches(self, gameround: int):
-        return self.session.query(schema.Match).filter_by(gameround=gameround).all()
+        result = self.session.query(schema.Match) \
+            .options(joinedload(schema.Match.home_team)) \
+            .options(joinedload(schema.Match.away_team)) \
+            .filter(
+                schema.Match.gameround==gameround
+            ).all()
+        
+        return result
     
     def list(self):
         return self.session.query(schema.Match).all()

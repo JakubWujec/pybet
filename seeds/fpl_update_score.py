@@ -1,44 +1,28 @@
-import requests
-from pybet import message_bus, commands, queries, unit_of_work, schema
+from pybet import message_bus, commands, unit_of_work
+from pybet.score_provider import FPLScoreProvider
 from seeds.fpl_data import get_team_code_by_fpl_id
 import sys
 
 #>py -m seeds.fpl_update_score
 
 def update_score_from_fpl(round: int):
-    URL = f"https://fantasy.premierleague.com/api/fixtures/?event={round}"
-    r = requests.get(url = URL)
-    data = r.json()    
-    team_id_by_name = {}
-    match_id_by_home_team_id = {}
+    score_provider = FPLScoreProvider()
+    match_results = score_provider.get_match_results(round)
+    
+   
     uow = unit_of_work.SqlAlchemyUnitOfWork()
+    
     with uow:
-        team_rows = uow.session.query(schema.Team).all()
-        for row in team_rows:
-            team_id_by_name[row.name] = row.id
-        match_rows = uow.session.query(schema.Match).filter_by(gameround=round).all()
-        for row in match_rows:
-            match_id_by_home_team_id[row.home_team_id] = row.id
-
-
-    for fixture in data:
-        if fixture['finished']:
-            home_team_fpl_id = fixture['team_h']
-            away_team_fpl_id = fixture['team_a']
-            home_team_code = get_team_code_by_fpl_id(home_team_fpl_id)
-            away_team_code = get_team_code_by_fpl_id(away_team_fpl_id)
-            home_team_id = team_id_by_name[home_team_code]
-            # away_team_id = team_id_by_name[away_team_code]
-            home_team_score = fixture['team_h_score']
-            away_team_score = fixture['team_a_score']
-            match_id = match_id_by_home_team_id[home_team_id]
+        matches = uow.matches.get_gameround_matches(round)
             
-            if match_id:
+        for _match in matches:
+            found_result = next((result for result in match_results if result.home_team_short_name == _match.home_team.name and result.away_team_short_name == _match.away_team.name), None)
+            if found_result:
                 message_bus.handle(
                     commands.UpdateMatchScoreCommand(
-                        match_id=match_id,
-                        home_team_score=home_team_score,
-                        away_team_score=away_team_score
+                        match_id=_match.id,
+                        home_team_score=found_result.home_team_score,
+                        away_team_score=found_result.away_team_score
                     ),
                     uow
                 )
