@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="mb-3">🏆 Season Finished</h1>
+        <p class="lead">No more matches to bet on. The season is officially over!</p>
+        <p>Thank you for participating and making it exciting!</p>
+
+        <hr class="my-4">
+
+        {% if standings_url %}
+        <a href="{{ standings_url }}" class="btn btn-success btn-lg mt-2">View Final Standings</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
