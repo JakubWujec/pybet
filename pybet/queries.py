@@ -138,6 +138,15 @@ def mygamestage(user_id: int, gamestage_id: int, uow: SqlAlchemyUnitOfWork):
     return result
 
 
+def get_username_by_user_id(user_id: int, uow: SqlAlchemyUnitOfWork):
+    with uow:
+        username = uow.session.execute(
+            text("""SELECT username from users where id = :user_id"""),
+            dict(user_id=user_id),
+        ).first()
+        return username or None
+
+
 def kickoff_to_datetime(kickoff):
     if isinstance(kickoff, datetime):
         return kickoff

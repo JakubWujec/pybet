@@ -41,11 +41,9 @@ def user_round_points_view(user_id: int, round: int):
         if current_user.is_anonymous or current_user.id != user_id:
             abort(403)
 
-    with uow:
-        user: schema.User = uow.session.query(schema.User).get(user_id)
-        if user is None:
-            abort(404)
-        username = user.username
+    username = queries.get_username_by_user_id(user_id=user_id, uow=uow)
+    if username is None:
+        abort(404, "User doesn't exist")
 
     query_result = queries.mybets(user_id, gameround=round, uow=uow)
     matches = query_result["matches"]
