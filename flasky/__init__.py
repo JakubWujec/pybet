@@ -42,6 +42,7 @@ def create_app(config_class=Config):
     )
     admin.add_view(admin_views.PybetAdminModelView(schema.User, db.session))
     admin.add_view(admin_views.PybetAdminModelView(schema.Bet, db.session))
+    admin.add_view(admin_views.PybetAdminModelView(schema.Gamestage, db.session))
     admin.add_link(MenuLink(name="Back to App", category="", url="/"))
 
     from flasky.main import bp as main_bp
