@@ -14,6 +14,10 @@ def mygameround_view():
     if gamestage is None:
         return "Gamestage not found"
 
+    matches = queries.mygamestage(
+        user_id=current_user.id, gamestage_id=gamestage["id"], uow=uow
+    )["matches"]
+
     return render_template(
         "mygameround/mygameround.html",
         gameround_name=gamestage["name"],
