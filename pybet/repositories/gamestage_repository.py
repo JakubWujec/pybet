@@ -21,6 +21,10 @@ class GamestageRepository(abc.ABC):
         return gamestage
 
     @abc.abstractmethod
+    def get_current(self) -> schema.Gamestage | None:
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def list(self) -> List[schema.Gamestage]:
         raise NotImplementedError
 
@@ -60,6 +64,11 @@ class FakeGamestageRepository(GamestageRepository):
             filter(lambda m: m.gamestage_id == gamestage_id, self.gamestages.values())
         )
 
+    def get_current(self) -> schema.Gamestage | None:
+        if self._next_id > 1:
+            return self.gamestages[self._next_id - 1]
+        return None
+
 
 class SqlGamestageRepository(GamestageRepository):
     def __init__(self, session):
@@ -77,6 +86,12 @@ class SqlGamestageRepository(GamestageRepository):
         if gamestage is None:
             return []
         return gamestage.matches
+
+    def get_current(self) -> schema.Gamestage | None:
+        all = self.list()
+        if len(all) == 0:
+            return None
+        return self.list()[0]
 
     def list(self):
         return self.session.query(schema.Gamestage).all()

@@ -77,6 +77,16 @@ def kickoff_to_datetime(kickoff):
     return datetime.strptime(kickoff, "%Y-%m-%d %H:%M:%S.%f")
 
 
+def get_current_gamestage(uow: SqlAlchemyUnitOfWork):
+    gamestage = None
+    with uow:
+        gamestage = uow.gamestages.get_current()
+        gamestage = gamestage.__dict__
+        print(f"TYYYYYYYYYYYYYY {gamestage}")
+
+    return gamestage
+
+
 def get_active_gameround_by_date(
     current_timestamp: datetime, uow: SqlAlchemyUnitOfWork
 ):
