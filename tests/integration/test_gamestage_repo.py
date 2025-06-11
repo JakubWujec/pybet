@@ -29,3 +29,13 @@ def test_repository_can_retrieve_gamestage(session, setup_gamestage_and_match):
 
     assert gamestage is not None
     assert isinstance(gamestage, schema.Gamestage)
+
+
+def test_repository_can_retrieve_gamestage_with_a_match(
+    session, setup_gamestage_and_match
+):
+    repo = SqlGamestageRepository(session)
+    gamestage = repo.get(gamestage_id=1)
+
+    assert len(gamestage.matches) == 1
+    assert gamestage.matches[0].id == 1
