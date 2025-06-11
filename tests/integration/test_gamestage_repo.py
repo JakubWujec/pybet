@@ -39,3 +39,11 @@ def test_repository_can_retrieve_gamestage_with_a_match(
 
     assert len(gamestage.matches) == 1
     assert gamestage.matches[0].id == 1
+
+
+def test_repository_can_retrieve_gamestage_matches(session, setup_gamestage_and_match):
+    repo = SqlGamestageRepository(session)
+    matches = repo.get_gamestage_matches(gamestage_id=1)
+
+    assert len(matches) == 1
+    assert matches[0].id == 1
