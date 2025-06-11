@@ -1,13 +1,13 @@
 from flask import render_template
 from flask_login import current_user, login_required
 
-from flasky.mygameround import bp
+from flasky.mygamestage import bp
 from pybet import unit_of_work, queries
 
 
-@bp.route("/mygameround", methods=["GET", "POST"])
+@bp.route("/mygamestage", methods=["GET", "POST"])
 @login_required
-def mygameround_view():
+def mygamestage_view():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     gamestage = queries.get_current_gamestage(uow=uow)
 
@@ -19,7 +19,7 @@ def mygameround_view():
     )["matches"]
 
     return render_template(
-        "mygameround/mygameround.html",
+        "mygamestage/mygamestage.html",
         gameround_name=gamestage["name"],
         current_user=current_user,
         enumerate=enumerate,

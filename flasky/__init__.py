@@ -57,9 +57,9 @@ def create_app(config_class=Config):
 
     app.register_blueprint(mybet_bp)
 
-    from flasky.mygameround import bp as mygameround_bp
+    from flasky.mygamestage import bp as mygamestage_bp
 
-    app.register_blueprint(mygameround_bp)
+    app.register_blueprint(mygamestage_bp)
 
     from flasky.standings import bp as standings_bp
 
