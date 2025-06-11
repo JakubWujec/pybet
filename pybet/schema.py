@@ -128,6 +128,9 @@ class Match(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     home_team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=False)
     away_team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=False)
+    gamestage_id: Mapped[int] = mapped_column(
+        ForeignKey("gamestages.id"), nullable=True
+    )
     gameround: Mapped[int] = mapped_column(Integer, nullable=False)
     home_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
     away_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
@@ -147,6 +150,9 @@ class Match(Base):
 
     home_team: Mapped["Team"] = relationship("Team", foreign_keys=[home_team_id])
     away_team: Mapped["Team"] = relationship("Team", foreign_keys=[away_team_id])
+    gamestage: Mapped["Gamestage"] = relationship(
+        "Gamestage", foreign_keys=[gamestage_id]
+    )
 
     __table_args__ = (
         CheckConstraint(
@@ -180,3 +186,14 @@ class Match(Base):
                 f"{self.home_team.name} VS {self.away_team.name} (GR:{self.gameround})"
             )
         return f"Match <{self.id}>"
+
+
+class Gamestage(Base):
+    __tablename__ = "gamestages"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
+
+    matches: Mapped[List["Match"]] = relationship(
+        "Match", back_populates="gamestage", foreign_keys="Match.gamestage_id"
+    )
