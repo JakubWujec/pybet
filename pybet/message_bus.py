@@ -49,6 +49,7 @@ COMMAND_HANDLERS: Dict[Type[events.Event], Callable] = {
     commands.UpdateMatchScoreCommand: handlers.update_match_score,
     commands.MakeBetCommand: handlers.make_bet,
     commands.MakeGamestageBetCommand: handlers.make_gamestage_bet,
+    commands.CreateGamestageCommand: handlers.create_gamestage,
 }
 
 EVENT_HANDLERS: Dict[Type[events.Event], List[Callable]] = {

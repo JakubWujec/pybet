@@ -15,7 +15,7 @@ def create_gamestage(
     command: commands.CreateGamestageCommand, uow: unit_of_work.UnitOfWork
 ):
     with uow:
-        gamestage = schema.Gamestage(name=command.name)
+        gamestage = schema.Gamestage(id=command.id, name=command.name)
         uow.gamestages.add(gamestage)
         uow.commit()
 
@@ -26,6 +26,7 @@ def create_match(command: commands.CreateMatchCommand, uow: unit_of_work.UnitOfW
             home_team_id=command.home_team_id,
             away_team_id=command.away_team_id,
             gameround=command.gameround,
+            gamestage_id=command.gamestage_id,
             kickoff=command.kickoff,
         )
         uow.matches.add(

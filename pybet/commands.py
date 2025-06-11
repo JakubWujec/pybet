@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 
 class Command:
@@ -10,6 +10,7 @@ class Command:
 @dataclass
 class CreateGamestageCommand(Command):
     name: str
+    id: Optional[int] = None
 
 
 @dataclass
@@ -18,6 +19,7 @@ class CreateMatchCommand(Command):
     away_team_id: int
     gameround: int
     kickoff: datetime
+    gamestage_id: Optional[int] = None
 
 
 @dataclass

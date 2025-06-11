@@ -53,10 +53,6 @@ def create_app(config_class=Config):
 
     app.register_blueprint(auth_bp)
 
-    from flasky.mybet import bp as mybet_bp
-
-    app.register_blueprint(mybet_bp)
-
     from flasky.mygamestage import bp as mygamestage_bp
 
     app.register_blueprint(mygamestage_bp)
