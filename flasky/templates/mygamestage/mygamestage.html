@@ -3,8 +3,8 @@
 {% block content %}
 
 <div class="container mt-5">
-    <h1 class="text-center mb-4">{{gameround_name}}</h1>
-    <form method="POST" role="form">
+    <h1 class="text-center mb-4">{{gamestage_name}}</h1>
+    <form method="POST" action="{{ url_for('mygamestage.mygamestage_view') }}" role="form">
         {{ form.hidden_tag() }}
         <div class="row">
             {% for idx, bet_form in enumerate(form.bets) %}

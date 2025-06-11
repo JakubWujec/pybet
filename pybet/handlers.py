@@ -34,6 +34,36 @@ def create_match(command: commands.CreateMatchCommand, uow: unit_of_work.UnitOfW
         uow.commit()
 
 
+def make_gamestage_bet(
+    command: commands.MakeGamestageBetCommand, uow: unit_of_work.UnitOfWork
+):
+    with uow:
+        gamestage = uow.gamestages.get(command.gamestage_id)
+        print(command)
+
+        for command_bet in command.bets:
+            match = uow.matches.get(command_bet.match_id)
+
+            if match is None:
+                raise MatchNotFound()
+
+            if match.is_after_kickoff():
+                raise MatchAlreadyStarted(
+                    f"Now: {datetime.now(timezone.utc)}, kickoff: {match.kickoff}"
+                )
+
+            new_bet = schema.Bet(
+                user_id=command.user_id,
+                home_team_score=command_bet.home_team_score,
+                away_team_score=command_bet.away_team_score,
+                points=0,
+            )
+            match.place_bet(new_bet)
+            uow.commit()
+
+        return gamestage
+
+
 def make_bet(
     command: commands.MakeBetCommand,
     uow: unit_of_work.UnitOfWork,

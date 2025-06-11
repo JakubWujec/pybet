@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import List
 
 
 class Command:
@@ -17,6 +18,20 @@ class CreateMatchCommand(Command):
     away_team_id: int
     gameround: int
     kickoff: datetime
+
+
+@dataclass
+class GamestageBet:
+    match_id: int
+    home_team_score: int
+    away_team_score: int
+
+
+@dataclass
+class MakeGamestageBetCommand(Command):
+    user_id: int
+    gamestage_id: int
+    bets: List[GamestageBet]
 
 
 @dataclass
