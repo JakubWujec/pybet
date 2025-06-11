@@ -51,7 +51,7 @@ class User(Base):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return check_password_hash(self.password_hash or "", password)
 
     @property
     def is_authenticated(self):
@@ -197,3 +197,6 @@ class Gamestage(Base):
     matches: Mapped[List["Match"]] = relationship(
         "Match", back_populates="gamestage", foreign_keys="Match.gamestage_id"
     )
+
+    def add_match(self, match: "Match"):
+        self.matches.append(match)
