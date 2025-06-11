@@ -153,6 +153,15 @@ def get_current_gamestage(uow: SqlAlchemyUnitOfWork):
     return gamestage
 
 
+def get_previous_gamestage_id(uow: SqlAlchemyUnitOfWork):
+    gamestage_id = None
+
+    with uow:
+        gamestage_id = uow.gamestages.list()[0].id
+
+    return gamestage_id
+
+
 def get_active_gameround_by_date(
     current_timestamp: datetime, uow: SqlAlchemyUnitOfWork
 ):

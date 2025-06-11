@@ -12,17 +12,17 @@ from pybet import queries, schema, unit_of_work
 def points():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     user_id = current_user.id
-    active_gameround = queries.get_active_gameround_by_date(
-        datetime.datetime.now(), uow
-    )
+    previous_gamestage_id = queries.get_previous_gamestage_id(uow)
 
-    if active_gameround is None:
+    if previous_gamestage_id is None:
         flash("There is no data to show yet!")
-        return redirect(url_for("my-bet.mybets_view"))
+        return redirect(url_for("mygamestage.mygamestage_view"))
 
     return redirect(
         url_for(
-            "points.user_round_points_view", user_id=user_id, round=active_gameround
+            "points.user_round_points_view",
+            user_id=user_id,
+            round=previous_gamestage_id,
         )
     )
 
