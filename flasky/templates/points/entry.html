@@ -4,7 +4,7 @@
 
 <div class="container mt-5">
     <h2>Points - {{username}}</h2>
-    <h1 class="text-center mb-4">Gameround {{gameround}}</h1>
+    <h1 class="text-center mb-4">{{gamestage_name}}</h1>
     <div class="row">
         {% for idx, match in enumerate(matches) %}
         {% set home_team_name = match["home_team"]["name"] %}

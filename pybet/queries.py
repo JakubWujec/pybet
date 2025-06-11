@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from pybet.unit_of_work import SqlAlchemyUnitOfWork
 from sqlalchemy.sql import text
 from datetime import datetime, timezone
@@ -153,22 +154,58 @@ def kickoff_to_datetime(kickoff):
     return datetime.strptime(kickoff, "%Y-%m-%d %H:%M:%S.%f")
 
 
-def get_current_gamestage(uow: SqlAlchemyUnitOfWork):
-    gamestage = None
-    with uow:
-        gamestage = uow.gamestages.get_current()
-        gamestage = gamestage.__dict__
+@dataclass
+class GamestageDTO:
+    id: int
+    name: str
+    deadline: datetime
 
-    return gamestage
+
+def get_gamestage_by_id(
+    gamestage_id: int, uow: SqlAlchemyUnitOfWork
+) -> GamestageDTO | None:
+    with uow:
+        gamestage = uow.gamestages.get(gamestage_id=gamestage_id)
+        return GamestageDTO(
+            id=gamestage.id, name=gamestage.name, deadline=gamestage.deadline
+        )
+    return None
 
 
 def get_previous_gamestage_id(uow: SqlAlchemyUnitOfWork):
-    gamestage_id = None
+    current_timestamp = datetime.now()
 
     with uow:
-        gamestage_id = uow.gamestages.list()[0].id
+        gamestage_id = uow.session.execute(
+            text(
+                "SELECT gamestage_id"
+                " FROM matches AS m"
+                " WHERE kickoff <= :current_timestamp"
+                " ORDER BY kickoff DESC"
+                " LIMIT 1"
+            ),
+            dict(current_timestamp=current_timestamp.strftime("%Y-%m-%d %H:%M:%S.%f")),
+        ).scalar()
 
-    return gamestage_id
+        return gamestage_id
+
+
+def get_current_gamestage_id(uow: SqlAlchemyUnitOfWork):
+    current_timestamp = datetime.now()
+
+    with uow:
+        gamestage_id = uow.session.execute(
+            text(
+                "SELECT gamestage_id"
+                " FROM matches AS m"
+                " WHERE kickoff > :current_timestamp"
+                " ORDER BY kickoff ASC"
+                " LIMIT 1"
+            ),
+            dict(current_timestamp=current_timestamp.strftime("%Y-%m-%d %H:%M:%S.%f")),
+        ).scalar()
+
+        return gamestage_id
 
 
 def get_active_gameround_by_date(

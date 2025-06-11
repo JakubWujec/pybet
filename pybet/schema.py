@@ -200,3 +200,10 @@ class Gamestage(Base):
 
     def add_match(self, match: "Match"):
         self.matches.append(match)
+
+    @property
+    def deadline(self):
+        return min(match.kickoff for match in self.matches)
+
+    def to_dict(self):
+        return dict(id=self.id, name=self.name, deadline=self.deadline)

@@ -4,7 +4,7 @@ from flask import abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
 from flasky.points import bp
-from pybet import queries, schema, unit_of_work
+from pybet import queries, unit_of_work
 
 
 @bp.route("/points", methods=["GET"])
@@ -22,22 +22,24 @@ def points():
         url_for(
             "points.user_round_points_view",
             user_id=user_id,
-            round=previous_gamestage_id,
+            gamestage_id=previous_gamestage_id,
         )
     )
 
 
-@bp.route("/points/<user_id>/rounds/<round>", methods=["GET"])
-def user_round_points_view(user_id: int, round: int):
+@bp.route("/points/<user_id>/gamestage/<gamestage_id>", methods=["GET"])
+def user_round_points_view(user_id: int, gamestage_id: int):
     uow = unit_of_work.SqlAlchemyUnitOfWork()
-    round = int(round)
     user_id = int(user_id)
-    active_gameround = queries.get_active_gameround_by_date(
-        datetime.datetime.now(), uow
-    )
+
+    gamestageDTO = queries.get_gamestage_by_id(gamestage_id=gamestage_id, uow=uow)
+    print(gamestage_id)
+    print(gamestageDTO)
+    if gamestageDTO is None:
+        abort(404)
 
     # dont allow to lookup future bets of other players
-    if round > active_gameround:
+    if gamestageDTO.deadline > datetime.datetime.now():
         if current_user.is_anonymous or current_user.id != user_id:
             abort(403)
 
@@ -45,13 +47,13 @@ def user_round_points_view(user_id: int, round: int):
     if username is None:
         abort(404, "User doesn't exist")
 
-    query_result = queries.mybets(user_id, gameround=round, uow=uow)
+    query_result = queries.mygamestage(user_id, gamestage_id=gamestage_id, uow=uow)
     matches = query_result["matches"]
 
     return render_template(
         "points/entry.html",
         enumerate=enumerate,
         matches=matches,
-        gameround=round,
+        gamestage_name=gamestageDTO.name,
         username=username,
     )
