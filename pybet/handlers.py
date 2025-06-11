@@ -11,6 +11,15 @@ class MatchNotFound(Exception):
     pass
 
 
+def create_gamestage(
+    command: commands.CreateGamestageCommand, uow: unit_of_work.UnitOfWork
+):
+    with uow:
+        gamestage = schema.Gamestage(name=command.name)
+        uow.gamestages.add(gamestage)
+        uow.commit()
+
+
 def create_match(command: commands.CreateMatchCommand, uow: unit_of_work.UnitOfWork):
     with uow:
         match = schema.Match(
