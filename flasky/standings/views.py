@@ -4,6 +4,8 @@ from pybet import unit_of_work, queries
 from flask import render_template, request, url_for, redirect
 from datetime import datetime
 
+PER_PAGE = 20
+
 
 @bp.route("/standings", methods=["POST"])
 def standings_view_post():
@@ -20,14 +22,16 @@ def standings_view():
         "gamestage_id", current_gamestage_id, type=int
     )
     page = request.args.get("page", 1, type=int)
-    per_page = 20
 
     available_gamestage_ids = queries.get_available_gamestage_ids(uow=uow)
     data = queries.standings_query(
-        gamestage_id=selected_gamestage_id, page=page, per_page=per_page, uow=uow
+        gamestage_id=selected_gamestage_id,
+        page=page,
+        per_page=PER_PAGE,
+        uow=uow,
     )
     standings, count = data["standings"], data["count"]
-    pagination = Pagination(page=page, per_page=per_page, total=count)
+    pagination = Pagination(page=page, per_page=PER_PAGE, total=count)
     next_url = (
         url_for(
             endpoint="standings.standings_view",
