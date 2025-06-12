@@ -17,8 +17,8 @@ class CreateGamestageCommand(Command):
 class CreateMatchCommand(Command):
     home_team_id: int
     away_team_id: int
-    gameround: int
     kickoff: datetime
+    gameround: Optional[int] = None
     gamestage_id: Optional[int] = None
 
 
