@@ -141,6 +141,19 @@ def get_current_gamestage_id(uow: SqlAlchemyUnitOfWork):
         return gamestage_id
 
 
+def get_gamestage_id_by_date(date: datetime, uow: SqlAlchemyUnitOfWork):
+    with uow:
+        result = uow.session.execute(
+            text(
+                "SELECT MAX(gamestage_id) as gameround"
+                " FROM matches AS m"
+                " WHERE kickoff <= :current_timestamp"
+            ),
+            dict(current_timestamp=date.strftime("%Y-%m-%d %H:%M:%S.%f")),
+        ).scalar()
+        return result
+
+
 def get_active_gameround_by_date(
     current_timestamp: datetime, uow: SqlAlchemyUnitOfWork
 ):
