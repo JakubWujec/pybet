@@ -228,22 +228,22 @@ class TestStandingsQuery:
             )
             self.uow.session.commit()
 
-        d = queries.standings_query(
+        queryDTO = queries.standings_query(
             gamestage_id=self.gamestage_id, page=1, per_page=20, uow=self.uow
         )
 
-        self.standings, self.count = d["standings"], d["count"]
+        self.standingsDTO, self.count = queryDTO.standings, queryDTO.count
 
     def test_count_is_equal_to_number_of_betters(self):
         assert self.count == 2
-        assert len(self.standings) == 2
+        assert len(self.standingsDTO) == 2
 
     def test_standings_are_ordered(self):
-        assert self.standings[0]["position"] == 1
-        assert self.standings[1]["position"] == 2
+        assert self.standingsDTO[0].position == 1
+        assert self.standingsDTO[1].position == 2
 
     def test_first_user_has_more_point_than_second(self):
-        assert self.standings[0]["points"] > self.standings[1]["points"]
+        assert self.standingsDTO[0].points > self.standingsDTO[1].points
 
 
 class TestGamestageQueries:

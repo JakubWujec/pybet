@@ -30,7 +30,7 @@ def standings_view():
         per_page=PER_PAGE,
         uow=uow,
     )
-    standings, count = data["standings"], data["count"]
+    standings, count = data.standings, data.count
     pagination = Pagination(page=page, per_page=PER_PAGE, total=count)
     next_url = (
         url_for(

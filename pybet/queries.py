@@ -162,12 +162,26 @@ def get_available_gamestage_ids(uow: SqlAlchemyUnitOfWork) -> List[int]:
         return [row[0] for row in result]
 
 
+@dataclass
+class StandingEntryDTO:
+    user_id: int
+    username: str
+    points: int
+    position: int
+
+
+@dataclass
+class StandingsQueryResultDTO:
+    standings: List[StandingEntryDTO]
+    count: int
+
+
 def standings_query(
     gamestage_id: int, page: int, per_page: int, uow: SqlAlchemyUnitOfWork
-):
+) -> StandingsQueryResultDTO:
     offset = (page - 1) * per_page
     with uow:
-        count = uow.session.execute(
+        count: int = uow.session.execute(
             text(
                 """
                 SELECT COUNT(DISTINCT u.id)
@@ -178,7 +192,7 @@ def standings_query(
             """
             ),
             dict(gamestage_id=gamestage_id),
-        ).scalar()
+        ).scalar_one()
 
         rows = uow.session.execute(
             text(
@@ -197,17 +211,11 @@ def standings_query(
 
     standings = list(
         map(
-            lambda row: {
-                "user_id": row[0],
-                "username": row[1],
-                "points": row[2],
-                "position": row[3],
-            },
+            lambda row: StandingEntryDTO(
+                user_id=row[0], username=row[1], points=row[2], position=row[3]
+            ),
             rows,
         )
     )
 
-    return {
-        "standings": standings,
-        "count": count,
-    }
+    return StandingsQueryResultDTO(count=count, standings=standings)
