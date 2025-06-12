@@ -10,7 +10,6 @@ class TestMyGamestage:
     def setup(self, in_memory_sqlite_session_factory):
         self.uow = unit_of_work.SqlAlchemyUnitOfWork(in_memory_sqlite_session_factory)
         self.user_id = 1
-        self.gameround = 1
         self.gamestage_id = 1
         self.tommorow = datetime.datetime.now() + datetime.timedelta(days=1)
 
@@ -34,7 +33,6 @@ class TestMyGamestage:
             commands.CreateMatchCommand(
                 home_team_id=1,
                 away_team_id=2,
-                gameround=self.gameround,
                 gamestage_id=self.gamestage_id,
                 kickoff=self.tommorow,
             ),
@@ -44,7 +42,6 @@ class TestMyGamestage:
             commands.CreateMatchCommand(
                 home_team_id=3,
                 away_team_id=4,
-                gameround=self.gameround,
                 gamestage_id=self.gamestage_id,
                 kickoff=self.tommorow,
             ),
@@ -93,7 +90,7 @@ class TestMyGamestage:
 
     def test_other_user_doesnt_have_any_bets(self):
         other_user_id = 2
-        result = queries.mygamestage(other_user_id, self.gameround, self.uow)
+        result = queries.mygamestage(other_user_id, self.gamestage_id, self.uow)
         matches = result["matches"]
 
         first_match = next((row for row in matches if row["home_team_id"] == 1), None)
