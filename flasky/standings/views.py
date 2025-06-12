@@ -21,7 +21,7 @@ def standings_view():
 
     available_gamestage_ids = queries.get_available_gamestage_ids(uow=uow)
     data = queries.standings_query(
-        round=gameround, page=page, per_page=per_page, uow=uow
+        gamestage_id=gameround, page=page, per_page=per_page, uow=uow
     )
     standings, count = data["standings"], data["count"]
     pagination = paginate(page, per_page, count)

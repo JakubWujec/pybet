@@ -145,7 +145,7 @@ def get_gamestage_id_by_date(date: datetime, uow: SqlAlchemyUnitOfWork):
     with uow:
         result = uow.session.execute(
             text(
-                "SELECT MAX(gamestage_id) as gameround"
+                "SELECT MAX(gamestage_id)"
                 " FROM matches AS m"
                 " WHERE kickoff <= :current_timestamp"
             ),
@@ -162,7 +162,9 @@ def get_available_gamestage_ids(uow: SqlAlchemyUnitOfWork) -> List[int]:
         return [row[0] for row in result]
 
 
-def standings_query(round: int, page: int, per_page: int, uow: SqlAlchemyUnitOfWork):
+def standings_query(
+    gamestage_id: int, page: int, per_page: int, uow: SqlAlchemyUnitOfWork
+):
     offset = (page - 1) * per_page
     with uow:
         count = uow.session.execute(
@@ -172,10 +174,10 @@ def standings_query(round: int, page: int, per_page: int, uow: SqlAlchemyUnitOfW
                 FROM users as u
                 JOIN bets as b on b.user_id = u.id
                 JOIN matches as m on m.id = b.match_id
-                WHERE m.gameround = :round
+                WHERE m.gamestage_id = :gamestage_id
             """
             ),
-            dict(round=round),
+            dict(gamestage_id=gamestage_id),
         ).scalar()
 
         rows = uow.session.execute(
@@ -185,12 +187,12 @@ def standings_query(round: int, page: int, per_page: int, uow: SqlAlchemyUnitOfW
                 FROM users as u
                 JOIN bets as b on b.user_id = u.id
                 JOIN matches as m on m.id = b.match_id
-                WHERE m.gameround = :round
+                WHERE m.gamestage_id = :gamestage_id
                 GROUP BY u.id, u.username
                 LIMIT :limit OFFSET :offset;
             """
             ),
-            dict(round=round, limit=per_page, offset=offset),
+            dict(gamestage_id=gamestage_id, limit=per_page, offset=offset),
         ).all()
 
     standings = list(

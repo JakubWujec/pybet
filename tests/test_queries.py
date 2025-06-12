@@ -185,7 +185,7 @@ class TestStandingsQuery:
         self.uow = unit_of_work.SqlAlchemyUnitOfWork(in_memory_sqlite_session_factory)
 
         self.today = datetime.datetime.now()
-        self.gameround = 1
+        self.gamestage_id = 1
 
         teams = [
             schema.Team(name="A"),
@@ -201,10 +201,17 @@ class TestStandingsQuery:
             self.uow.session.commit()
 
         message_bus.handle(
+            commands.CreateGamestageCommand(
+                f"Gamestage {self.gamestage_id}", id=self.gamestage_id
+            ),
+            uow=self.uow,
+        )
+
+        message_bus.handle(
             commands.CreateMatchCommand(
                 home_team_id=1,
                 away_team_id=2,
-                gameround=self.gameround,
+                gamestage_id=self.gamestage_id,
                 kickoff=self.today,
             ),
             self.uow,
@@ -223,7 +230,7 @@ class TestStandingsQuery:
             self.uow.session.commit()
 
         d = queries.standings_query(
-            round=self.gameround, page=1, per_page=20, uow=self.uow
+            gamestage_id=self.gamestage_id, page=1, per_page=20, uow=self.uow
         )
 
         self.standings, self.count = d["standings"], d["count"]
