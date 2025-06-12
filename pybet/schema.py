@@ -131,7 +131,7 @@ class Match(Base):
     gamestage_id: Mapped[int] = mapped_column(
         ForeignKey("gamestages.id"), nullable=True
     )
-    gameround: Mapped[int] = mapped_column(Integer, nullable=False)
+    gameround: Mapped[int] = mapped_column(Integer, nullable=True)
     home_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
     away_team_score: Mapped[int] = mapped_column(Integer, nullable=True)
     kickoff: Mapped[datetime] = mapped_column(
