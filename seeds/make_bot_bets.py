@@ -4,10 +4,10 @@ import sys
 from pybet import commands, handlers, schema, unit_of_work
 
 
-def make_bot_bets(round: int):
+def make_bot_bets(gamestage_id: int):
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     with uow:
-        matches = uow.matches.get_gamestage_matches(round)
+        matches = uow.matches.get_gamestage_matches(gamestage_id=gamestage_id)
         bots = uow.session.query(schema.User).filter_by(role=schema.Role.BOT).all()
 
         for match in matches:
@@ -27,7 +27,7 @@ def make_bot_bets(round: int):
 if __name__ == "__main__":
     print("Run Seed: Make bot bets")
     if len(sys.argv) < 2:
-        print("Provide gameround")
+        print("Provide gamestage_id")
     else:
         p1 = sys.argv[1]
         make_bot_bets(int(p1))

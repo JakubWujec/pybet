@@ -182,9 +182,7 @@ class Match(Base):
 
     def __str__(self):
         if self.away_team is not None and self.home_team is not None:
-            return (
-                f"{self.home_team.name} VS {self.away_team.name} (GR:{self.gameround})"
-            )
+            return f"{self.home_team.name} VS {self.away_team.name} (GR:{self.gamestage_id})"
         return f"Match <{self.id}>"
 
 

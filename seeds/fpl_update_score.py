@@ -42,7 +42,7 @@ def update_score_from_fpl(round: int):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Provide gameround")
+        print("Provide fpl gameweek number")
     else:
         p1 = sys.argv[1]
         update_score_from_fpl(int(p1))

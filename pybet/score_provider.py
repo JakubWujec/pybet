@@ -16,12 +16,12 @@ class MatchResultDTO:
 
 
 class ScoreProvider(abc.ABC):
-    def get_match_results(self, gameround: int) -> List[MatchResultDTO]:
+    def get_match_results(self, gamestage_id: int) -> List[MatchResultDTO]:
         raise NotImplementedError
 
 
 class FPLScoreProvider(ScoreProvider):
-    BASE_URL = "https://fantasy.premierleague.com/api/fixtures/?event={gameround}"
+    BASE_URL = "https://fantasy.premierleague.com/api/fixtures/?event={FPL_EVENT}"
     FPL_ID_TO_NAME_MAPPING = {
         1: "ARS",
         2: "AVL",
@@ -45,8 +45,8 @@ class FPLScoreProvider(ScoreProvider):
         20: "WOL",
     }
 
-    def get_match_results(self, gameround: int) -> List[MatchResultDTO]:
-        r = requests.get(url=self.BASE_URL.format(gameround=gameround))
+    def get_match_results(self, gamestage_id: int) -> List[MatchResultDTO]:
+        r = requests.get(url=self.BASE_URL.format(FPL_EVENT=gamestage_id))
         data = r.json()
         result = [
             MatchResultDTO(
