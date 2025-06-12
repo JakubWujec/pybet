@@ -14,8 +14,8 @@ def standings_view_post():
 def standings_view():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
 
-    active_gameround = queries.get_active_gameround_by_date(datetime.now(), uow=uow)
-    gameround = request.args.get("gameround", active_gameround, type=int)
+    active_gamestage_id = queries.get_gamestage_id_by_date(datetime.now(), uow=uow)
+    gameround = request.args.get("gameround", active_gamestage_id, type=int)
     page = request.args.get("page", 1, type=int)
     per_page = 20
 
