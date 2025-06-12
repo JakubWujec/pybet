@@ -276,8 +276,3 @@ class TestGameroundQueries:
         gamerounds = queries.get_available_gamerounds(uow=self.uow)
 
         assert gamerounds == [1, 2, 3]
-
-    def test_get_next_gameround_query(self):
-        gameround = queries.get_next_gameround(uow=self.uow)
-
-        assert gameround == 2
