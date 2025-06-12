@@ -1,40 +1,41 @@
-from flasky.standings.views import paginate
-
-def test_paginate_multiple_pages():
-    result = paginate(page=2, per_page=10, total_count=35)
-
-    assert result["has_next"] is True
-    assert result["has_prev"] is True
-    assert result["next_page"] == 3
-    assert result["prev_page"] == 1
-    assert result["total_pages"] == 4
+from flasky.generic.pagination import Pagination
 
 
-def test_paginate_first_page():
-    result = paginate(page=1, per_page=10, total_count=35)
+def test_Pagination_multiple_pages():
+    pagination = Pagination(page=2, per_page=10, total=35)
 
-    assert result["has_next"] is True
-    assert result["has_prev"] is False
-    assert result["next_page"] == 2
-    assert result["prev_page"] is None
-    assert result["total_pages"] == 4
-
-
-def test_paginate_last_page():
-    result = paginate(page=4, per_page=10, total_count=35)
-
-    assert result["has_next"] is False
-    assert result["has_prev"] is True
-    assert result["next_page"] is None
-    assert result["prev_page"] == 3
-    assert result["total_pages"] == 4
+    assert pagination.has_next is True
+    assert pagination.has_prev is True
+    assert pagination.next_page == 3
+    assert pagination.prev_page == 1
+    assert pagination.total_pages == 4
 
 
-def test_paginate_single_page():
-    result = paginate(page=1, per_page=50, total_count=35)
+def test_Pagination_first_page():
+    pagination = Pagination(page=1, per_page=10, total=35)
 
-    assert result["has_next"] is False
-    assert result["has_prev"] is False
-    assert result["next_page"] is None
-    assert result["prev_page"] is None
-    assert result["total_pages"] == 1
+    assert pagination.has_next is True
+    assert pagination.has_prev is False
+    assert pagination.next_page == 2
+    assert pagination.prev_page is None
+    assert pagination.total_pages == 4
+
+
+def test_Pagination_last_page():
+    pagination = Pagination(page=4, per_page=10, total=35)
+
+    assert pagination.has_next is False
+    assert pagination.has_prev is True
+    assert pagination.next_page is None
+    assert pagination.prev_page == 3
+    assert pagination.total_pages == 4
+
+
+def test_Pagination_single_page():
+    pagination = Pagination(page=1, per_page=50, total=35)
+
+    assert pagination.has_next is False
+    assert pagination.has_prev is False
+    assert pagination.next_page is None
+    assert pagination.prev_page is None
+    assert pagination.total_pages == 1

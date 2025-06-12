@@ -1,3 +1,4 @@
+from flasky.generic.pagination import Pagination
 from flasky.standings import bp
 from pybet import unit_of_work, queries
 from flask import render_template, request, url_for, redirect
@@ -26,23 +27,23 @@ def standings_view():
         gamestage_id=selected_gamestage_id, page=page, per_page=per_page, uow=uow
     )
     standings, count = data["standings"], data["count"]
-    pagination = paginate(page, per_page, count)
+    pagination = Pagination(page=page, per_page=per_page, total=count)
     next_url = (
         url_for(
             endpoint="standings.standings_view",
             gamestage_id=selected_gamestage_id,
-            page=pagination["next_page"],
+            page=pagination.next_page,
         )
-        if pagination["has_next"]
+        if pagination.has_next
         else None
     )
     prev_url = (
         url_for(
             endpoint="standings.standings_view",
             gamestage_id=selected_gamestage_id,
-            page=pagination["prev_page"],
+            page=pagination.prev_page,
         )
-        if pagination["has_prev"]
+        if pagination.has_prev
         else None
     )
 
@@ -56,19 +57,3 @@ def standings_view():
         next_url=next_url,
         prev_url=prev_url,
     )
-
-
-def paginate(page, per_page, total_count):
-    total_pages = (total_count + per_page - 1) // per_page
-    has_next = page < total_pages
-    has_prev = page > 1
-    next_page = page + 1 if has_next else None
-    prev_page = page - 1 if has_prev else None
-
-    return {
-        "has_next": has_next,
-        "has_prev": has_prev,
-        "next_page": next_page,
-        "prev_page": prev_page,
-        "total_pages": total_pages,
-    }
