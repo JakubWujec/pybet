@@ -240,50 +240,19 @@ class TestStandingsQuery:
         assert self.standings[0]["points"] > self.standings[1]["points"]
 
 
-class TestGameroundQueries:
+class TestGamestageQueries:
     @pytest.fixture(autouse=True)
     def setup(self, in_memory_sqlite_session_factory):
         self.uow = unit_of_work.SqlAlchemyUnitOfWork(in_memory_sqlite_session_factory)
         self.today = datetime.datetime.now()
 
-        message_bus.handle(
-            commands.CreateMatchCommand(
-                home_team_id=1,
-                away_team_id=2,
-                gameround=1,
-                kickoff=self.today - datetime.timedelta(days=7),
-            ),
-            self.uow,
-        )
-        message_bus.handle(
-            commands.CreateMatchCommand(
-                home_team_id=1,
-                away_team_id=2,
-                gameround=2,
-                kickoff=self.today + datetime.timedelta(days=7),
-            ),
-            self.uow,
-        )
-        message_bus.handle(
-            commands.CreateMatchCommand(
-                home_team_id=1,
-                away_team_id=2,
-                gameround=3,
-                kickoff=self.today + datetime.timedelta(days=14),
-            ),
-            self.uow,
-        )
-        message_bus.handle(
-            commands.CreateMatchCommand(
-                home_team_id=1,
-                away_team_id=2,
-                gameround=3,
-                kickoff=self.today + datetime.timedelta(days=14),
-            ),
-            self.uow,
-        )
+        for i in range(1, 4):
+            message_bus.handle(
+                commands.CreateGamestageCommand(name=f"Gamestage {i}", id=i),
+                uow=self.uow,
+            )
 
-    def test_get_available_gamerounds_query(self):
-        gamerounds = queries.get_available_gamerounds(uow=self.uow)
+    def test_get_available_gamestage_ids_query(self):
+        gamestage_ids = queries.get_available_gamestage_ids(uow=self.uow)
 
-        assert gamerounds == [1, 2, 3]
+        assert gamestage_ids == [1, 2, 3]

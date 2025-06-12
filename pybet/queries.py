@@ -169,14 +169,10 @@ def get_active_gameround_by_date(
         return result
 
 
-def get_available_gamerounds(uow: SqlAlchemyUnitOfWork) -> List[int]:
+def get_available_gamestage_ids(uow: SqlAlchemyUnitOfWork) -> List[int]:
     with uow:
         result = uow.session.execute(
-            text(
-                """
-                SELECT DISTINCT gameround FROM matches ORDER BY gameround
-            """
-            )
+            text("SELECT id FROM gamestages ORDER BY id")
         ).all()
         return [row[0] for row in result]
 
