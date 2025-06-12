@@ -6,29 +6,34 @@ from datetime import datetime
 
 @bp.route("/standings", methods=["POST"])
 def standings_view_post():
-    gameround = request.form.get("gameround", type=int)
-    return redirect(url_for("standings.standings_view", gameround=gameround))
+    gamestage_id = request.form.get("gamestage_id", type=int)
+    print(f"YYY {gamestage_id}")
+    return redirect(url_for("standings.standings_view", gamestage_id=gamestage_id))
 
 
 @bp.route("/standings", methods=["GET"])
 def standings_view():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
 
-    active_gamestage_id = queries.get_gamestage_id_by_date(datetime.now(), uow=uow)
-    gameround = request.args.get("gameround", active_gamestage_id, type=int)
+    current_gamestage_id = queries.get_gamestage_id_by_date(datetime.now(), uow=uow)
+    selected_gamestage_id = request.args.get(
+        "gamestage_id", current_gamestage_id, type=int
+    )
+    print(f"XXX {selected_gamestage_id}")
+    print(f"XXX {request.args.get('gamestage_id')}")
     page = request.args.get("page", 1, type=int)
     per_page = 20
 
     available_gamestage_ids = queries.get_available_gamestage_ids(uow=uow)
     data = queries.standings_query(
-        gamestage_id=gameround, page=page, per_page=per_page, uow=uow
+        gamestage_id=selected_gamestage_id, page=page, per_page=per_page, uow=uow
     )
     standings, count = data["standings"], data["count"]
     pagination = paginate(page, per_page, count)
     next_url = (
         url_for(
             endpoint="standings.standings_view",
-            gameround=gameround,
+            gamestage_id=selected_gamestage_id,
             page=pagination["next_page"],
         )
         if pagination["has_next"]
@@ -37,7 +42,7 @@ def standings_view():
     prev_url = (
         url_for(
             endpoint="standings.standings_view",
-            gameround=gameround,
+            gamestage_id=selected_gamestage_id,
             page=pagination["prev_page"],
         )
         if pagination["has_prev"]
@@ -46,9 +51,9 @@ def standings_view():
 
     return render_template(
         "standings/standings.html",
-        gamerounds=available_gamestage_ids,
-        gameround=gameround,
-        selected_gameround=gameround,
+        available_gamestage_ids=available_gamestage_ids,
+        current_gamestage_id=current_gamestage_id,
+        selected_gamestage_id=selected_gamestage_id,
         standings=standings,
         count=count,
         next_url=next_url,

@@ -20,10 +20,11 @@
     <form method="POST" action="{{ url_for('standings.standings_view') }}" class="mb-4">
         <div class="input-group">
             <label class="input-group-text" for="gameroundSelect">Select Gameround</label>
-            <select class="form-select" id="gameroundSelect" name="gameround">
-                {% for round in gamerounds %}
-                <option value="{{ round }}" {% if round==selected_gameround %}selected{% endif %}>
-                    Gameround {{ round }}
+            <select class="form-select" id="gameroundSelect" name="gamestage_id">
+                {% for gamestage_id_option in available_gamestage_ids %}
+                <option value="{{ gamestage_id_option }}" {% if gamestage_id_option==selected_gamestage_id %}selected{%
+                    endif %}>
+                    Gameround {{ gamestage_id_option }}
                 </option>
                 {% endfor %}
             </select>
@@ -47,7 +48,7 @@
 
                     <td>
                         <a class="link-hover-underline"
-                            href="{{url_for('points.user_round_points_view', user_id=player.user_id, round=gameround)}}">
+                            href="{{url_for('points.user_round_points_view', user_id=player.user_id, gamestage_id=current_gamestage_id)}}">
                             {{player.username }}
                         </a>
                     </td>

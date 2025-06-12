@@ -33,8 +33,7 @@ def user_round_points_view(user_id: int, gamestage_id: int):
     user_id = int(user_id)
 
     gamestageDTO = queries.get_gamestage_by_id(gamestage_id=gamestage_id, uow=uow)
-    print(gamestage_id)
-    print(gamestageDTO)
+
     if gamestageDTO is None:
         abort(404)
 
