@@ -1,10 +1,9 @@
-from config import get_session, session_scope
-from pybet import schema
+import datetime
 
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
-import datetime
-import requests
+
+from config import session_scope
+from pybet import schema
 
 
 def seed_teams_and_matches(session):
@@ -47,31 +46,31 @@ def seed_teams_and_matches(session):
             home_team_id=team_dict["MCI"].id,
             away_team_id=team_dict["EVE"].id,
             kickoff=past_date,
-            gameround=1,
+            gamestage_id=1,
         ),
         schema.Match(
             home_team_id=team_dict["BOU"].id,
             away_team_id=team_dict["CRY"].id,
             kickoff=past_date,
-            gameround=1,
+            gamestage_id=1,
         ),
         schema.Match(
             home_team_id=team_dict["CHE"].id,
             away_team_id=team_dict["FUL"].id,
             kickoff=past_date,
-            gameround=1,
+            gamestage_id=1,
         ),
         schema.Match(
             home_team_id=team_dict["NEW"].id,
             away_team_id=team_dict["AVC"].id,
             kickoff=past_date,
-            gameround=1,
+            gamestage_id=1,
         ),
         schema.Match(
             home_team_id=team_dict["NOT"].id,
             away_team_id=team_dict["TOT"].id,
             kickoff=past_date,
-            gameround=1,
+            gamestage_id=1,
         ),
     ]
 
@@ -80,31 +79,31 @@ def seed_teams_and_matches(session):
             home_team_id=team_dict["SOU"].id,
             away_team_id=team_dict["WHU"].id,
             kickoff=future_date,
-            gameround=2,
+            gamestage_id=2,
         ),
         schema.Match(
             home_team_id=team_dict["WOL"].id,
             away_team_id=team_dict["MUN"].id,
             kickoff=future_date,
-            gameround=2,
+            gamestage_id=2,
         ),
         schema.Match(
             home_team_id=team_dict["LIV"].id,
             away_team_id=team_dict["LEI"].id,
             kickoff=future_date,
-            gameround=2,
+            gamestage_id=2,
         ),
         schema.Match(
             home_team_id=team_dict["BHA"].id,
             away_team_id=team_dict["BRE"].id,
             kickoff=future_date,
-            gameround=2,
+            gamestage_id=2,
         ),
         schema.Match(
             home_team_id=team_dict["ARS"].id,
             away_team_id=team_dict["IPS"].id,
             kickoff=future_date,
-            gameround=2,
+            gamestage_id=2,
         ),
     ]
 
