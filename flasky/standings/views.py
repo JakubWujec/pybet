@@ -25,6 +25,24 @@ def standings_view():
     )
     standings, count = data["standings"], data["count"]
     pagination = paginate(page, per_page, count)
+    next_url = (
+        url_for(
+            endpoint="standings.standings_view",
+            gameround=gameround,
+            page=pagination["next_page"],
+        )
+        if pagination["has_next"]
+        else None
+    )
+    prev_url = (
+        url_for(
+            endpoint="standings.standings_view",
+            gameround=gameround,
+            page=pagination["prev_page"],
+        )
+        if pagination["has_prev"]
+        else None
+    )
 
     return render_template(
         "standings/standings.html",
@@ -33,20 +51,8 @@ def standings_view():
         selected_gameround=gameround,
         standings=standings,
         count=count,
-        next_url=url_for(
-            endpoint="standings.standings_view",
-            gameround=gameround,
-            page=pagination["next_page"],
-        )
-        if pagination["has_next"]
-        else None,
-        prev_url=url_for(
-            endpoint="standings.standings_view",
-            gameround=gameround,
-            page=pagination["prev_page"],
-        )
-        if pagination["has_prev"]
-        else None,
+        next_url=next_url,
+        prev_url=prev_url,
     )
 
 
