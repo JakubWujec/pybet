@@ -170,7 +170,6 @@ class TestGetActiveGamestageQuery:
 
     def test_returns_one_when_between_rounds(self):
         result = queries.get_gamestage_id_by_date(self.today, self.uow)
-        print(result)
         assert result == 1
 
     def test_returns_two_after_all_matches(self):

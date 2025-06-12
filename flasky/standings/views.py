@@ -7,7 +7,6 @@ from datetime import datetime
 @bp.route("/standings", methods=["POST"])
 def standings_view_post():
     gamestage_id = request.form.get("gamestage_id", type=int)
-    print(f"YYY {gamestage_id}")
     return redirect(url_for("standings.standings_view", gamestage_id=gamestage_id))
 
 
@@ -19,8 +18,6 @@ def standings_view():
     selected_gamestage_id = request.args.get(
         "gamestage_id", current_gamestage_id, type=int
     )
-    print(f"XXX {selected_gamestage_id}")
-    print(f"XXX {request.args.get('gamestage_id')}")
     page = request.args.get("page", 1, type=int)
     per_page = 20
 

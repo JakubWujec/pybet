@@ -39,7 +39,6 @@ def make_gamestage_bet(
 ):
     with uow:
         gamestage = uow.gamestages.get(command.gamestage_id)
-        print(command)
 
         for command_bet in command.bets:
             match = uow.matches.get(command_bet.match_id)
