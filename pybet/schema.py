@@ -207,3 +207,6 @@ class Gamestage(Base):
 
     def to_dict(self):
         return dict(id=self.id, name=self.name, deadline=self.deadline)
+
+    def __str__(self):
+        return f"{self.name} ({self.deadline})"
