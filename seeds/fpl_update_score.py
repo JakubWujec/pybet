@@ -12,7 +12,7 @@ def update_score_from_fpl(round: int):
     uow = unit_of_work.SqlAlchemyUnitOfWork()
 
     with uow:
-        matches = uow.matches.get_gameround_matches(round)
+        matches = uow.matches.get_gamestage_matches(round)
 
         for _match in matches:
             found_result = next(

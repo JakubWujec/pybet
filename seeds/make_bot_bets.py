@@ -7,7 +7,7 @@ from pybet import commands, handlers, schema, unit_of_work
 def make_bot_bets(round: int):
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     with uow:
-        matches = uow.matches.get_gameround_matches(round)
+        matches = uow.matches.get_gamestage_matches(round)
         bots = uow.session.query(schema.User).filter_by(role=schema.Role.BOT).all()
 
         for match in matches:
