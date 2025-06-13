@@ -2,8 +2,8 @@ from flask import abort, flash, redirect, render_template, request
 from flask_login import current_user, login_required
 
 from flasky.mygamestage import bp, forms
-from pybet import commands, message_bus, queries, unit_of_work
-from pybet.queries import gamestage_queries
+from pybet import commands, message_bus, unit_of_work
+from pybet.queries import gamestage_queries, queries
 
 
 @bp.route("/mygamestage", methods=["GET", "POST"])
