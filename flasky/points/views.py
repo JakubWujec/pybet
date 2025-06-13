@@ -27,20 +27,19 @@ def points():
     )
 
 
-@bp.route("/points/<user_id>/gamestage/<gamestage_id>", methods=["GET"])
+@bp.route("/points/<int:user_id>/gamestage/<int:gamestage_id>", methods=["GET"])
 def user_round_points_view(user_id: int, gamestage_id: int):
     uow = unit_of_work.SqlAlchemyUnitOfWork()
-    user_id = int(user_id)
-
+    current_user_id = getattr(current_user, "id", None)
     gamestageDTO = queries.get_gamestage_by_id(gamestage_id=gamestage_id, uow=uow)
 
     if gamestageDTO is None:
         abort(404)
 
-    # dont allow to lookup future bets of other players
-    if gamestageDTO.deadline > datetime.datetime.now():
-        if current_user.is_anonymous or current_user.id != user_id:
-            abort(403)
+    if not can_view_gamestage(
+        gamestageDTO=gamestageDTO, viewer_id=user_id, current_user_id=current_user_id
+    ):
+        abort(403)
 
     username = queries.get_username_by_user_id(user_id=user_id, uow=uow)
     if username is None:
@@ -56,3 +55,11 @@ def user_round_points_view(user_id: int, gamestage_id: int):
         gamestage_name=gamestageDTO.name,
         username=username,
     )
+
+
+def can_view_gamestage(
+    gamestageDTO: queries.GamestageDTO, viewer_id, current_user_id: int | None
+):
+    if gamestageDTO.deadline > datetime.datetime.now():
+        return viewer_id == current_user_id
+    return True
