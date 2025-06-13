@@ -37,23 +37,10 @@ def standings_view():
     )
     standings, count = data.standings, data.count
     pagination = Pagination(page=page, per_page=PER_PAGE, total=count)
-    next_url = (
-        url_for(
-            endpoint="standings.standings_view",
-            gamestage_id=selected_gamestage_id,
-            page=pagination.next_page,
-        )
-        if pagination.has_next
-        else None
-    )
-    prev_url = (
-        url_for(
-            endpoint="standings.standings_view",
-            gamestage_id=selected_gamestage_id,
-            page=pagination.prev_page,
-        )
-        if pagination.has_prev
-        else None
+    prev_url, next_url = build_pagination_urls(
+        endpoint="standings.standings_view",
+        gamestage_id=selected_gamestage_id,
+        pagination=pagination,
     )
 
     return render_template(
@@ -65,4 +52,15 @@ def standings_view():
         count=count,
         next_url=next_url,
         prev_url=prev_url,
+    )
+
+
+def build_pagination_urls(endpoint, gamestage_id, pagination: Pagination):
+    return (
+        url_for(endpoint, gamestage_id=gamestage_id, page=pagination.next_page)
+        if pagination.has_next
+        else None,
+        url_for(endpoint, gamestage_id=gamestage_id, page=pagination.prev_page)
+        if pagination.has_prev
+        else None,
     )
