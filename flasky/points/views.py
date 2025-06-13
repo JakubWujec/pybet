@@ -31,9 +31,12 @@ def points():
 def user_round_points_view(user_id: int, gamestage_id: int):
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     current_user_id = getattr(current_user, "id", None)
-    gamestageDTO = queries.get_gamestage_by_id(gamestage_id=gamestage_id, uow=uow)
 
-    if gamestageDTO is None:
+    try:
+        gamestageDTO = queries.get_gamestage_by_id(gamestage_id=gamestage_id, uow=uow)
+        if gamestageDTO is None:
+            abort(404)
+    except Exception:
         abort(404)
 
     if not can_view_gamestage(
