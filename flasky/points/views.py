@@ -1,10 +1,12 @@
 import datetime
+from typing import List
 
 from flask import abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
 from flasky.points import bp
-from pybet import queries, unit_of_work
+from pybet import unit_of_work
+from pybet.queries import queries, gamestage_queries
 
 
 @bp.route("/points", methods=["GET"])
@@ -12,7 +14,7 @@ from pybet import queries, unit_of_work
 def points():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     user_id = current_user.id
-    previous_gamestage_id = queries.get_previous_gamestage_id(uow)
+    previous_gamestage_id = gamestage_queries.get_previous_gamestage_id(uow)
 
     if previous_gamestage_id is None:
         flash("There is no data to show yet!")
@@ -31,9 +33,11 @@ def points():
 def user_round_points_view(user_id: int, gamestage_id: int):
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     current_user_id = getattr(current_user, "id", None)
-    gamestageDTO: queries.GamestageDTO = get_gamestageDTO_or_abort(
-        gamestage_id=gamestage_id, uow=uow
-    )
+    all_gamestagesDTO = gamestage_queries.get_all(uow=uow)
+    gamestageDTO = next((g for g in all_gamestagesDTO if g.id == gamestage_id), None)
+
+    if gamestageDTO is None:
+        abort(404)
 
     if not can_view_gamestage(
         gamestageDTO=gamestageDTO, viewer_id=user_id, current_user_id=current_user_id
@@ -47,28 +51,49 @@ def user_round_points_view(user_id: int, gamestage_id: int):
     query_result = queries.mygamestage(user_id, gamestage_id=gamestage_id, uow=uow)
     matches = query_result["matches"]
 
+    prev_gamestageDTO, next_gamestageDTO = get_adjacent_gamestages(
+        gamestageDTO, all_gamestagesDTO
+    )
+
     return render_template(
         "points/entry.html",
         enumerate=enumerate,
         matches=matches,
         gamestage_name=gamestageDTO.name,
         username=username,
+        next_url=build_gamestage_url(next_gamestageDTO, user_id, current_user_id),
+        prev_url=build_gamestage_url(prev_gamestageDTO, user_id, current_user_id),
     )
 
 
-def get_gamestageDTO_or_abort(gamestage_id: int, uow):
-    try:
-        gamestageDTO = queries.get_gamestage_by_id(gamestage_id=gamestage_id, uow=uow)
-        if gamestageDTO is None:
-            abort(404)
-        return gamestageDTO
-    except Exception:
-        abort(404)
-
-
 def can_view_gamestage(
-    gamestageDTO: queries.GamestageDTO, viewer_id, current_user_id: int | None
+    gamestageDTO: gamestage_queries.GamestageDTO,
+    viewer_id,
+    current_user_id: int | None,
 ):
     if gamestageDTO.deadline > datetime.datetime.now():
         return viewer_id == current_user_id
     return True
+
+
+def get_adjacent_gamestages(current, all_stages):
+    try:
+        idx = all_stages.index(current)
+    except ValueError:
+        return None, None
+
+    prev_stage = all_stages[idx - 1] if idx - 1 >= 0 else None
+    next_stage = all_stages[idx + 1] if idx + 1 < len(all_stages) else None
+    return prev_stage, next_stage
+
+
+def build_gamestage_url(
+    gamestageDTO: gamestage_queries.GamestageDTO | None, user_id, current_user_id
+):
+    if gamestageDTO is None:
+        return None
+    if not can_view_gamestage(gamestageDTO, user_id, current_user_id):
+        return None
+    return url_for(
+        "points.user_round_points_view", user_id=user_id, gamestage_id=gamestageDTO.id
+    )
