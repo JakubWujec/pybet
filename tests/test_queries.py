@@ -1,5 +1,5 @@
-from pybet import queries
 from pybet import message_bus, unit_of_work, commands, schema
+from pybet.queries import gamestage_queries, queries
 from sqlalchemy.sql import text
 import datetime
 import pytest
@@ -163,18 +163,18 @@ class TestGetActiveGamestageQuery:
 
     def test_returns_returns_none_before_any_matches(self):
         before_any_match_started = self.previous_week - datetime.timedelta(days=7)
-        result = queries.get_gamestage_id_by_date(
+        result = gamestage_queries.get_gamestage_id_by_date(
             date=before_any_match_started, uow=self.uow
         )
         assert result is None
 
     def test_returns_one_when_between_rounds(self):
-        result = queries.get_gamestage_id_by_date(self.today, self.uow)
+        result = gamestage_queries.get_gamestage_id_by_date(self.today, self.uow)
         assert result == 1
 
     def test_returns_two_after_all_matches(self):
         after_all_matches = self.next_week + datetime.timedelta(days=7)
-        result = queries.get_gamestage_id_by_date(after_all_matches, self.uow)
+        result = gamestage_queries.get_gamestage_id_by_date(after_all_matches, self.uow)
         assert result == 2
 
 
@@ -259,6 +259,6 @@ class TestGamestageQueries:
             )
 
     def test_get_available_gamestage_ids_query(self):
-        gamestage_ids = queries.get_available_gamestage_ids(uow=self.uow)
+        gamestage_ids = gamestage_queries.get_available_gamestage_ids(uow=self.uow)
 
         assert gamestage_ids == [1, 2, 3]
