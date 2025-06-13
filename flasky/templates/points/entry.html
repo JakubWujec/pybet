@@ -1,3 +1,4 @@
+{% from "macros/match_score_badge.html" import match_score_badge %}
 {% extends "base.html" %}
 
 {% block content %}
@@ -9,38 +10,24 @@
     <div class="row">
         {% for idx, match in enumerate(matches) %}
         {% set home_team_name = match["home_team"]["name"] %}
-        {% set home_team_score = match["home_team_score"] if match["home_team_score"] is not none else '?' %}
         {% set away_team_name = match["away_team"]["name"] %}
-        {% set away_team_score = match["away_team_score"] if match["away_team_score"] is not none else '?' %}
+        {% set bet_home_score = match.bet.home_team_score if match.bet else none %}
+        {% set bet_away_score = match.bet.away_team_score if match.bet else none %}
 
         <div class="col-md-4">
             <div class="card shadow-sm mb-4">
                 <!-- Header  -->
-                <div class="card-header bg-dark text-white text-center">
-                    <strong>{{ match.home_team.name }}</strong> vs <strong>{{ match.away_team.name }}</strong>
-                    <div>
-                        {{ match.kickoff.strftime('%d %b %Y, %H:%M') }}
-                    </div>
+                <div class="card-header bg-dark text-white text-center py-3 h5">
+                    <strong>{{ home_team_name }}</strong>
+                    {{ match_score_badge(match.home_team_score, match.away_team_score) }}
+                    <strong>{{ away_team_name }}</strong>
                 </div>
 
                 <!-- Match Details -->
-                <div class="card-body">
-                    <p class="text-center mb-2">
-                        <strong>Actual Score:</strong>
-                        <span class="badge bg-primary">{{ match.home_team_score }}</span>
-                        <span>-</span>
-                        <span class="badge bg-primary">{{ match.away_team_score }}</span>
-                    </p>
-
+                <div class="card-body h5">
                     <p class="text-center mb-2">
                         <strong>Your Prediction:</strong>
-                        {% if match.bet %}
-                        <span class="badge bg-info">{{ match.bet.home_team_score }}</span>
-                        <span>-</span>
-                        <span class="badge bg-info">{{ match.bet.away_team_score }}</span>
-                        {% else %}
-                        <span>None</span>
-                        {% endif %}
+                        {{ match_score_badge(bet_home_score, bet_away_score) }}
                     </p>
                     <p class="text-center mb-0">
                         <strong>Points:</strong>
