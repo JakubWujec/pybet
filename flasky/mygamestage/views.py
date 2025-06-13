@@ -1,19 +1,19 @@
-from typing import List
 from flask import abort, flash, redirect, render_template, request
 from flask_login import current_user, login_required
 
 from flasky.mygamestage import bp, forms
-from pybet import commands, message_bus, unit_of_work, queries
+from pybet import commands, message_bus, queries, unit_of_work
+from pybet.queries import gamestage_queries
 
 
 @bp.route("/mygamestage", methods=["GET", "POST"])
 @login_required
 def mygamestage_view():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
-    current_gamestage_id = queries.get_current_gamestage_id(uow)
+    current_gamestage_id = gamestage_queries.get_current_gamestage_id(uow)
     if current_gamestage_id is None:
         abort(404)
-    current_gamestage = queries.get_gamestage_by_id(
+    current_gamestage = gamestage_queries.get_by_id(
         gamestage_id=current_gamestage_id, uow=uow
     )
 

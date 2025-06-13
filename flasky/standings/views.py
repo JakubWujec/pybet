@@ -1,8 +1,11 @@
+from datetime import datetime
+
+from flask import redirect, render_template, request, url_for
+
 from flasky.generic.pagination import Pagination
 from flasky.standings import bp
-from pybet import unit_of_work, queries
-from flask import render_template, request, url_for, redirect
-from datetime import datetime
+from pybet import unit_of_work
+from pybet.queries import gamestage_queries, queries
 
 PER_PAGE = 20
 
@@ -17,13 +20,15 @@ def standings_view_post():
 def standings_view():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
 
-    current_gamestage_id = queries.get_gamestage_id_by_date(datetime.now(), uow=uow)
+    current_gamestage_id = gamestage_queries.get_gamestage_id_by_date(
+        datetime.now(), uow=uow
+    )
     selected_gamestage_id = request.args.get(
         "gamestage_id", current_gamestage_id, type=int
     )
     page = request.args.get("page", 1, type=int)
 
-    available_gamestage_ids = queries.get_available_gamestage_ids(uow=uow)
+    available_gamestage_ids = gamestage_queries.get_available_gamestage_ids(uow=uow)
     data = queries.standings_query(
         gamestage_id=selected_gamestage_id,
         page=page,
