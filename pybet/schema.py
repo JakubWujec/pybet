@@ -200,7 +200,9 @@ class Gamestage(Base):
 
     @property
     def deadline(self):
-        return min(match.kickoff for match in self.matches)
+        if self.matches:
+            return min(match.kickoff for match in self.matches)
+        return datetime.now()
 
     def to_dict(self):
         return dict(id=self.id, name=self.name, deadline=self.deadline)
