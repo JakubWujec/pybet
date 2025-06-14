@@ -41,6 +41,11 @@ def seed_teams_and_matches(session):
             pass
     session.flush()
 
+    s1 = schema.Gamestage(id=1, name="Gamestage 1")
+    s2 = schema.Gamestage(id=2, name="Gamestage 2")
+    session.add(s1)
+    session.add(s2)
+
     past_matches = [
         schema.Match(
             home_team_id=team_dict["MCI"].id,
