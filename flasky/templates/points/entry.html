@@ -1,4 +1,5 @@
 {% from "macros/match_score_badge.html" import match_score_badge %}
+{% from "macros/points_calculation_table.html" import points_calculation_table %}
 {% extends "base.html" %}
 
 {% block content %}
@@ -29,14 +30,7 @@
                         <strong>Your Prediction:</strong>
                         {{ match_score_badge(bet_home_score, bet_away_score) }}
                     </p>
-                    <p class="text-center mb-0">
-                        <strong>Points:</strong>
-                        {% if match.bet %}
-                        <span class="badge bg-success">{{ match.bet.points }}</span>
-                        {% else %}
-                        <span class="badge bg-danger">0</span>
-                        {% endif %}
-                    </p>
+                    {{points_calculation_table(0, 0, 0)}}
                 </div>
 
 

@@ -1,0 +1,36 @@
+{% macro points_calculation_table(result, score, total, multiplier=None) %}
+<div class="table-responsive w-auto mx-auto">
+    <table class="table table-borderless table-sm text-end align-middle mb-0 small">
+        <tbody>
+            <tr>
+                <td class="text-start">Result</td>
+                <td><span class="badge bg-success">+ {{ result }}</span></td>
+            </tr>
+            <tr>
+                <td class="text-start">Score</td>
+                <td><span class="badge bg-success">+ {{ score }}</span></td>
+            </tr>
+            {% if multiplier %}
+            <tr>
+                <td colspan="2">
+                    <hr class="my-1">
+                </td>
+            </tr>
+            <tr>
+                <td class="text-start">Mulitplier</td>
+                <td><span class="badge bg-success">* {{ multiplier }}</span></td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td colspan="2">
+                    <hr class="my-1">
+                </td>
+            </tr>
+            <tr>
+                <td class="text-start fw-bold">Total</td>
+                <td><span class="badge bg-success">= {{ total }}</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endmacro %}
