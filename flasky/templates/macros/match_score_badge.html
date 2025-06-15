@@ -1,7 +1,7 @@
 {% macro match_score_badge(home_score, away_score, class_) %}
 <span class="mb-0 badge bg-primary h4 {{ class_ }}">
-    {{ home_score if home_score is not none else '?' }}
+    {{ home_score | default('?', true) }}
     :
-    {{ away_score if away_score is not none else '?' }}
+    {{ away_score | default('?', true) }}
 </span>
 {% endmacro %}
