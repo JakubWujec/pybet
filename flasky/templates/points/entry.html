@@ -10,33 +10,23 @@
 
     <div class="row">
         {% for idx, match in enumerate(matches) %}
-        {% set home_team_name = match["home_team"]["name"] %}
-        {% set away_team_name = match["away_team"]["name"] %}
-        {% set bet_home_score = match.bet.home_team_score if match.bet else none %}
-        {% set bet_away_score = match.bet.away_team_score if match.bet else none %}
+        {% set bet = betDTO_by_match_id.get(match.id) %}
 
         <div class="col-md-4">
             <div class="card shadow-sm mb-4">
-                <!-- Header  -->
                 <div class="card-header bg-dark text-white text-center py-3 h5">
-                    <strong>{{ home_team_name }}</strong>
+                    <strong>{{match.home_team.name}}</strong>
                     {{ match_score_badge(match.home_team_score, match.away_team_score) }}
-                    <strong>{{ away_team_name }}</strong>
+                    <strong>{{match.away_team.name}}</strong>
                 </div>
-
-                <!-- Match Details -->
                 <div class="card-body h5">
                     <p class="text-center mb-2">
                         <strong>Your Prediction:</strong>
-                        {{ match_score_badge(bet_home_score, bet_away_score) }}
+                        {{ match_score_badge(bet.home_team_score, bet.away_team_score) }}
                     </p>
-                    {{points_calculation_table(0, 0, 0)}}
+                    {{points_calculation_table(bet.result_points, bet.score_points, bet.total_points)}}
                 </div>
-
-
             </div>
-
-
         </div>
         {% endfor %}
 
