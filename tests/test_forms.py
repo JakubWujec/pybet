@@ -55,7 +55,7 @@ def test_valid():
     )
     form = MatchBetForm(formdata=form_data)
 
-    assert form.validate(), "The form should validate with valid data."
+    assert form.validate(), f"The form should validate with valid data. {form.errors}"
 
 
 def test_valid_form_when_nil_nil_score():
@@ -71,8 +71,10 @@ def test_valid_form_when_nil_nil_score():
     if not form.validate():
         for field_name, error_messages in form.errors.items():
             print(f"Field '{field_name}' errors: {', '.join(error_messages)}")
+    print(form.data)
 
-    assert form.validate(), "The form should validate with valid data."
+    print(form.home_team_score.data)
+    assert form.validate(), "The form should validate with 0:0 score."
 
 
 def test_form_shouldnt_validate_without_scores():

@@ -13,13 +13,13 @@ MAX_SCORE = 100
 
 def non_negative_integer_required(form, field):
     if field.data is None or field.data < 0:
-        raise ValidationError("Field must be non-negative integer.")
+        raise ValidationError(f"{field.label.text} must be non-negative integer.")
 
 
-def too_high_value(form, field):
+def too_high_value(form: "MatchBetForm", field: IntegerField):
     if field.data is None or field.data > MAX_SCORE:
         raise ValidationError(
-            f"Field must be non-negative integer less than {MAX_SCORE}"
+            f"{field.label.text} must be non-negative integer less than {MAX_SCORE}."
         )
 
 
@@ -27,10 +27,11 @@ def too_high_value(form, field):
 class MatchBetForm(Form):
     match_id = HiddenInteger(validators=[DataRequired()])
     home_team_score = IntegerField(
-        "Home Score", validators=[non_negative_integer_required, too_high_value]
+        label="Home Score",
+        validators=[non_negative_integer_required, too_high_value],
     )
     away_team_score = IntegerField(
-        "Away Score", validators=[non_negative_integer_required, too_high_value]
+        label="Away Score", validators=[non_negative_integer_required, too_high_value]
     )
 
 

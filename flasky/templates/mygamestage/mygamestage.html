@@ -23,15 +23,19 @@
 
                     <div class="card-body">
                         {{ bet_form.match_id() }}
-
+                        {% set away_score_field = bet_form.away_team_score %}
+                        {% set home_score_field = bet_form.home_team_score %}
                         <!-- Prediction Inputs -->
                         <div class="d-flex justify-content-center align-items-center mb-3">
                             <!-- Home Team -->
                             <div class="text-center">
-                                {{ bet_form.home_team_score(
-                                class="form-control mt-1",
-                                min="0",
-                                required="required")
+
+                                {{ home_score_field(
+                                class="form-control mt-1" + (" is-invalid" if
+                                home_score_field.errors else
+                                ""),
+                                required="required",
+                                )
                                 }}
                             </div>
 
@@ -40,12 +44,23 @@
 
                             <!-- Away Team -->
                             <div class="text-center">
-                                {{ bet_form.away_team_score(
-                                class="form-control mt-1",
-                                min="0",
-                                required="required")
-                                }}
+
+                                {{ away_score_field(class="form-control mt-1" + (" is-invalid" if
+                                away_score_field.errors else
+                                ""),
+                                required="required",
+                                ) }}
+
                             </div>
+
+                        </div>
+                        <div class="invalid-feedback d-block">
+                            {% for error in home_score_field.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                            {% for error in away_score_field.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
