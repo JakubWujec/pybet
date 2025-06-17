@@ -3,7 +3,8 @@ from flask_login import current_user, login_required
 
 from flasky.mygamestage import bp, forms
 from pybet import commands, message_bus, unit_of_work
-from pybet.queries import gamestage_queries, queries
+from pybet.queries import gamestage_queries, queries, bet_queries, match_queries
+from pybet.utils import list_to_dict
 
 
 @bp.route("/mygamestage", methods=["GET", "POST"])
@@ -13,20 +14,26 @@ def mygamestage_view():
     current_gamestage_DTO = gamestage_queries.get_current_gamestage(uow=uow)
     if current_gamestage_DTO is None:
         return "Gamestage not found"
-    matches = queries.mygamestage(
-        user_id=current_user.id, gamestage_id=current_gamestage_DTO.id, uow=uow
-    )["matches"]
-    match_by_id = {match["id"]: match for match in matches}
+
+    matches = match_queries.get_by_gamestage_id(
+        gamestage_id=current_gamestage_DTO.id, uow=uow
+    )
+    match_by_id = {matchDTO.id: matchDTO for matchDTO in matches}
+
+    bets = bet_queries.get_user_gamestage_bets(
+        current_user.id, gamestage_id=current_gamestage_DTO.id, uow=uow
+    )
+    bet_by_match_id = list_to_dict(bets, lambda bet: bet.match_id)
     form = forms.MatchBetListForm()
 
     if request.method == "GET":
-        for match in matches:
-            bet = getattr(match, "bet", match["bet"] or dict())  # TODO FIX TOFIX
+        for matchDTO in matches:
+            bet = bet_by_match_id.get(matchDTO.id, None)
             form.bets.append_entry(
                 {
-                    "match_id": int(match["id"]),
-                    "home_team_score": bet.get("home_team_score", None),
-                    "away_team_score": bet.get("away_team_score", None),
+                    "match_id": matchDTO.id,
+                    "home_team_score": getattr(bet, "home_team_score", None),
+                    "away_team_score": getattr(bet, "away_team_score", None),
                 }
             )
     elif request.method == "POST":

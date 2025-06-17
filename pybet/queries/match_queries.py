@@ -36,5 +36,4 @@ def get_by_gamestage_id(gamestage_id: int, uow: SqlAlchemyUnitOfWork) -> List[Ma
             for m in matches
         ]
 
-        print(result)
         return result

@@ -9,8 +9,8 @@
         {{ form.hidden_tag() }}
         <div class="row">
             {% for idx, bet_form in enumerate(form.bets) %}
-            {% set home_team_name = match_by_id[bet_form.match_id.data]["home_team"]["name"] %}
-            {% set away_team_name = match_by_id[bet_form.match_id.data]["away_team"]["name"] %}
+            {% set home_team_name = match_by_id[bet_form.match_id.data].home_team_name %}
+            {% set away_team_name = match_by_id[bet_form.match_id.data].away_team_name %}
             {% set kickoff = match_by_id[bet_form.match_id.data]["kickoff"] %}
 
             <div class="col-md-6 col-xl-4">
