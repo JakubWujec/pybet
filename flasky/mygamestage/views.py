@@ -3,25 +3,18 @@ from flask_login import current_user, login_required
 
 from flasky.mygamestage import bp, forms
 from pybet import commands, message_bus, unit_of_work
-from pybet.queries import gamestage_queries, queries
+from pybet.queries import gamestage_queries, queries, match_queries
 
 
 @bp.route("/mygamestage", methods=["GET", "POST"])
 @login_required
 def mygamestage_view():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
-    current_gamestage_id = gamestage_queries.get_current_gamestage_id(uow)
-    if current_gamestage_id is None:
-        abort(404)
-    current_gamestage = gamestage_queries.get_by_id(
-        gamestage_id=current_gamestage_id, uow=uow
-    )
-
-    if current_gamestage is None:
+    current_gamestage_DTO = gamestage_queries.get_current_gamestage(uow=uow)
+    if current_gamestage_DTO is None:
         return "Gamestage not found"
-
     matches = queries.mygamestage(
-        user_id=current_user.id, gamestage_id=current_gamestage.id, uow=uow
+        user_id=current_user.id, gamestage_id=current_gamestage_DTO.id, uow=uow
     )["matches"]
     match_by_id = {match["id"]: match for match in matches}
     form = forms.MatchBetListForm()
@@ -49,7 +42,7 @@ def mygamestage_view():
                 ]
                 message = commands.MakeGamestageBetCommand(
                     user_id=current_user.id,
-                    gamestage_id=current_gamestage.id,
+                    gamestage_id=current_gamestage_DTO.id,
                     bets=gamestage_bets,
                 )
 
@@ -67,7 +60,7 @@ def mygamestage_view():
 
     return render_template(
         "mygamestage/mygamestage.html",
-        gamestage_name=current_gamestage.name,
+        gamestage_name=current_gamestage_DTO.name,
         form=form,
         match_by_id=match_by_id,
         current_user=current_user,

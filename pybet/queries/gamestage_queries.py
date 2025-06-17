@@ -21,6 +21,13 @@ def get_all(uow: SqlAlchemyUnitOfWork) -> List[GamestageDTO]:
     return []
 
 
+def get_current_gamestage(uow: SqlAlchemyUnitOfWork) -> GamestageDTO | None:
+    gamestage_id = get_current_gamestage_id(uow)
+    if gamestage_id is None:
+        return None
+    return get_by_id(gamestage_id=gamestage_id, uow=uow)
+
+
 def get_by_id(gamestage_id: int, uow: SqlAlchemyUnitOfWork) -> GamestageDTO | None:
     with uow:
         gamestage = uow.gamestages.get(gamestage_id=gamestage_id)
