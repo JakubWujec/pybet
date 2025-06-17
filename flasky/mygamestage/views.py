@@ -1,9 +1,9 @@
-from flask import abort, flash, redirect, render_template, request
+from flask import flash, redirect, render_template, request
 from flask_login import current_user, login_required
 
 from flasky.mygamestage import bp, forms
 from pybet import commands, message_bus, unit_of_work
-from pybet.queries import gamestage_queries, queries, match_queries
+from pybet.queries import gamestage_queries, queries
 
 
 @bp.route("/mygamestage", methods=["GET", "POST"])
@@ -56,6 +56,7 @@ def mygamestage_view():
                 )
         except Exception as ex:
             flash(f"Error {ex}", "error")
+        finally:
             redirect(request.url)
 
     return render_template(
@@ -63,6 +64,5 @@ def mygamestage_view():
         gamestage_name=current_gamestage_DTO.name,
         form=form,
         match_by_id=match_by_id,
-        current_user=current_user,
         enumerate=enumerate,
     )
