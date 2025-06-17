@@ -1,0 +1,29 @@
+{% macro match_bet_form_fields(bet_form) %}
+{{ bet_form.match_id() }}
+
+{% set home = bet_form.home_team_score %}
+{% set away = bet_form.away_team_score %}
+
+<div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+    <div class="text-center">
+        {{ home(class="form-control form-control-sm text-center" + (" is-invalid" if home.errors else "")) }}
+    </div>
+
+    <div class="fw-bold">-</div>
+
+    <div class="text-center">
+        {{ away(class="form-control form-control-sm text-center" + (" is-invalid" if away.errors else "")) }}
+    </div>
+</div>
+
+{% if home.errors or away.errors %}
+<div class="invalid-feedback d-block">
+    {% for error in home.errors %}
+    <div>{{ error }}</div>
+    {% endfor %}
+    {% for error in away.errors %}
+    <div>{{ error }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endmacro %}

@@ -1,3 +1,4 @@
+{% from "macros/match_bet_form_fields.html" import match_bet_form_fields %}
 {% extends "base.html" %}
 
 {% block content %}
@@ -22,44 +23,7 @@
                     </div>
 
                     <div class="card-body">
-                        {{ bet_form.match_id() }}
-                        {% set away_score_field = bet_form.away_team_score %}
-                        {% set home_score_field = bet_form.home_team_score %}
-                        <!-- Prediction Inputs -->
-                        <div class="d-flex justify-content-center align-items-center mb-3">
-                            <!-- Home Team -->
-                            <div class="text-center">
-
-                                {{ home_score_field(
-                                class="form-control mt-1" + (" is-invalid" if
-                                home_score_field.errors else
-                                ""),
-                                )
-                                }}
-                            </div>
-
-                            <!-- Separator -->
-                            <div class="mx-3 fw-bold">-</div>
-
-                            <!-- Away Team -->
-                            <div class="text-center">
-
-                                {{ away_score_field(class="form-control mt-1" + (" is-invalid" if
-                                away_score_field.errors else
-                                ""),
-                                ) }}
-
-                            </div>
-
-                        </div>
-                        <div class="invalid-feedback d-block">
-                            {% for error in home_score_field.errors %}
-                            <span>{{ error }}</span>
-                            {% endfor %}
-                            {% for error in away_score_field.errors %}
-                            <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
+                        {{match_bet_form_fields(bet_form)}}
                     </div>
                 </div>
             </div>
