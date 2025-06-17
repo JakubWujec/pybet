@@ -4,6 +4,10 @@ from datetime import datetime
 from typing import List
 
 import requests
+import random
+
+from config import get_session_factory
+from pybet import unit_of_work
 
 
 @dataclass(frozen=True)
@@ -59,4 +63,23 @@ class FPLScoreProvider(ScoreProvider):
             for fixture in data
         ]
 
+        return result
+
+
+class RandomScoreProvider(ScoreProvider):
+    def get_match_results(self, gamestage_id: int) -> List[MatchResultDTO]:
+        uow = unit_of_work.SqlAlchemyUnitOfWork(get_session_factory())
+        result: List[MatchResultDTO] = []
+        with uow:
+            gamestage = uow.gamestages.get(gamestage_id)
+            for match in gamestage.matches:
+                result.append(
+                    MatchResultDTO(
+                        home_team_short_name=match.home_team.name,
+                        away_team_short_name=match.away_team.name,
+                        home_team_score=random.randint(0, 5),
+                        away_team_score=random.randint(0, 5),
+                        finished=True,
+                    )
+                )
         return result

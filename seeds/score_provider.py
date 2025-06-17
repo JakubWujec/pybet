@@ -1,12 +1,11 @@
 from pybet import message_bus, commands, unit_of_work
-from pybet.score_provider import FPLScoreProvider
+from pybet.score_provider import FPLScoreProvider, ScoreProvider, RandomScoreProvider
 import sys
 
 # >py -m seeds.fpl_update_score
 
 
-def update_score_from_fpl(round: int):
-    score_provider = FPLScoreProvider()
+def run_score_provider(score_provider: ScoreProvider, round: int):
     match_results = score_provider.get_match_results(round)
 
     uow = unit_of_work.SqlAlchemyUnitOfWork()
@@ -41,8 +40,11 @@ def update_score_from_fpl(round: int):
 
 
 if __name__ == "__main__":
+    # score_provider = FPLScoreProvider()
+    score_provider = RandomScoreProvider()
+
     if len(sys.argv) < 2:
         print("Provide fpl gameweek number")
     else:
         p1 = sys.argv[1]
-        update_score_from_fpl(int(p1))
+        run_score_provider(score_provider, int(p1))
