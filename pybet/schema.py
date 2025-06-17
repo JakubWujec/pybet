@@ -170,7 +170,8 @@ class Match(Base):
         self.home_team_score = home_team_score
         self.away_team_score = away_team_score
 
-        self.events.append(events.MatchScoreUpdated(self.id))
+        if home_team_score is not None and away_team_score is not None:
+            self.events.append(events.MatchScoreUpdated(self.id))
 
     def is_after_kickoff(self) -> bool:
         # not flushed
