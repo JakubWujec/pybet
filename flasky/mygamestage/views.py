@@ -68,7 +68,7 @@ def mygamestage_view():
 
     return render_template(
         "mygamestage/mygamestage.html",
-        gamestage_name=current_gamestage_DTO.name,
+        gamestageDTO=current_gamestage_DTO,
         form=form,
         match_by_id=match_by_id,
         enumerate=enumerate,
