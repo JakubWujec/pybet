@@ -1,14 +1,17 @@
-{% macro points_calculation_table(result=0, score=0, total=0, multiplier=None) %}
-<div class="table-responsive w-auto mx-auto">
+{% from "macros/points_badge_color.html" import points_badge_color %}
+{% macro points_calculation_table(result=0, score=0, total=0, multiplier=None) %} <div
+    class="table-responsive w-auto mx-auto">
     <table class="table table-borderless table-sm text-end align-middle mb-0 small">
         <tbody>
             <tr>
                 <td class="text-start">Result (1X2)</td>
-                <td><span class="badge bg-success">+ {{ result | default(0) }}</span></td>
+                <td><span class="badge {{ points_badge_color(result | default(0)) }}">+ {{ result | default(0) }}</span>
+                </td>
             </tr>
             <tr>
                 <td class="text-start">Exact Score</td>
-                <td><span class="badge bg-success">+ {{ score | default(0) }}</span></td>
+                <td><span class="badge {{ points_badge_color(score | default(0)) }}">+ {{ score | default(0) }}</span>
+                </td>
             </tr>
             {% if multiplier %}
             <tr>
@@ -18,7 +21,9 @@
             </tr>
             <tr>
                 <td class="text-start">Mulitplier</td>
-                <td><span class="badge bg-success">* {{ multiplier | default(1) }}</span></td>
+                <td><span class="badge {{ points_badge_color(multiplier | default(0)) }}">* {{ multiplier | default(1)
+                        }}</span>
+                </td>
             </tr>
             {% endif %}
             <tr>
@@ -28,7 +33,8 @@
             </tr>
             <tr>
                 <td class="text-start fw-bold">Total</td>
-                <td><span class="badge bg-success">= {{ total | default(0) }}</span></td>
+                <td><span class="badge {{ points_badge_color(total | default(0)) }}">= {{ total | default(0) }}</span>
+                </td>
             </tr>
         </tbody>
     </table>
