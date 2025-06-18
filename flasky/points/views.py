@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 
 from flasky.points import bp
 from pybet import unit_of_work, utils
-from pybet.queries import bet_queries, gamestage_queries, queries
+from pybet.queries import bet_queries, queries, match_queries, gamestage_queries
 
 
 @bp.route("/points", methods=["GET"])
@@ -47,8 +47,7 @@ def user_round_points_view(user_id: int, gamestage_id: int):
     if username is None:
         abort(404, "User doesn't exist")
 
-    query_result = queries.mygamestage(user_id, gamestage_id=gamestage_id, uow=uow)
-    matches = query_result["matches"]
+    matches = match_queries.get_by_gamestage_id(gamestage_id=gamestage_id, uow=uow)
 
     betDTOs = bet_queries.get_user_gamestage_bets(
         user_id, gamestage_id=gamestage_id, uow=uow
