@@ -4,7 +4,7 @@ from flask import abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
 from flasky.points import bp
-from pybet import unit_of_work, utils
+from pybet import unit_of_work
 from pybet.queries import bet_queries, queries, match_queries, gamestage_queries
 
 
@@ -52,7 +52,7 @@ def user_round_points_view(user_id: int, gamestage_id: int):
     betDTOs = bet_queries.get_user_gamestage_bets(
         user_id, gamestage_id=gamestage_id, uow=uow
     )
-    betDTO_by_match_id = utils.list_to_dict(betDTOs, lambda bet: bet.match_id)
+    betDTO_by_match_id = {bet.match_id: bet for bet in betDTOs}
 
     prev_gamestageDTO, next_gamestageDTO = get_adjacent_gamestages(
         gamestageDTO, all_gamestagesDTO

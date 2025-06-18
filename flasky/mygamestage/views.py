@@ -4,7 +4,6 @@ from flask_login import current_user, login_required
 from flasky.mygamestage import bp, forms
 from pybet import commands, message_bus, unit_of_work
 from pybet.queries import gamestage_queries, queries, bet_queries, match_queries
-from pybet.utils import list_to_dict
 
 
 @bp.route("/mygamestage", methods=["GET", "POST"])
@@ -23,7 +22,8 @@ def mygamestage_view():
     bets = bet_queries.get_user_gamestage_bets(
         current_user.id, gamestage_id=current_gamestage_DTO.id, uow=uow
     )
-    bet_by_match_id = list_to_dict(bets, lambda bet: bet.match_id)
+    bet_by_match_id = {bet.match_id: bet for bet in bets}
+
     form = forms.MatchBetListForm()
 
     if request.method == "GET":
