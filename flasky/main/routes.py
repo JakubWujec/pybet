@@ -1,6 +1,12 @@
+import os
+
+from flask import (
+    render_template,
+    send_from_directory,
+)
+from flask_login import current_user
+
 from flasky.main import bp
-from flask import request, render_template, flash, redirect, url_for
-from flask_login import login_user, logout_user, current_user, login_required
 
 
 @bp.route("/")
@@ -10,5 +16,14 @@ def index():
     username = None
     if not current_user.is_anonymous:
         username = user.username
-    #return render_template('index.html', title='Home', username=username )
-    return render_template('index.html', title='Home', username=username )
+    # return render_template('index.html', title='Home', username=username )
+    return render_template("index.html", title="Home", username=username)
+
+
+@bp.route("/favicon.ico")
+def favicon():
+    print(os.path.join(os.path.dirname(bp.root_path), "static"))
+    return send_from_directory(
+        os.path.join(os.path.dirname(bp.root_path), "static"),
+        "favicon.ico",
+    )
