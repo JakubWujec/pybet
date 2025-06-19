@@ -1,5 +1,5 @@
 import enum
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional
 
 from sqlalchemy import (
@@ -188,6 +188,7 @@ class Match(Base):
 
 class Gamestage(Base):
     __tablename__ = "gamestages"
+    DEADLINE_OFFSET_IN_MINUTES = 60
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
@@ -202,7 +203,9 @@ class Gamestage(Base):
     @property
     def deadline(self):
         if self.matches:
-            return min(match.kickoff for match in self.matches)
+            return min(match.kickoff for match in self.matches) - timedelta(
+                minutes=self.DEADLINE_OFFSET_IN_MINUTES
+            )
         return datetime.now()
 
     def to_dict(self):
