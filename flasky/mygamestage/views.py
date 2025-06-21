@@ -1,4 +1,4 @@
-from flask import flash, redirect, render_template, request
+from flask import abort, flash, redirect, render_template, request
 from flask_login import current_user, login_required
 
 from flasky.mygamestage import bp, forms
@@ -12,7 +12,7 @@ def mygamestage_view():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     current_gamestage_DTO = gamestage_queries.get_current_gamestage(uow=uow)
     if current_gamestage_DTO is None:
-        return "Gamestage not found"
+        abort(404)
 
     matches = match_queries.get_by_gamestage_id(
         gamestage_id=current_gamestage_DTO.id, uow=uow
