@@ -21,6 +21,13 @@ def seed_teams_and_matches_from_fpl(session: Session):
 
     session.flush()
 
+    gamestages = {}
+    for i in range(1, 39):
+        gamestages[i] = schema.Gamestage(id=i, name=f"Gamestage {i}")
+        session.add(gamestages[i])
+
+    session.flush()
+
     r = requests.get(url=URL2)
     fixtures_data = r.json()
     for idx, fixture in enumerate(fixtures_data):
