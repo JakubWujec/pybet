@@ -17,7 +17,7 @@ def points():
 
     if previous_gamestage_id is None:
         flash("There is no data to show yet!")
-        return redirect(url_for("mygamestage.mygamestage_view"))
+        abort(404)
 
     return redirect(
         url_for(

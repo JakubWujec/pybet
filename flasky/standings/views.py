@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import redirect, render_template, request, url_for
+from flask import abort, redirect, render_template, request, url_for
 
 from flasky.generic.pagination import Pagination
 from flasky.standings import bp
@@ -23,6 +23,10 @@ def standings_view():
     current_gamestage_id = gamestage_queries.get_gamestage_id_by_date(
         datetime.now(), uow=uow
     )
+
+    if current_gamestage_id is None:
+        abort(404)
+
     selected_gamestage_id = request.args.get(
         "gamestage_id", current_gamestage_id, type=int
     )
