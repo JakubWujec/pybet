@@ -1,6 +1,7 @@
 import datetime
 
 from sqlalchemy.exc import IntegrityError
+from seeds.seed_users import seed_admin_user, seed_test_user
 
 from config import session_scope
 from pybet import schema
@@ -124,3 +125,5 @@ def seed_teams_and_matches(session):
 if __name__ == "__main__":
     with session_scope() as session:
         seed_teams_and_matches(session)
+        seed_admin_user(session)
+        seed_test_user(session)
