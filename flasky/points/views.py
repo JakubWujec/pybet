@@ -16,8 +16,7 @@ def points():
     previous_gamestage_id = gamestage_queries.get_previous_gamestage_id(uow)
 
     if previous_gamestage_id is None:
-        flash("There is no data to show yet!")
-        abort(404)
+        return render_template("points/before_first_round_finished.html")
 
     return redirect(
         url_for(

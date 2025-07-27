@@ -25,7 +25,7 @@ def standings_view():
     )
 
     if current_gamestage_id is None:
-        abort(404)
+        return render_template("standings/before_game_start.html")
 
     selected_gamestage_id = request.args.get(
         "gamestage_id", current_gamestage_id, type=int

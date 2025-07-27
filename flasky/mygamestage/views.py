@@ -12,7 +12,8 @@ def mygamestage_view():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     current_gamestage_DTO = gamestage_queries.get_current_gamestage(uow=uow)
     if current_gamestage_DTO is None:
-        abort(404)
+        return render_template("mygamestage/before_new_season.html")
+        # abort(404)
 
     matches = match_queries.get_by_gamestage_id(
         gamestage_id=current_gamestage_DTO.id, uow=uow
