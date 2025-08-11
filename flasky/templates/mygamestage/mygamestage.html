@@ -22,17 +22,14 @@
             {% set away_team_name = match_by_id[bet_form.match_id.data].away_team_name %}
             {% set kickoff = match_by_id[bet_form.match_id.data]["kickoff"] %}
 
-            <div class="col-md-6 col-xl-4">
+            <div class="col-lg-6 col-xl-4">
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-dark text-white text-center">
-                        <strong>{{ home_team_name }}</strong> vs <strong>{{ away_team_name }}</strong>
-                        <div>
-                            {{ kickoff.strftime('%d %b %Y, %H:%M') }}
-                        </div>
+                        {{ kickoff.strftime('%d %b %Y, %H:%M') }}
                     </div>
 
                     <div class="card-body">
-                        {{match_bet_form_fields(bet_form)}}
+                        {{match_bet_form_fields(bet_form, home_team_name, away_team_name)}}
                     </div>
                 </div>
             </div>
