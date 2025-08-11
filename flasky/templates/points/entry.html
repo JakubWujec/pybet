@@ -12,12 +12,23 @@
         {% for idx, match in enumerate(matches) %}
         {% set bet = betDTO_by_match_id.get(match.id) %}
 
-        <div class="col-md-4">
+        <div class="col-lg-6 col-xl-4">
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-dark text-white text-center py-3 h5">
-                    <strong>{{match.home_team_name}}</strong>
-                    {{ match_score_badge(match.home_team_score, match.away_team_score) }}
-                    <strong>{{match.away_team_name}}</strong>
+                    <div class="mb-3">
+                        {{ match.kickoff.strftime('%d %b %Y, %H:%M') }}
+                    </div>
+                    <div class="d-flex flex-row justify-content-around align-items-center">
+                        <img src="/static/img/clubs/{{match.home_team_name}}.png" alt="{{match.home_team_name}}"
+                            class="img-fluid" style="width: 50px;">
+                        <span>{{match.home_team_name}}</span>
+                        {{ match_score_badge(match.home_team_score, match.away_team_score) }}
+                        <span>{{match.away_team_name}}</span>
+                        <img src="/static/img/clubs/{{match.away_team_name}}.png" alt="{{match.away_team_name}}"
+                            class="img-fluid" style="width: 50px;">
+
+                    </div>
+
                 </div>
                 <div class="card-body h5">
                     <p class="text-center mb-2">
