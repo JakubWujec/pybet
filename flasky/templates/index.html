@@ -54,29 +54,34 @@
 <section class="features-icons bg-light text-center py-5">
     <div class="container">
         <div class="row">
-            <div class="col-lg-4">
-                <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
+            <div class="col-lg-8 d-flex flex-grow flex-column">
+                <div class="features-icons-item m-auto d-flex flex-column justify-content-center flex-grow-1">
                     <div class="features-icons-icon d-flex"><i class="bi-window m-auto text-primary"></i></div>
                     <h3>Predict Matches</h3>
-                    <p class="lead mb-0">Test your knowledge by predicting match scores and compete with your friends.
+                    <p class="lead mb-0">Test your knowledge by predicting match scores and compete with your
+                        friends.
                     </p>
                 </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
+
+                <div class="features-icons-item m-auto d-flex flex-column justify-content-center flex-grow-1">
                     <div class="features-icons-icon d-flex"><i class="bi-layers m-auto text-primary"></i></div>
                     <h3>Challenge Friends</h3>
                     <p class="lead mb-0">Invite your friends to compete with you in prediction challenges.</p>
                 </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="features-icons-item mx-auto mb-0 mb-lg-3">
+
+
+                <div class="features-icons-item m-auto d-flex flex-column justify-content-center flex-grow-1">
                     <div class="features-icons-icon d-flex"><i class="bi-trophy m-auto text-primary"></i></div>
                     <h3>Track Progress</h3>
                     <p class="lead mb-0">See how you rank on the leaderboard and celebrate your victories.</p>
                 </div>
+
+            </div>
+            <div class="col-lg-4 d-flex justify-content-center">
+                <img src="/static/img/phone.png" alt="phone" class="img-fluid">
             </div>
         </div>
+
     </div>
 </section>
 
@@ -84,12 +89,7 @@
 
 <section class="py-3">
     <h2 class="h2">Point System</h2>
-
-
     {% include "components/rules_accordion.html" %}
-
-
-
 </section>
 
 
