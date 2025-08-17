@@ -83,6 +83,78 @@ class TestGetActiveGamestageQuery:
         assert result == 2
 
 
+class TestGetCurrentGamestageDuringOngoingGamestage:
+    @pytest.fixture(autouse=True)
+    def setup(self, in_memory_sqlite_session_factory):
+        self.uow = unit_of_work.SqlAlchemyUnitOfWork(in_memory_sqlite_session_factory)
+
+        self.today = datetime.datetime.now()
+        self.yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+        self.tommorow = datetime.datetime.now() + datetime.timedelta(days=1)
+        self.next_week = self.today + datetime.timedelta(days=7)
+
+        teams = [
+            schema.Team(name="A"),
+            schema.Team(name="B"),
+            schema.Team(name="C"),
+            schema.Team(name="D"),
+        ]
+        with self.uow:
+            for t in teams:
+                self.uow.session.add(t)
+            self.uow.session.commit()
+
+        message_bus.handle(
+            commands.CreateGamestageCommand("Gamestage 1", 1), uow=self.uow
+        )
+        message_bus.handle(
+            commands.CreateGamestageCommand("Gamestage 2", 2), uow=self.uow
+        )
+
+        ## ROUND 1 - ongoing gamestage
+        message_bus.handle(
+            commands.CreateMatchCommand(
+                home_team_id=1,
+                away_team_id=2,
+                gamestage_id=1,
+                kickoff=self.yesterday,
+            ),
+            self.uow,
+        )
+        message_bus.handle(
+            commands.CreateMatchCommand(
+                home_team_id=3,
+                away_team_id=4,
+                gamestage_id=1,
+                kickoff=self.tommorow,
+            ),
+            self.uow,
+        )
+
+        ## ROUND 2 NEXT WEEK
+        message_bus.handle(
+            commands.CreateMatchCommand(
+                home_team_id=1, away_team_id=3, gamestage_id=2, kickoff=self.next_week
+            ),
+            self.uow,
+        )
+        message_bus.handle(
+            commands.CreateMatchCommand(
+                home_team_id=2, away_team_id=4, gamestage_id=2, kickoff=self.next_week
+            ),
+            self.uow,
+        )
+
+    def test_returns_doesnt_return_none(self):
+        result = gamestage_queries.get_current_gamestage(uow=self.uow)
+        assert result is not None
+
+    def test_returns_next_gamestage(self):
+        result = gamestage_queries.get_current_gamestage(uow=self.uow)
+        assert result is not None
+        assert result.id == 2
+
+
 class TestStandingsQuery:
     @pytest.fixture(autouse=True)
     def setup(self, in_memory_sqlite_session_factory):
