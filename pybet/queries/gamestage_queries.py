@@ -57,14 +57,16 @@ def get_previous_gamestage_id(uow: SqlAlchemyUnitOfWork):
 
 def get_current_gamestage_id(uow: SqlAlchemyUnitOfWork):
     current_timestamp = datetime.now()
-
     with uow:
         gamestage_id = uow.session.execute(
             text(
                 "SELECT gamestage_id"
-                " FROM matches AS m"
-                " WHERE kickoff > :current_timestamp"
-                " ORDER BY kickoff ASC"
+                " FROM ("
+                " SELECT gamestage_id, MIN(kickoff) as gamestage_kickoff"
+                " FROM matches"
+                " GROUP BY gamestage_id) AS T1"
+                " WHERE T1.gamestage_kickoff > :current_timestamp"
+                " ORDER BY gamestage_kickoff ASC"
                 " LIMIT 1"
             ),
             dict(current_timestamp=current_timestamp.strftime("%Y-%m-%d %H:%M:%S.%f")),
