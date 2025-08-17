@@ -32,6 +32,7 @@ def user_round_points_view(user_id: int, gamestage_id: int):
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     current_user_id = getattr(current_user, "id", None)
     all_gamestagesDTO = gamestage_queries.get_all(uow=uow)
+    all_gamestagesDTO.sort(key=lambda g: g.deadline)
     gamestageDTO = next((g for g in all_gamestagesDTO if g.id == gamestage_id), None)
 
     if gamestageDTO is None:
